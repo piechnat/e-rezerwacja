@@ -1,0 +1,318 @@
+/*
+Piechnat Total Menu v. 1.0 
+©2020 Mateusz Piechnat https://piechnat.pl
+HTML TEMPLATE:
+  <div id="navigation-bar">
+    <div class="placeholder"></div>
+    <div class="container">
+      <div class="logo-wrapper">
+        [Logo strony]
+      </div>
+      <div class="menu-wrapper">
+        <input type="checkbox">
+        <div class="hamburger-button">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="blurred-bg"></div>
+        <nav class="menu-panel">
+          <ul>
+            <li><a href="#">A</a></li>
+            <li><a href="#">B</a>
+              <ul>
+                <li><a href="#">B1</a></li>
+                <li><a href="#">B2</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+*/
+
+/* CONFIGURATION - BEGIN */
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+:root {
+  --navigation-bar-height: 3.2em;
+}
+#navigation-bar .container {
+  position: relative;
+  background-color: darkgreen;
+  min-height: 3.2em;
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+}
+#navigation-bar.sticky .container {
+  position: fixed;
+}
+#navigation-bar .placeholder {
+  height: var(--navigation-bar-height);
+  display: none;
+}
+#navigation-bar.sticky .placeholder {
+  display: block;
+}
+/* top-menu mode */
+@media (min-width: 1025px) { 
+  #navigation-bar .menu-panel ul {
+    background-color: darkgreen;
+  }
+  #navigation-bar .menu-panel a {
+    color: white;
+  }
+  #navigation-bar .menu-panel a:hover {
+    background-color: black;
+  }
+}
+/* side-menu mode */
+@media (max-width: 1024px) {
+  #navigation-bar .menu-panel {
+    background-color: midnightblue;
+  }
+  #navigation-bar .hamburger-button > span {
+    background-color: white;
+  }
+  #navigation-bar .menu-panel a {
+    color: white;
+  }
+  @media (hover: hover) {
+    #navigation-bar .menu-panel a:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* CONFIGURATION - END */
+
+#navigation-bar {
+  position: relative;
+  z-index: 99999;
+  font-size: 1.2rem;
+}
+#navigation-bar .container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  top: 0; left: 0; right: 0;
+  box-shadow: 0 0 0.5em 0.1em rgba(0, 0, 0, 0.6);
+}
+#navigation-bar .logo-wrapper {
+  flex-shrink: 0;
+  padding: 0 0.5em;
+}
+#navigation-bar .logo-wrapper * {
+  display: block;
+  width: auto;
+  max-height: 2.8em;
+}
+#navigation-bar .menu-panel ul {
+  position: relative;
+  display: block;
+  list-style: none;
+  margin: 0; border: 0; padding: 0;
+  z-index: 1;
+}
+#navigation-bar .menu-panel a {
+  display: block;
+  text-decoration: none;
+  line-height: 1.6em;
+}
+
+/* top-menu mode */
+@media (min-width: 1025px) {
+  #navigation-bar::before {
+    display: none;
+    content: "TOP"; /* data for JS */
+  }
+  #navigation-bar .menu-wrapper > input, 
+  #navigation-bar .hamburger-button, #navigation-bar .blurred-bg {
+    display: none;
+  }
+  #navigation-bar .menu-panel ul ul {
+    position: absolute;
+    top: 100%;
+    visibility: hidden;
+    opacity: 0;
+    border-radius: 0.2em;
+    box-shadow: 0 0 0.5em 0.1em rgba(0, 0, 0, 0.6);
+  }
+  #navigation-bar .menu-panel:hover ul ul {
+    transition: opacity 0.5s, visibility 0.5s;
+  }
+  #navigation-bar .menu-panel ul ul li:first-child, 
+  #navigation-bar .menu-panel ul ul li:first-child > a {
+    border-top-left-radius: 0.2em;
+    border-top-right-radius: 0.2em;
+  }
+  #navigation-bar .menu-panel ul ul li:last-child, 
+  #navigation-bar .menu-panel ul ul li:last-child > a {
+    border-bottom-left-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+  }
+  #navigation-bar .menu-panel ul ul ul {
+    top: 0;
+    transform: translate(100%, 0);
+  }
+  #navigation-bar .menu-panel ul li:hover > ul {
+    visibility: visible;
+    opacity: 1;
+  }
+  #navigation-bar .menu-panel ul li {
+    display: block;
+    position: relative;
+    float: left;
+  }
+  #navigation-bar .menu-panel ul ul li {
+    width: 10em;
+    float: none;
+  }
+  #navigation-bar .menu-panel a {
+    padding: 0.8em;
+  }
+  #navigation-bar .menu-panel li > a::after {
+    content: ' ＋';
+  }
+  #navigation-bar .menu-panel li > a:only-child::after {
+    content: '';
+  }
+}
+
+/* side-menu mode */
+@media (max-width: 1024px) {
+  #navigation-bar .container {
+    justify-content: space-between;
+  }
+  #navigation-bar::before {
+    display: none;
+    content: "SIDE"; /* data for JS */
+  }
+  #navigation-bar .menu-wrapper {
+    display: block;
+    position: absolute;
+    top: 0.28em;
+    right: 0.28em;
+    width: 3.4em;
+    height: 2.66em;
+  }
+  #navigation-bar .menu-wrapper > input {
+    display: block;
+    position: absolute;
+    margin: 0; border: 0; padding: 0;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
+  }
+  #navigation-bar .hamburger-button {
+    display: block;
+    position: absolute;
+    top: 30%;
+    right: 24%;
+    bottom: 30%;
+    left: 24%;
+    z-index: 1;
+  }
+  #navigation-bar .hamburger-button > span {
+    display: block;
+    position: absolute;
+    height: 12%;
+    width: 100%;
+    left: 0;
+    border-radius: 10% / 40%;
+    transition: 0.25s ease-in-out;
+  }
+  #navigation-bar .hamburger-button > span:nth-child(1) {
+    top: 0;
+  }
+  #navigation-bar .hamburger-button > span:nth-child(2) {
+    top: 44%;
+  }
+  #navigation-bar .hamburger-button > span:nth-child(3) {
+    top: 88%;
+  }
+  #navigation-bar .menu-wrapper > input:checked + .hamburger-button > span:nth-child(1) {
+    top: 44%;
+    transform: rotate(-45deg);
+  }
+  #navigation-bar .menu-wrapper > input:checked + .hamburger-button > span:nth-child(2) {
+    width: 0;
+    left: 50%;
+  }
+  #navigation-bar .menu-wrapper > input:checked + .hamburger-button > span:nth-child(3) {
+    top: 44%;
+    transform: rotate(45deg);
+  }
+  #navigation-bar .menu-panel {
+    position: fixed;
+    top: 0;
+    left: calc(100% + 1em);
+    right: auto;
+    bottom: 0;
+    width: 15em;
+    transform-origin: 0 0;
+    transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+    overflow: auto;
+    box-shadow: 0 0 0.5em 0.1em rgba(0, 0, 0, 0.5);
+    padding: 0.8em 0.4em;
+  }
+  @keyframes fade-in-opacity { 0% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes fade-out-opacity { 0% { opacity: 1; } 100% { opacity: 0; } }
+  #navigation-bar .blurred-bg {
+    position: fixed;
+    display: block;
+    background-color: rgba(50, 50, 50, 0.7);
+    top: 0; right: 0; bottom: 0; left: 0;
+    visibility: hidden;
+    transition: visibility 0.51s; /* 0.51 - fix for FF bug */
+    animation: fade-out-opacity 0.5s ease-in forwards;
+  }
+  #navigation-bar .menu-wrapper > input:checked ~ .blurred-bg {
+    visibility: visible;
+    animation: fade-in-opacity 0.5s ease-in;
+  }
+  #navigation-bar .menu-wrapper > input:checked ~ .menu-panel {
+    transform: translate(calc(-100% - 1em), 0);
+  }
+  #navigation-bar .menu-panel ul ul {
+    margin-left: 1.1em;
+    border-left: 1px dotted #ddd;
+    transition: height 0.5s ease-out;
+  }
+  #navigation-bar .menu-panel ul li.js_close > ul {
+    height: 0;
+    overflow: hidden;
+  }
+  #navigation-bar .menu-panel a {
+    padding: 0.5em 1em;
+  }
+  #navigation-bar .menu-panel li > a::after {
+    content: '▼';
+    display: inline-block;
+    position: absolute;
+    margin-left: 0.6em;
+    opacity: 0.6;
+    font-size: 0.8em;
+    vertical-align: top;
+    transition: transform 0.5s;
+  }
+  #navigation-bar .menu-panel li.js_close > a::after {
+    transform: rotate(-90deg);
+  }
+  #navigation-bar .menu-panel li > a:only-child::after {
+    display: none;
+  }
+}
+
+.disable-anim *, .disable-anim ::before, .disable-anim ::after {
+  transition: none !important;
+  animation: none !important;
+}
+/* WordPress: lower the content by admin bar height */
+.admin-bar #navigation-bar .container, .admin-bar #navigation-bar .menu-panel { top: 32px; }
+@media screen and (max-width: 782px) {
+  .admin-bar #navigation-bar .container, .admin-bar #navigation-bar .menu-panel { top: 46px; }
+}
+#wpadminbar { position: fixed !important; }

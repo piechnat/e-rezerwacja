@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch currently open script",
+        "type": "php",
+        "request": "launch",
+        "hostname": "127.0.0.1",
+        "port": 9000
+      },
+      {
+        "name": "Listen for XDebug",
+        "type": "php",
+        "request": "launch",
+        "hostname": "127.0.0.1",
+        "port": 9000
+      }
+    ]
+  }

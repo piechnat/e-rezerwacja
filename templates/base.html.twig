@@ -1,12 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl-PL">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#ac271e">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <title>e-rezerwacja » {% block title %}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
+        <script type='text/javascript' src="{{ asset('piechnat-menu.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('piechnat-menu.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ asset('style.css') }}?{{ random() }}" type="text/css" media="all" />
+        <script src="https://kit.fontawesome.com/2a434de389.js" crossorigin="anonymous"></script>
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body style="margin: 0; border: 0; padding: 0">
+        <header id="navigation-bar">
+            <div class="placeholder"></div>
+            <div class="container">
+            <div class="logo-wrapper">
+                <a href="{{ path('main') }}">
+                    <img src="{{ asset('logo.png') }}" alt="E-rezerwacja">
+                </a>
+            </div>
+            <div class="menu-wrapper">
+                <input type="checkbox" autocomplete="off">
+                <div class="hamburger-button">
+                <span></span><span></span><span></span>
+                </div>
+                <div class="blurred-bg"></div>
+                <nav class="menu-panel">
+                    {{ knp_menu_render('main', {'allow_safe_labels': true})}}
+                </nav>
+            </div>
+            </div>
+        </header>
+        <main>
+          {% block main %}{% endblock %}
+        </main>
+        <footer>
+          {% block footer %}{% endblock %}
+        </footer>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  {{ title|default('Wystąpił błąd')|trans }}
+{% endblock %}
+
+{% block main %}
+<div>
+    <h1>
+      {{ title|default('Wystąpił błąd')|trans }}
+    </h1>
+    <p>
+      {{ content|default('')|trans }}
+    </p>
+    <p>
+      <form action="{{ path(path|default('main'), params|default([])) }}">
+        <button type="submit" /><i class="fas fa-check"></i>OK</button>
+      </form>
+    </p>
+</div>
+{% endblock %}

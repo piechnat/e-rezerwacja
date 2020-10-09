@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Edytowanie użytkownika'|trans }}{% endblock %}
+
+{% block main %}
+  <h2>{{ 'Edytowanie użytkownika'|trans }}</h2>
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="button-row">
+      <button type="submit" name="save" value="save">
+        <i class="fas fa-save"></i>{{ 'Zapisz'|trans }}
+      </button>
+    </div>
+  {{ form_end(form) }}
+{% endblock %}

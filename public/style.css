@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+html, body {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: 100%;
+  margin: 0; border: 0; padding: 0;
+}
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 1.1em;
+  line-height: 1.5;
+  background-color: #fcfcfc;
+}
+main, footer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1em;
+}
+footer {
+  font-size: 0.8em;
+}
+a {
+  color: #2d2dc5;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 {
+  font-size: 1.7em;
+}
+.cryptedmail:after {
+  content: attr(data-name) "@" attr(data-domain) "." attr(data-tld); 
+}
+.row {
+  display: inline-block;
+}
+.button-row {
+  margin: 1em 0;
+}
+i.fas, i.fab, i.far {
+  margin-right: 0.4em;
+  opacity: 0.6;
+}
+
+#navigation-bar i.fas, #navigation-bar i.fab, #navigation-bar i.far {
+  text-align: center;
+  width: 1.2em;
+}
+
+/* MENU RECONFIGURATION - BEGIN */
+
+#navigation-bar .container {
+  background-color: #cc2e22;
+}
+@media (min-width: 1025px) { 
+  #navigation-bar .menu-panel ul {
+    background-color:#cc2e22;
+  }
+  #navigation-bar .menu-panel > ul > li > a::after {
+    content: '';
+    margin-left: 0.5em;
+  }
+}
+@media (max-width: 1024px) {
+  #navigation-bar .menu-panel {
+    background-color:#cc2e22;
+  }
+}
+
+/* MENU RECONFIGURATION - END */
+
+body, select, input, button, textarea, a.button   {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #000;
+  font-size: 1em;
+}
+select, input, button, textarea, a.button {
+  margin: 0 1rem 1rem 0;
+}
+select:focus, input:focus, textarea:focus, button:focus, a:focus, a.button:focus {
+  outline: none;
+}
+select, input {
+  font-size: 1.2em;
+}
+select, input, textarea {
+  padding: 0.3em 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 0.3rem;
+  background: #fff;
+  box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
+  box-sizing: border-box;
+}
+label {
+  display: block;
+  font-size: 1.1em;
+  padding: 0.4em 0.4em 0.4em 0.1em;
+}
+input[type=checkbox] { margin: 0 0.6rem 1rem 0.4rem; }
+input[type=checkbox] + label {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+select:focus, input:focus, textarea:focus, a.button {
+  border: 1px solid #888;
+  transform: translateY(-0.05rem) translateX(-0.05rem);
+  box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
+}
+select, button {
+  appearance: none;
+}
+button, a.button {
+  font-size: 1.1em;
+  padding: 0.3em 0.7em 0.3em 0.5em;
+  border: 1px solid transparent;
+  border-radius: 0.3rem;
+  background: #fff;
+  box-shadow: 0 0 0.3rem 0.05rem rgba(45,45,45,0.3);
+  box-sizing: border-box;
+  transition: 0.3s;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-block;
+  line-height: inherit;
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+  color: initial;
+  font-weight: 400;
+}
+button:active, a.button:active {
+  border: 1px solid #888;
+  background: #eee;
+  transform: translateY(0.05rem) translateX(0.05rem);
+  box-shadow: none;
+  border-color: #bbb;
+  -webkit-tap-highlight-color: transparent;
+  transition: none;
+}
+form ul {
+  color: red;
+  margin-top: 0;
+}

@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Lista rezerwacji'|trans }}{% endblock %}
+
+{% block main %}
+  <h2>{{ 'Lista rezerwacji'|trans }}</h2>
+    <ul>
+    {% for item in item_list %}
+      <li>
+        <a href="{{ path('reservation_show', {id: item.id}) }}">
+          {{ item.requester.username }}:
+          {{ item.room.title }} -
+          {{ item.beginTime|date('Y-m-d, H:i') }}-{{ item.endTime|date('H:i') }}
+        </a>
+      </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
