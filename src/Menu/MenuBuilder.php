@@ -30,12 +30,12 @@ class MenuBuilder
         $langButton = $twig->render('main/lang-'.$lang.'.html.twig');
         $menu = $factory->createItem('root');
 
-        if (!$security->isGranted('ROLE_USER')) {
+        if (!$security->isGranted(constant('App\\CustomTypes\\UserRole::USER'))) {
             $this->ac($menu, 'Strona główna', ['route' => 'main'], '<i class="fas fa-home"></i>');
             $this->ac($menu, 'Zaloguj', ['route' => 'login'], '<i class="fas fa-sign-in-alt"></i>');
             $this->ac($menu, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
         } else {
-            $child = $this->ac($menu, 'Witryna', ['uri' => '#'], '<i class="fas fa-globe"></i>');
+            $child = $this->ac($menu, 'Aplikacja', ['uri' => '#'], '<i class="fas fa-globe"></i>');
             $this->ac($child, 'Strona główna', ['route' => 'main'], '<i class="fas fa-home"></i>');
             $this->ac($child, 'Wyloguj', ['route' => 'logout'], '<i class="fas fa-sign-out-alt"></i>');
             $this->ac($child, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
@@ -44,7 +44,7 @@ class MenuBuilder
             $this->ac($child, 'Pokaż', ['route' => 'user_index'], '<i class="far fa-eye"></i>');
             $this->ac($child, 'Mój profil', ['route' => 'user_self_show'], '<i class="far fa-user"></i>');
 
-            if ($security->isGranted('ROLE_ADMIN')) {
+            if ($security->isGranted(constant('App\\CustomTypes\\UserRole::ADMIN'))) {
                 $child = $this->ac($menu, 'Sale', ['uri' => '#'], '<i class="fas fa-door-closed"></i>');
                 $this->ac($child, 'Dodaj', ['route' => 'room_add'], '<i class="far fa-plus-square"></i>');
                 $this->ac($child, 'Pokaż', ['route' => 'room_index'], '<i class="far fa-eye"></i>');
@@ -53,9 +53,10 @@ class MenuBuilder
             }
             $child = $this->ac($menu, 'Rezerwacje', ['uri' => '#'], '<i class="fas fa-calendar"></i>');
             $this->ac($child, 'Dodaj', ['route' => 'reservation_add'], '<i class="far fa-calendar-plus"></i>');
-            $this->ac($child, 'Pokaż', ['route' => 'reservation_index'], '<i class="far fa-eye"></i>');
+            $this->ac($child, 'Pokaż dzień', ['route' => 'reservation_view_day'], '<i class="far fa-eye"></i>');
+            $this->ac($child, 'Pokaż tydzień', ['route' => 'reservation_view_week'], '<i class="far fa-eye"></i>');
             $this->ac($child, 'Moje', ['route' => 'reservation_index'], '<i class="far fa-check-square"></i>');
-            if ($security->isGranted('ROLE_ADMIN')) {
+            if ($security->isGranted(constant('App\\CustomTypes\\UserRole::ADMIN'))) {
                 $this->ac($child, 'Żądania', ['route' => 'request'], '<i class="far fa-bell"></i>');
             }
         }

@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+<style type="text/css">
+.table-view {
+  overflow: auto;
+  position: absolute;
+  top: var(--navigation-bar-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.table-view .table-view-header {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0.5em 1em;
+  position: sticky;
+  left: 0;
+}
+.table-view .table-view-header .form-wrapper > div {
+  display: inline-block;
+}
+.table-view .table-view-header .form-wrapper button {
+  margin-right: 0;
+}
+.table-view table {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0 auto;
+}
+.table-view th, .table-view td {
+  position: relative;
+  padding: 0.3em;
+  border-right: 1px solid #bbb;
+  color: #000;
+  background-color: #fff;
+  min-width: 6em;
+}
+.table-view td {
+  background-image: url("{{ asset('table-view-bg.png') }}");
+  background-size: 1px 1.875em;
+  overflow: hidden;
+}
+.table-view th {
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 10;
+  background-color: #ddd;
+  font-weight: 400;
+  color: #333;
+  white-space: nowrap;
+}
+.table-view th.marked {
+  font-weight: 700;
+}
+.table-view thead th {
+  top: 0;
+  border-bottom: 1px solid #bbb;
+}
+.table-view tbody th, .table-view thead th:first-child {
+  left: 0;
+  min-width: 3.5em;
+}
+.table-view thead th:first-child {
+  z-index: 11;
+}
+.table-view td .rsvn-item {
+  box-sizing: border-box;
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  background-color: #9bd28d;
+  border-radius: 0.3rem;
+  overflow: hidden;
+  opacity: 0.9;
+  border: solid #777;
+  border-width: 0 1px 1px 0;
+  transition: box-shadow 0.5s;
+}
+.table-view td .rsvn-username {
+  padding: 0.1em 0.4em;
+  font-size: 0.9em;
+}
+.table-view table a {
+  color: #000;
+}
+.table-view table a:active .rsvn-item {
+  box-shadow: 0px 0px 0.1em 0.2em #2d2dc577;
+  transition: none;
+  z-index: 1;
+}
+.table-view th.hours-header {
+  line-height: 3.75em;
+  vertical-align: top;
+  padding: 1.875em 0;
+}
+.table-view td .add-item {
+  box-sizing: border-box;
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 0.3rem;
+  overflow: hidden;
+  transition: background-color 0.5s;
+}
+.table-view table a:active .add-item {
+  background-color: rgba(0, 0, 0, 0.1);
+  transition: none;
+  z-index: 1;
+}
+</style>
+
+<div class="table-view">
+  <div class="table-view-header">
+
+  {% block table_view_form %}{% endblock %}
+
+  {% if table_view is null %}
+
+    {% block table_view_null_message %}{% endblock %}
+
+  {% elseif table_view.columns|length == 0 %}
+
+    <p>Nie znaleziono sal spełniających zadane kryteria.</p>
+
+  {% elseif table_view.columns|length > 0 %}
+
+  </div> 
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+
+        {% block table_view_headers %}{% endblock %}
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="hours-header">
+        {% for i in (table_view.meta.min_hour + 1)..(table_view.meta.max_hour - 1) %}
+          {{ '%02d'|format(i) }}:00<br>
+        {% endfor %}
+        </th>
+        {% for key, column in table_view.columns %}
+        <td>
+          {% for item in column %}
+            {% if item.id > 0 %}
+            <a href="{{ path('reservation_show', {id: item.id}) }}">
+              <div class="rsvn-item" style="{{ item|col_css }}">
+                <div class="rsvn-username">{{ item.user_username }}</div>
+              </div>
+            </a>
+            {% else %}
+            <a href="{{ path('reservation_add', {
+                id: table_view.headers[key]['id'],
+                beginTime: item.begin_time|date('Y-m-d H:i'),
+                endTime: item.end_time|date('Y-m-d H:i')
+              }) }}">
+              <div class="add-item" style="{{ item|col_css }}"></div>
+            </a>
+            {% endif %}
+          {% endfor %}
+        </td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+
+{% endblock %}

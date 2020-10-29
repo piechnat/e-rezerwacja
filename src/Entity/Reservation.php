@@ -25,12 +25,12 @@ class Reservation
     private $room;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     private $begin_time;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     private $end_time;
 
@@ -51,7 +51,7 @@ class Reservation
     private $editorId;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     private $edit_time;
 

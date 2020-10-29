@@ -1,0 +1,7 @@
+- dodanie tabeli props oraz tabel relacji dla sal i użytkowników
+- max_hour 21:30
+- dodawanie rezerwacji przez kliknięcie na nagłówku kolumny
+- wersja językowa zapisywana w tabeli `users`
+- edycja rezerwacji
+- wydłużenie zalogowania do miesiąca
+(- dodatkowe opcje logowania)

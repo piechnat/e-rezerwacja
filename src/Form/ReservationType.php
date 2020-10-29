@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Reservation;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -42,20 +44,27 @@ class ReservationType extends AbstractType
                     'mapped' => false,
                     'required' => false,
                 ])
-                ->add('requester', TextType::class, ['label' => 'E-mail'])
+                ->add('requester', TextType::class, [
+                    'label' => 'E-mail',
+                    'attr' => ['size' => 30],
+                ])
             ;
         } else {
             $builder->add('requester', HiddenType::class);
         }
         $builder
-            ->add('room', TextType::class, ['label' => 'Sala'])
+            ->add('room', TextType::class, [
+                'label' => 'Sala',
+                'attr' => ['size' => 12],
+            ])
             ->add('begin_time', DateTimeType::class, [
+                'input' => 'datetime_immutable',
                 'label' => 'Termin rozpoczęcia',
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'time_label' => 'sdf',
             ])
             ->add('end_time', TimeType::class, [
+                'input' => 'datetime_immutable',
                 'label' => 'Godzina zakończenia',
                 'widget' => 'single_text',
             ])
@@ -72,12 +81,21 @@ class ReservationType extends AbstractType
         $builder->get('room')->addModelTransformer($this->roomToTitle);
 
         if (false === $options['past_begin_time']) {
-            $builder->get('begin_time')->addModelTransformer(new CallbackTransformer(
+            $field = $builder->get('begin_time');
+
+            $type = $field->get('date')->getType()->getInnerType();
+            $options = $field->get('date')->getOptions();
+            $attr = $options['attr'] ?? [];
+            $attr['min'] = (new DateTimeImmutable())->format('Y-m-d');
+            $options['attr'] = $attr;
+            $field->add('date', get_class($type), $options);
+
+            $field->addModelTransformer(new CallbackTransformer(
                 function ($beginTime) {
                     return $beginTime;
                 },
                 function ($beginTime) {
-                    return max(new \DateTime(), $beginTime);
+                    return max(new DateTimeImmutable(), $beginTime);
                 }
             ));
         }
@@ -104,15 +122,14 @@ class ReservationType extends AbstractType
             return;
         }
 
-        /** @var \DateTime */
-        $tmpTime = clone $rsvn->getBeginTime();
-        /** @var \DateTime */
-        $endTime = $rsvn->getEndTime();
-        // change time field to a datetime on the same day as begin time
+        $tmpTime = DateTime::createFromImmutable($rsvn->getBeginTime());
+        $endTime = DateTime::createFromImmutable($rsvn->getEndTime());
+        // change end time to a date on the same day as begin time
         $endTime->modify($tmpTime->format('Y-m-d'));
-        if ($endTime < $tmpTime) {
+        if ($endTime <= $tmpTime) {
             $endTime->modify('+1 day'); // or next day if it is earlier
         }
+        $rsvn->setEndTime(DateTimeImmutable::createFromMutable($endTime));
 
         $tmpTime->modify('+15 minutes');
         if ($endTime < $tmpTime) {
@@ -123,7 +140,7 @@ class ReservationType extends AbstractType
         }
 
         $tmpTime->modify('+23 hours +45 minutes');
-        if ($endTime >= $tmpTime) {
+        if ($endTime > $tmpTime) {
             $context->buildViolation('Rezerwacja nie może być dłuższa niż 24 godziny.')
                 ->atPath('end_time')->addViolation();
 

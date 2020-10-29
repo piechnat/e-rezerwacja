@@ -1,6 +1,7 @@
 Użytkownik: User
 Administrator: Administrator
 anonimowy: anonymous
+Aplikacja: Application
 Witryna: Website
 Użytkownicy: Users
 Sale: Rooms
@@ -25,3 +26,10 @@ Wyślij: Send
 Nazwa sali: Room name
 Akademia Muzyczna w Łodzi. Wszelkie prawa zastrzeżone.: The University of Music in Łódź. All rights reserved.
 Uwagi można kierować na adres: Comments can be sent to
+Poniedziałek: Monday
+Wtorek: Tuesday
+Środa: Wednesday
+Czwartek: Thursday
+Piątek: Friday
+Sobota: Saturday
+Niedziela: Sunday

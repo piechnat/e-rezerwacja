@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\CustomTypes\NotAllowedException;
+use App\CustomTypes\ReservationConflictException;
 use App\Entity\Reservation;
-use Exception;
+use App\CustomTypes\ReservationError as RsvnErr;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
@@ -11,16 +13,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AppHelper
 {
-    const RSVN_ALLOWED_MSG = 0;
-    const RSVN_CONFLICT_MSG = 1;
-    const NO_PRIVILEGES_MSG = 2;
-
-    private const messageList = [
-        self::RSVN_ALLOWED_MSG => 'Rezerwacja sali jest dozwolona.',
-        self::RSVN_CONFLICT_MSG => 'W podanym terminie sala jest już zarezerwowana.',
-        self::NO_PRIVILEGES_MSG => 'Nie posiadasz wystarczających uprawnień do zarezerwowania sali.',
-    ];
-
     private $security;
     private $trans;
     private $generator;
@@ -35,14 +27,14 @@ class AppHelper
         $this->generator = $generator;
     }
 
-    public function createFormError(Exception $exception): FormError
+    public function createFormError(\Exception $exc): FormError
     {
         $content = '';
-        if ($exception instanceof NotAllowedException) {
-            $content .= $this->trans->trans(self::messageList[$exception->getCode()]);
-        } elseif ($exception instanceof ReservationConflictException) {
-            $content .= $this->trans->trans(self::messageList[self::RSVN_CONFLICT_MSG]);
-            $url = $this->generator->generate('reservation_show', ['id' => $exception->getCode()]);
+        if ($exc instanceof NotAllowedException) {
+            $content .= $this->trans->trans(RsvnErr::getValue($exc->getMessage()));
+        } elseif ($exc instanceof ReservationConflictException) {
+            $content .= $this->trans->trans(RsvnErr::getValue(RsvnErr::RSVN_CONFLICT));
+            $url = $this->generator->generate('reservation_show', ['id' => $exc->getMessage()]);
             $text = $this->trans->trans('Zobacz konflikt');
             $content .= ' <a href="'.$url.'">'.$text.'</a>.';
         }
@@ -50,9 +42,9 @@ class AppHelper
         return new FormError($content);
     }
 
-    public function isReservationAllowed(Reservation $rsvn): int
+    public function isReservationAllowed(Reservation $rsvn): string
     {
-        return self::NO_PRIVILEGES_MSG;
-        //return self::RSVN_ALLOWED_MSG;
+        //return ReservationError::NO_PRIVILEGES;
+        return RsvnErr::RSVN_ALLOWED;
     }
 }

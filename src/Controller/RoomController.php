@@ -62,7 +62,7 @@ class RoomController extends AbstractController
                 return $this->render('main/redirect.html.twig', [
                     'path' => 'room_edit',
                     'params' => ['id' => $room->getId()],
-                    'content' => 'Nie możesz usunąć sali, 
+                    'content' => 'Nie można usunąć sali, 
                         do której przyporządkowane są rezerwacje.',
                 ]);
             }

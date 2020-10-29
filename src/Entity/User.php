@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\CustomTypes\UserRole;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -66,8 +67,7 @@ class User implements UserInterface
     public function getRoles(): ?array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = UserRole::USER;
 
         return array_unique($roles);
     }

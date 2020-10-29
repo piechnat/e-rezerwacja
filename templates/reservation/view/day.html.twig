@@ -1,0 +1,34 @@
+{% extends 'reservation/view/base.html.twig' %}
+
+{% block title %}Widok dnia{% endblock %}
+
+{% block table_view_null_message %}
+  <p>Określ zbiór sal za pomocą znaczników.</p>
+{% endblock %}
+
+{% block table_view_form %}
+
+  {{ form_start(form) }}
+    <div class="form-wrapper">
+      <div>
+        {{ form_label(form.date) }}
+        {{ form_errors(form.date) }}
+        {{ form_widget(form.date) }}
+        <button type="submit">
+          <i class="fas fa-redo"></i>OK
+        </button>
+      </div>
+    </div>
+  {{ form_end(form) }}
+
+{% endblock %}
+
+{% block table_view_headers %}
+
+  {% for header in table_view.headers %}
+    <th>
+      {{ header.title }}
+    </th>
+  {% endfor %}
+
+{% endblock %}

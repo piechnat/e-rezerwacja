@@ -2,20 +2,22 @@
 
 namespace App\Controller;
 
+use App\CustomTypes\NotAllowedException;
+use App\CustomTypes\ReservationConflictException;
+use App\CustomTypes\ReservationError;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
 use App\Service\AppHelper;
-use App\Service\NotAllowedException;
-use App\Service\ReservationConflictException;
+use DateTimeImmutable;
 use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class ReservationController extends AbstractController
 {
@@ -38,14 +40,22 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/add", name="reservation_add")
+     * @Route("/reservation/add/{id}/{beginTime}/{endTime}", name="reservation_add",
+     * defaults={"id":null,"beginTime":"now","endTime":"now +60 minutes"})
+     * @ParamConverter("room", options={"strip_null":true})
      */
-    public function reservation_add(Request $request, AppHelper $helper)
-    {
+    public function reservation_add(
+        Room $room = null,
+        DateTimeImmutable $beginTime = null,
+        DateTimeImmutable $endTime = null,
+        Request $request,
+        AppHelper $helper
+    ) {
         $rsvn = new Reservation();
         $rsvn->setRequester($this->getUser());
-        $rsvn->setBeginTime(new \DateTime());
-        $rsvn->setEndTime((new \DateTime())->modify('+60 minutes'));
+        if ($room) $rsvn->setRoom($room);
+        $rsvn->setBeginTime($beginTime);
+        $rsvn->setEndTime($endTime);
         $rsvn->setDetails('Ćwiczenie');
 
         $formOptions = [
@@ -61,13 +71,14 @@ class ReservationController extends AbstractController
             $rsvn = $form->getData();
 
             try {
-                $privilegesMsg = $helper->isReservationAllowed($rsvn);
-                if (AppHelper::RSVN_ALLOWED_MSG === $privilegesMsg) {
+                $rsvnErr = $helper->isReservationAllowed($rsvn);
+                if (ReservationError::RSVN_ALLOWED === $rsvnErr) {
                     /** @var EntityManagerInterface */
                     $mngr = $this->getDoctrine()->getManager();
                     /** @var Connection */
                     $conn = $this->getDoctrine()->getConnection();
-                    $rsvn->setEditorId($this->getUser()->getId())->setEditTime(new \DateTime());
+                    $rsvn->setEditorId($this->getUser()->getId());
+                    $rsvn->setEditTime(new DateTimeImmutable());
                     $conn->beginTransaction();
 
                     try {
@@ -85,7 +96,7 @@ class ReservationController extends AbstractController
                         $conn->commit();
 
                         return $this->redirectToRoute('reservation_show', ['id' => $rsvn->getId()]);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $conn->rollback();
 
                         throw $e;
@@ -96,7 +107,7 @@ class ReservationController extends AbstractController
                         throw new ReservationConflictException($conflictIds[0]);
                     }
 
-                    throw new NotAllowedException($privilegesMsg);
+                    throw new NotAllowedException($rsvnErr);
                 }
             } catch (ReservationConflictException $e) {
                 $form->get('room')->addError($helper->createFormError($e));

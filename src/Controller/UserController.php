@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\CustomTypes\UserRole;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -44,7 +45,7 @@ class UserController extends AbstractController
         if (!$user) {
             $user = $this->getUser();
         }
-        $formOptions = ['edit_roles' => $this->isGranted('ROLE_ADMIN')];
+        $formOptions = ['edit_roles' => $this->isGranted(UserRole::ADMIN)];
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
 

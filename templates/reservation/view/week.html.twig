@@ -1,0 +1,35 @@
+{% extends 'reservation/view/base.html.twig' %}
+
+{% block title %}Widok tygodnia{% endblock %}
+
+{% block table_view_null_message %}
+  <p>Wpisz nazwę sali.</p>
+{% endblock %}
+
+{% block table_view_form %}
+
+  {{ form_start(form) }}
+    <div class="form-wrapper">
+      {{ form_row(form.room) }}
+      <div>
+        {{ form_label(form.date) }}
+        {{ form_errors(form.date) }}
+        {{ form_widget(form.date) }}
+        <button type="submit">
+          <i class="fas fa-redo"></i>OK
+        </button>
+      </div>
+    </div>
+  {{ form_end(form) }}
+
+{% endblock %}
+
+{% block table_view_headers %}
+
+  {% for header in table_view.headers %}
+    <th class="{{ chosen_day == header.date|date('z') ? 'marked' : '' }}">
+      {{ header.date|week_day|trans }}
+    </th>
+  {% endfor %}
+
+{% endblock %}

@@ -1,16 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
 html, body {
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: none;
   -ms-text-size-adjust: 100%;
   margin: 0; border: 0; padding: 0;
-}
-body {
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  font-size: 1.1em;
-  line-height: 1.5;
   background-color: #fcfcfc;
+}
+body, select, input, button, textarea, a.button   {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 300;
+  font-size: 1em;
+  line-height: 1.5;
+  color: #000;
 }
 main, footer {
   max-width: 800px;
@@ -53,7 +56,11 @@ i.fas, i.fab, i.far {
 /* MENU RECONFIGURATION - BEGIN */
 
 #navigation-bar .container {
+  position: fixed;
   background-color: #cc2e22;
+}
+#navigation-bar .placeholder {
+  display: block;
 }
 @media (min-width: 1025px) { 
   #navigation-bar .menu-panel ul {
@@ -72,20 +79,11 @@ i.fas, i.fab, i.far {
 
 /* MENU RECONFIGURATION - END */
 
-body, select, input, button, textarea, a.button   {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #000;
-  font-size: 1em;
-}
 select, input, button, textarea, a.button {
   margin: 0 1rem 1rem 0;
 }
 select:focus, input:focus, textarea:focus, button:focus, a:focus, a.button:focus {
   outline: none;
-}
-select, input {
-  font-size: 1.2em;
 }
 select, input, textarea {
   padding: 0.3em 0.5em;
@@ -95,9 +93,13 @@ select, input, textarea {
   box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
   box-sizing: border-box;
 }
+input[type=date] {
+  height: 2.25em; /* bug in input type="date" line-height */
+  width: auto;
+}
 label {
   display: block;
-  font-size: 1.1em;
+  font-size: 1em;
   padding: 0.4em 0.4em 0.4em 0.1em;
 }
 input[type=checkbox] { margin: 0 0.6rem 1rem 0.4rem; }
@@ -107,16 +109,16 @@ input[type=checkbox] + label {
 }
 select:focus, input:focus, textarea:focus, a.button {
   border: 1px solid #888;
-  transform: translateY(-0.05rem) translateX(-0.05rem);
+  /* transform: translateY(-0.05rem) translateX(-0.05rem); */
   box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
 }
 select, button {
   appearance: none;
 }
 button, a.button {
-  font-size: 1.1em;
+  font-size: 1em;
   padding: 0.3em 0.7em 0.3em 0.5em;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 0.3rem;
   background: #fff;
   box-shadow: 0 0 0.3rem 0.05rem rgba(45,45,45,0.3);

@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\CustomTypes\UserRole;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -16,10 +17,7 @@ class UserType extends AbstractType
         $builder->add('username', TextType::class, ['label' => 'Nazwa użytkownika']);
         if ($options['edit_roles']) {
             $builder->add('roles', ChoiceType::class, [
-                'choices' => [
-                    'Użytkownik' => 'ROLE_USER',
-                    'Administrator' => 'ROLE_ADMIN',
-                ],
+                'choices' => array_flip(UserRole::getValues()),
                 'label' => 'Uprawnienia',
                 'expanded' => true,
                 'multiple' => true,

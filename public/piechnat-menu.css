@@ -33,9 +33,7 @@ HTML TEMPLATE:
 /* CONFIGURATION - BEGIN */
 
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
-:root {
-  --navigation-bar-height: 3.2em;
-}
+
 #navigation-bar .container {
   position: relative;
   background-color: darkgreen;
@@ -89,6 +87,9 @@ HTML TEMPLATE:
   position: relative;
   z-index: 99999;
   font-size: 1.2rem;
+}
+:root {
+  --navigation-bar-height: calc(3.2em * 1.2);
 }
 #navigation-bar .container {
   display: flex;
