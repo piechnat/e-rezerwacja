@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use App\CustomTypes\Lang;
+use App\CustomTypes\UserLevel;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -20,6 +22,7 @@ class GoogleAuthenticator extends SocialAuthenticator
 {
     private $clientRegistry;
     private $em;
+    private $request;
     private $router;
 
     public function __construct(
@@ -41,6 +44,8 @@ class GoogleAuthenticator extends SocialAuthenticator
     public function getCredentials(Request $request)
     {
         // this method is only called if supports() returns true
+        $this->request = $request;
+
         return $this->fetchAccessToken($this->getGoogleClient());
     }
 
@@ -52,13 +57,17 @@ class GoogleAuthenticator extends SocialAuthenticator
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if (!$user) {
+            $fullname = $googleUser->getName();
+            $email_fullname = explode('@', $email)[0];
+            if (0 === strlen($fullname)) {
+                $fullname = ucwords(str_replace('.', ' ', $email_fullname));
+            }
+            $isStudent = preg_match('/^\\d+$/', $email_fullname);
             $user = new User();
             $user->setEmail($email);
-            $username = $googleUser->getName();
-            if (0 == strlen($username)) {
-                $username = ucwords(str_replace('.', ' ', explode('@', $email)[0]));
-            }
-            $user->setUsername($username);
+            $user->setFullname($fullname);
+            $user->setLang(Lang::fromCookie($this->request->cookies));
+            $user->setAccess($isStudent ? UserLevel::USER : UserLevel::SUPER_USER);
             $this->em->persist($user);
             $this->em->flush();
         }
@@ -68,8 +77,16 @@ class GoogleAuthenticator extends SocialAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // on success, let the request continue
-        return null;
+        $session = $request->getSession();
+        $redirect_uri = $session->get('login_success_redirect');
+
+        if (null !== $redirect_uri) {
+            $session->remove('login_success_redirect');
+        } else {
+            $redirect_uri = $this->router->generate('main');
+        }
+
+        return new RedirectResponse($redirect_uri, Response::HTTP_TEMPORARY_REDIRECT);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
@@ -87,6 +104,11 @@ class GoogleAuthenticator extends SocialAuthenticator
         $request->getSession()->set('login_success_redirect', $request->getRequestUri());
 
         return new RedirectResponse('/login', Response::HTTP_TEMPORARY_REDIRECT);
+    }
+
+    public function supportsRememberMe(): bool
+    {
+        return true;
     }
 
     /**

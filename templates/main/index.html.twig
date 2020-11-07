@@ -7,28 +7,18 @@
 {% block main %}
 <div>
   <h1>
-    {% trans %}Strona główna{% endtrans %}
+    {{ (app.user.fullname ?? 'Użytkownik')|trans }}
+    <span style="display: block; font-weight: 300; font-size: 0.7em; margin-top: 0.3em">
+      {{ (app.user.accessname ?? 'Nieznany')|trans }}
+    </span>
   </h1>
-  <p>
-    {% if is_granted(constant('App\\CustomTypes\\UserRole::ADMIN')) %}
-      {{ 'Administrator'|trans }}{% else %}
-      {{ 'Użytkownik'|trans }}{% endif %}: 
-    {{ app.user.username ?? 'anonimowy'|trans }}
-  </p>
-  {% if not is_granted(constant('App\\CustomTypes\\UserRole::USER')) %}
+  <div>
+  
+  </div>
+  {% if not is_granted(constant('App\\CustomTypes\\UserLevel::USER')) %}
     <p><a href="{{ path('login') }}">
       {% trans %}Zaloguj się za pomocą poczty <b>amuz.lodz.pl</b>{% endtrans %}
     </a></p>
   {% endif %}
 </div>
-{% endblock %}
-
-{% block footer %}
-<p>
-  © 2020 {% trans %}Akademia Muzyczna w Łodzi. Wszelkie prawa zastrzeżone.{% endtrans %}
-  {% trans %}Uwagi można kierować na adres{% endtrans %}
-  <a href="#" class="cryptedmail" data-name="mateusz.piechnat" data-domain="amuz.lodz" data-tld="pl"
-    onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
-  </a>
-</p>
 {% endblock %}

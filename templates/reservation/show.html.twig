@@ -4,7 +4,7 @@
 
 {% block main %}
   <h2>{{ 'Rezerwacja'|trans }}</h2>
-  <p>Nazwa użytkownika: {{ rsvn.requester.username }}</p>
+  <p>Nazwa użytkownika: {{ rsvn.requester.fullname }}</p>
   <p>Adres e-mail: {{ rsvn.requester.email }}</p>
   <p>Sala: {{ rsvn.room.title }}</p>
   <p>Termin rozpoczęcia: {{ rsvn.beginTime|date('Y-m-d H:i:s') }}</p>

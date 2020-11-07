@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\CustomTypes\UserRole;
+use App\CustomTypes\Lang;
+use App\CustomTypes\UserLevel;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -18,7 +19,7 @@ class UserController extends AbstractController
     /**
      * @Route("/index", name="user_index")
      */
-    public function user_index(UserRepository $userRepository)
+    public function index(UserRepository $userRepository)
     {
         return $this->render('user/index.html.twig', ['users' => $userRepository->findAll()]);
     }
@@ -27,34 +28,57 @@ class UserController extends AbstractController
      * @Route("/show", name="user_self_show")
      * @Route("/show/{id}", name="user_show")
      */
-    public function user_show(User $user = null)
+    public function show(User $user = null)
     {
         if (!$user) {
             $user = $this->getUser();
         }
 
-        return $this->render('user/show.html.twig', ['user' => $user]);
+        return $this->render('user/show.html.twig', [
+            'user' => $user,
+            'lang' => Lang::getValue($user->getLang()),
+            'can_modify' => $this->canModify($user),
+        ]);
     }
 
     /**
      * @Route("/edit", name="user_self_edit")
      * @Route("/edit/{id}", name="user_edit")
      */
-    public function user_edit(User $user = null, Request $request)
+    public function edit(User $user = null, Request $request)
     {
         if (!$user) {
             $user = $this->getUser();
         }
-        $formOptions = ['edit_roles' => $this->isGranted(UserRole::ADMIN)];
+        if (!$this->canModify($user)) {
+            throw $this->createAccessDeniedException();
+        }
+        $formOptions = [];
+        if ($this->isGranted(UserLevel::ADMIN)) {
+            $formOptions['access_names'] = array_flip(UserLevel::getValues());
+            array_splice($formOptions['access_names'], $this->getUser()->getAccessLevel() + 1);
+        }
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $em = $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
         }
 
         return $this->render('user/edit.html.twig', ['form' => $form->createView()]);
+    }
+
+    private function canModify(User $user): bool
+    {
+        if ($this->getUser()->getId() === $user->getId()) {
+            return true;
+        }
+        if ($this->isGranted(UserLevel::ADMIN)) {
+            return $this->getUser()->getAccessLevel() >= $user->getAccessLevel();
+        }
+
+        return false;
     }
 }

@@ -6,28 +6,38 @@
 .table-view {
   overflow: auto;
   position: absolute;
-  top: var(--navigation-bar-height);
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
 }
 .table-view .table-view-header {
-  max-width: 800px;
+  max-width: calc(800px + 4%);
   margin: 0 auto;
-  padding: 0.5em 1em;
   position: sticky;
   left: 0;
+  padding: 0.4em calc(2% + 0.4em);
+  box-sizing: border-box;
 }
-.table-view .table-view-header .form-wrapper > div {
-  display: inline-block;
+.table-view .table-view-header .form-wrapper {
+  display: flex;
+  flex-wrap: wrap;
 }
 .table-view .table-view-header .form-wrapper button {
   margin-right: 0;
+}
+.table-view .table-view-body {
+  position: relative;
+  z-index: 1;
+  background-color: #f0f0f0;
+  box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
 }
 .table-view table {
   border-collapse: separate;
   border-spacing: 0;
   margin: 0 auto;
+  border: solid #ccc;
+  border-width: 1px 0 0 1px;
 }
 .table-view th, .table-view td {
   position: relative;
@@ -68,8 +78,8 @@
 .table-view td .rsvn-item {
   box-sizing: border-box;
   position: absolute;
-  left: 4%;
-  right: 4%;
+  left: 0.3em;
+  right: 0.3em;
   background-color: #9bd28d;
   border-radius: 0.3rem;
   overflow: hidden;
@@ -78,7 +88,7 @@
   border-width: 0 1px 1px 0;
   transition: box-shadow 0.5s;
 }
-.table-view td .rsvn-username {
+.table-view td .rsvn-fullname {
   padding: 0.1em 0.4em;
   font-size: 0.9em;
 }
@@ -115,60 +125,67 @@
 <div class="table-view">
   <div class="table-view-header">
 
-  {% block table_view_form %}{% endblock %}
-
   {% if table_view is null %}
 
-    {% block table_view_null_message %}{% endblock %}
+      <h2>{{ block('title')|trans }}</h2>
+      {{ block('table_view_form') }}
 
   {% elseif table_view.columns|length == 0 %}
 
-    <p>Nie znaleziono sal spełniających zadane kryteria.</p>
+      {{ block('table_view_form') }}
+      <p>Nie znaleziono sal spełniających zadane kryteria.</p>
 
   {% elseif table_view.columns|length > 0 %}
 
+      {{ block('table_view_form') }}
+    
   </div> 
-  <table>
-    <thead>
-      <tr>
-        <th></th>
+  <div class="table-view-body">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
 
-        {% block table_view_headers %}{% endblock %}
+          {% block table_view_headers %}{% endblock %}
 
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th class="hours-header">
-        {% for i in (table_view.meta.min_hour + 1)..(table_view.meta.max_hour - 1) %}
-          {{ '%02d'|format(i) }}:00<br>
-        {% endfor %}
-        </th>
-        {% for key, column in table_view.columns %}
-        <td>
-          {% for item in column %}
-            {% if item.id > 0 %}
-            <a href="{{ path('reservation_show', {id: item.id}) }}">
-              <div class="rsvn-item" style="{{ item|col_css }}">
-                <div class="rsvn-username">{{ item.user_username }}</div>
-              </div>
-            </a>
-            {% else %}
-            <a href="{{ path('reservation_add', {
-                id: table_view.headers[key]['id'],
-                beginTime: item.begin_time|date('Y-m-d H:i'),
-                endTime: item.end_time|date('Y-m-d H:i')
-              }) }}">
-              <div class="add-item" style="{{ item|col_css }}"></div>
-            </a>
-            {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th class="hours-header">
+          {% for i in (table_view.meta.min_hour + 1)..(table_view.meta.max_hour - 1) %}
+            {{ '%02d'|format(i) }}:00<br>
           {% endfor %}
-        </td>
-        {% endfor %}
-      </tr>
-    </tbody>
-  </table>
+          </th>
+          {% for key, column in table_view.columns %}
+          <td>
+            {% for item in column %}
+              {% if item.id > 0 %}
+              <a href="{{ path('reservation_show', {id: item.id}) }}">
+                <div class="rsvn-item" style="{{ item|col_css }}">
+                  <div class="rsvn-fullname">{{ item.user_fullname }}</div>
+                </div>
+              </a>
+              {% else %}
+              <a href="{{ path('reservation_add', {
+                  id: table_view.headers[key]['id'],
+                  beginTime: item.begin_time|date('Y-m-d H:i'),
+                  endTime: item.end_time|date('Y-m-d H:i')
+                }) }}">
+                <div class="add-item" style="{{ item|col_css }}"></div>
+              </a>
+              {% endif %}
+            {% endfor %}
+          </td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   {% endif %}
 </div>
 
 {% endblock %}
+
+{% block footer %}{% endblock %}

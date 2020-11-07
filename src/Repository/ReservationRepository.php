@@ -48,7 +48,7 @@ class ReservationRepository extends ServiceEntityRepository
         $headers = $columns = [];
         $reservations = $this->createQueryBuilder('rsvn')
             ->select(['rsvn.id', 'rsvn.begin_time', 'rsvn.end_time',
-                'user.username AS user_username', ])
+                'user.fullname AS user_fullname', ])
             ->innerJoin('rsvn.requester', 'user')
             ->where('rsvn.room = :roomId')
             ->andWhere('rsvn.end_time > :beginTime')
@@ -112,7 +112,7 @@ class ReservationRepository extends ServiceEntityRepository
             $endTime = $date->modify('next day');
             $reservations = $this->createQueryBuilder('rsvn')
                 ->select(['rsvn.id', 'rsvn.begin_time', 'rsvn.end_time',
-                    'user.username AS user_username', 'room.id AS room_id'])
+                    'user.fullname AS user_fullname', 'room.id AS room_id'])
                 ->innerJoin('rsvn.requester', 'user')
                 ->innerJoin('rsvn.room', 'room')
                 ->where('rsvn.room IN (:roomIds)')

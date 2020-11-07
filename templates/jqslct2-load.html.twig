@@ -1,0 +1,42 @@
+<script>
+
+$('select.jqslct2-multiple-select').select2({
+    closeOnSelect: false
+});
+
+$('select.jqslct2-single-select').select2({
+    minimumResultsForSearch: Infinity, 
+    width: 'style',
+});
+
+$('input.jqslct2-single-user').each(function(i, elm) {
+
+    var select = $('<select>');
+    var input = $(elm).replaceWith(select);
+    $.each(input.prop('attributes'), function() {
+        if ($.inArray(this.name, ['name', 'required', 'id', 'style', 'class']) > -1) {
+            select.attr(this.name, this.value);
+        }
+    });
+    var i, email = input.prop('value'), text = `${input.data('text')} &lt;${email}&gt;`;             
+    if (!email.length) for (i = 0, text = ''; i < 50; i++) text += '&nbsp;';
+
+    select.append(`<option value="${email}">${text}</option>`).select2({
+        language: 'pl',
+        minimumInputLength: 3,
+        width: 'style',
+        ajax: {
+            url: '/jsonapi/find/user',
+            dataType: 'json',
+            delay: 400,
+            processResults: function(data) {
+                data.results.forEach(o => o.text = o.text + ' <' + o.id + '>');
+                return data;
+            },
+            cache: true,
+        },
+    });
+
+});
+
+</script>

@@ -18,7 +18,7 @@ class RoomController extends AbstractController
     /**
      * @Route("/index", name="room_index")
      */
-    public function rooms_index(RoomRepository $roomRepository)
+    public function index(RoomRepository $roomRepository)
     {
         return $this->render('room/index.html.twig', ['rooms' => $roomRepository->findAll()]);
     }
@@ -26,7 +26,7 @@ class RoomController extends AbstractController
     /**
      * @Route("/add", name="room_add")
      */
-    public function rooms_add(Request $request)
+    public function add(Request $request)
     {
         $form = $this->createForm(RoomType::class);
         $form->handleRequest($request);
@@ -44,7 +44,7 @@ class RoomController extends AbstractController
     /**
      * @Route("/edit/{id}", name="room_edit")
      */
-    public function room_edit(Room $room, Request $request)
+    public function edit(Room $room, Request $request)
     {
         $form = $this->createForm(RoomType::class, $room);
         $form->handleRequest($request);

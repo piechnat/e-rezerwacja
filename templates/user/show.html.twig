@@ -4,12 +4,15 @@
 
 {% block main %}
   <h2>{{ 'Użytkownik'|trans }}</h2>
-  <p>Nazwa użytkownika: {{ user.username }}</p>
+  <p>Nazwa użytkownika: {{ user.fullname }}</p>
   <p>Adres e-mail: {{ user.email }}</p>
-  <p>Uprawnienia: {{ user.roles ? user.roles|join(', ') : '' }}</p>
-  <p class="button-row">
+  <p>Język: {{ lang }}</p>
+  <p>Typ konta: {{ user.accessname }}</p>
+  {% if can_modify %}
+  <p class="form-group button-row">
     <a class="button" href="{{ path('user_edit', {id: user.id}) }}">
       <i class="fas fa-edit"></i>{{ 'Edytuj'|trans }}
     </a>
   </p>
+  {% endif %}
 {% endblock %}

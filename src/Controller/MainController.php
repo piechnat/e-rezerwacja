@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\CustomTypes\Lang;
+use App\CustomTypes\UserLevel;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +15,7 @@ class MainController extends AbstractController
     /**
      * @Route("/", name="main")
      */
-    public function main(Request $request)
+    public function main()
     {
         return $this->render('main/index.html.twig');
     }
@@ -22,16 +25,19 @@ class MainController extends AbstractController
      */
     public function lang(string $lang, Request $request)
     {
+        $user = $this->getUser();
         $response = $this->redirectToRoute('main');
+        $referer = $request->headers->get('referer');
 
-        if (in_array($lang, ['pl', 'en'])) {
-            $referer = $request->headers->get('referer');
-            if (false !== strpos($referer, $request->getHost())) {
-                $response = $this->redirect($referer);
-            }
-            $response->headers->setCookie(new Cookie('lang', $lang, 'now +1 year'));
+        if (false !== strpos($referer, $request->getHost())) {
+            $response = $this->redirect($referer);
         }
-
+        if ($user) {
+            $user->setLang(Lang::valid($lang));
+            $this->getDoctrine()->getManager()->flush();
+        }
+        $response->headers->setCookie(Lang::createCookie($lang));
+        
         return $response;
     }
 }

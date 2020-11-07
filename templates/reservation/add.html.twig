@@ -1,31 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% form_theme form _self %}
-
-{% block form_errors %}
-  {% if errors|length > 0 %}
-    <ul>
-      {% for error in errors %}
-        <li>{{ error.message|raw }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endblock %}
-
-{% block checkbox_row %}
-  <div>{{ form_widget(form) }}{{ form_label(form) }}{{ form_errors(form) }}{{ form_help(form) }}</div>
-{% endblock %}
-
 {% block title %}{{ 'Dodawanie rezerwacji'|trans }}{% endblock %}
 
 {% block main %}
   <h2>{{ 'Dodawanie rezerwacji'|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
-    <div class="button-row">
+    <div class="form-group button-row">
       <button type="submit" name="send" value="send">
         <i class="fas fa-share-square"></i>{{ 'Wyślij'|trans }}
       </button>
     </div>
   {{ form_end(form) }}
+  {{ include('jqslct2-load.html.twig') }}
 {% endblock %}

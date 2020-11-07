@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Entity\Room;
-use App\Form\ReservationViewType;
+use App\Form\RsvnViewType;
 use App\Repository\ReservationRepository;
 use DateTimeImmutable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -21,12 +21,13 @@ class ReservationViewController extends AbstractController
      * @Route("/week/{id}/{date}", name="reservation_view_week", defaults={"id":null,"date":"now"})
      * @ParamConverter("room", options={"strip_null":true})
      */
-    public function reservation_view_week(
+    public function week(
         Room $room = null,
         DateTimeImmutable $date = null,
-        Request $request
+        Request $request,
+        ReservationRepository $rsvnRepo
     ) {
-        $form = $this->createForm(ReservationViewType::class, null, [
+        $form = $this->createForm(RsvnViewType::class, null, [
             'route_name' => 'reservation_view_week',
             'date' => $date,
         ]);
@@ -41,10 +42,8 @@ class ReservationViewController extends AbstractController
 
         $tableView = null;
         if ($room && $date) {
-            /** @var ReservationRepository */
-            $repo = $this->getDoctrine()->getRepository(Reservation::class);
             $d = $date->modify('next monday');
-            $tableView = $repo->getTableByRoom($room->getId(), $d->modify('last monday'), $d);
+            $tableView = $rsvnRepo->getTableByRoom($room->getId(), $d->modify('last monday'), $d);
         }
 
         return $this->render('reservation/view/week.html.twig', [
@@ -57,22 +56,20 @@ class ReservationViewController extends AbstractController
     /**
      * @Route("/day", name="reservation_view_day")
      */
-    public function reservation_view_day(Request $request)
+    public function day(Request $request, ReservationRepository $rsvnRepo)
     {
-        $form = $this->createForm(ReservationViewType::class, null, [
+        $form = $this->createForm(RsvnViewType::class, null, [
             'route_name' => 'reservation_view_day',
         ]);
         $form->handleRequest($request);
-        
+
         $tableView = null;
         if ($form->isSubmitted() && $form->isValid()) {
             $tagIds = [];
             foreach ($form->get('tags')->getData()->getValues() as $tag) {
                 $tagIds[] = $tag->getId();
             }
-            /** @var ReservationRepository */
-            $repo = $this->getDoctrine()->getRepository(Reservation::class);
-            $tableView = $repo->getDayTable(
+            $tableView = $rsvnRepo->getDayTable(
                 $form->get('date')->getData(),
                 $tagIds,
                 $form->get('operation')->getData()

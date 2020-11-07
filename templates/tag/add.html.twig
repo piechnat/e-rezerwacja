@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dodawanie tagu{% endblock %}
+
+{% block main %}
+    <h1>Dodawanie tagu</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <p class="form-group button-row">
+            <a class="button" href="{{ path('tag_index') }}">
+                <i class="fas fa-arrow-left"></i>Lista
+            </a>
+            <button type="submit" name="send" value="send">
+                <i class="fas fa-plus"></i>Dodaj
+            </button>
+        </p>
+    {{ form_end(form) }}
+    {{ include('jqslct2-load.html.twig') }}
+
+{% endblock %}

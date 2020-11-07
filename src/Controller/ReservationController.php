@@ -24,17 +24,17 @@ class ReservationController extends AbstractController
     /**
      * @Route("/reservation/index", name="reservation_index")
      */
-    public function reservation_index()
+    public function index(ReservationRepository $rsvnRepo)
     {
         return $this->render('reservation/index.html.twig', [
-            'item_list' => $this->getDoctrine()->getRepository(Reservation::class)->findAll(),
+            'item_list' => $rsvnRepo->findAll(),
         ]);
     }
 
     /**
      * @Route("/reservation/show/{id}", name="reservation_show")
      */
-    public function reservation_show(Reservation $rsvn)
+    public function show(Reservation $rsvn)
     {
         return $this->render('reservation/show.html.twig', ['rsvn' => $rsvn]);
     }
@@ -44,11 +44,12 @@ class ReservationController extends AbstractController
      * defaults={"id":null,"beginTime":"now","endTime":"now +60 minutes"})
      * @ParamConverter("room", options={"strip_null":true})
      */
-    public function reservation_add(
+    public function add(
         Room $room = null,
         DateTimeImmutable $beginTime = null,
         DateTimeImmutable $endTime = null,
         Request $request,
+        ReservationRepository $rsvnRepo,
         AppHelper $helper
     ) {
         $rsvn = new Reservation();
@@ -56,7 +57,6 @@ class ReservationController extends AbstractController
         if ($room) $rsvn->setRoom($room);
         $rsvn->setBeginTime($beginTime);
         $rsvn->setEndTime($endTime);
-        $rsvn->setDetails('Ćwiczenie');
 
         $formOptions = [
             'modify_requester' => true,
@@ -66,8 +66,6 @@ class ReservationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ReservationRepository */
-            $repo = $this->getDoctrine()->getRepository(Reservation::class);
             $rsvn = $form->getData();
 
             try {
@@ -87,7 +85,7 @@ class ReservationController extends AbstractController
                             $rsvn->getRoom()->getId(),
                             LockMode::PESSIMISTIC_WRITE // SELECT ... FOR UPDATE
                         );
-                        $conflictIds = $repo->getConflictIds($rsvn);
+                        $conflictIds = $rsvnRepo->getConflictIds($rsvn);
                         if (count($conflictIds) > 0) {
                             throw new ReservationConflictException($conflictIds[0]);
                         }
@@ -102,7 +100,7 @@ class ReservationController extends AbstractController
                         throw $e;
                     }
                 } else {
-                    $conflictIds = $repo->getConflictIds($rsvn);
+                    $conflictIds = $rsvnRepo->getConflictIds($rsvn);
                     if (count($conflictIds) > 0) {
                         throw new ReservationConflictException($conflictIds[0]);
                     }

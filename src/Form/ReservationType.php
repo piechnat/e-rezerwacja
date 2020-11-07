@@ -38,15 +38,15 @@ class ReservationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['modify_requester']) {
+            $fullname = $builder->getData()->getRequester()->getFullname();
             $builder
-                ->add('username', TextType::class, [
-                    'label' => 'Użytkownik',
-                    'mapped' => false,
-                    'required' => false,
-                ])
                 ->add('requester', TextType::class, [
-                    'label' => 'E-mail',
-                    'attr' => ['size' => 30],
+                    'label' => 'Użytkownik',
+                    'attr' => [
+                        'class' => 'jqslct2-single-user', 
+                        'style' => 'min-width: 15em', 
+                        'data-text' => $fullname
+                    ],
                 ])
             ;
         } else {
@@ -62,13 +62,19 @@ class ReservationType extends AbstractType
                 'label' => 'Termin rozpoczęcia',
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
+                'attr' => ['class' => 'form-group'],
             ])
             ->add('end_time', TimeType::class, [
                 'input' => 'datetime_immutable',
                 'label' => 'Godzina zakończenia',
                 'widget' => 'single_text',
             ])
-            ->add('details', TextareaType::class, ['label' => 'Cel rezerwacji'])
+            ->add('details', TextareaType::class, [
+                'required' => false,
+                'empty_data' => 'Ćwiczenie',
+                'attr' => ['style' => 'width: 100%', 'placeholder' => 'Ćwiczenie'],
+                'label' => 'Cel rezerwacji',
+            ])
         ;
         if ($options['send_request']) {
             $builder->add('send_request', CheckboxType::class, [

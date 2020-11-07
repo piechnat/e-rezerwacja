@@ -2,15 +2,15 @@
 
 {% block title %}Widok dnia{% endblock %}
 
-{% block table_view_null_message %}
-  <p>Określ zbiór sal za pomocą znaczników.</p>
-{% endblock %}
-
 {% block table_view_form %}
 
   {{ form_start(form) }}
     <div class="form-wrapper">
-      <div>
+      <div style="flex-basis: 100%">
+        {{ form_row(form.tags) }}
+      </div>
+      {{ form_row(form.operation) }}
+      <div class="form-group">
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
@@ -20,6 +20,7 @@
       </div>
     </div>
   {{ form_end(form) }}
+  {{ include('jqslct2-load.html.twig') }}
 
 {% endblock %}
 

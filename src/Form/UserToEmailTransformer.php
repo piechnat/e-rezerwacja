@@ -3,19 +3,19 @@
 namespace App\Form;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Security\Core\Security;
 
 class UserToEmailTransformer implements DataTransformerInterface
 {
-    private $entityManager;
+    private $userRepo;
     private $security;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security)
+    public function __construct(UserRepository $userRepo, Security $security)
     {
-        $this->entityManager = $entityManager;
+        $this->userRepo = $userRepo;
         $this->security = $security;
     }
 
@@ -36,8 +36,7 @@ class UserToEmailTransformer implements DataTransformerInterface
         if (!$userEmail || $userEmail === $loggedUser->getEmail()) {
             return $loggedUser;
         }
-        $user = $this->entityManager
-            ->getRepository(User::class)->findOneBy(['email' => $userEmail]);
+        $user = $this->userRepo->findOneBy(['email' => $userEmail]);
 
         if (null === $user) {
             throw new TransformationFailedException();

@@ -8,7 +8,7 @@
     {% for item in item_list %}
       <li>
         <a href="{{ path('reservation_show', {id: item.id}) }}">
-          {{ item.requester.username }}:
+          {{ item.requester.fullname }}:
           {{ item.room.title }} -
           {{ item.beginTime|date('Y-m-d, H:i') }}-{{ item.endTime|date('H:i') }}
         </a>

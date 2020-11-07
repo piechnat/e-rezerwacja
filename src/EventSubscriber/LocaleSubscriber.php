@@ -2,20 +2,49 @@
 
 namespace App\EventSubscriber;
 
+use App\CustomTypes\Lang;
+use App\CustomTypes\UserLevel;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Security;
+use Twig\Environment;
 
 class LocaleSubscriber implements EventSubscriberInterface
 {
+    private $security;
+    private $twig;
+
+    public function __construct(Security $security, Environment $twig)
+    {
+        $this->security = $security;
+        $this->twig = $twig;
+    }
+
     public function onKernelRequest(RequestEvent $event)
     {
+        /** @var User */
+        $user = $this->security->getUser();
         $request = $event->getRequest();
-        $request->setLocale($request->cookies->get('lang', 'pl'));
+        $request->setLocale($user ? $user->getLang() : Lang::fromCookie($request->cookies));
+    }
+
+    public function onKernelResponse(ResponseEvent $event)
+    {
+        if ($this->security->getUser()) {
+            if ($this->security->isGranted(UserLevel::DISABLED)) {
+                $event->setResponse(new Response($this->twig->render('main/forbidden.html.twig')));
+            }
+        }
     }
 
     public static function getSubscribedEvents()
     {
-        return [KernelEvents::REQUEST => [['onKernelRequest', 20]]];
+        return [
+            KernelEvents::REQUEST => [['onKernelRequest', 20]],
+            KernelEvents::RESPONSE => [['onKernelResponse', 20]],
+        ];
     }
 }

@@ -29,4 +29,9 @@ abstract class CustomType
     {
         return static::VALUES[static::valid($type)];
     }
+
+    public static function getIndex(string $type): string
+    {
+        return array_search(static::valid($type), array_keys(static::VALUES));
+    }
 }

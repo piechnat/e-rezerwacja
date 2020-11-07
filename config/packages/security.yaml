@@ -21,6 +21,12 @@ security:
                 path: logout
                 target: /
 
+            remember_me:
+                secret:   '%kernel.secret%'
+                lifetime: 2419200 # 4 weeks in seconds
+                path:     /
+                always_remember_me: true
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -28,15 +34,17 @@ security:
             # switch_user: true
             
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_DISABLED: 
+        ROLE_USER:         
+        ROLE_SUPER_USER:        ROLE_USER
+        ROLE_ADMIN:             ROLE_SUPER_USER
+        ROLE_SUPER_ADMIN:       [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/(login|lang|logout$|$), roles: IS_AUTHENTICATED_ANONYMOUSLY }   
-        - { path: ^/(_profiler|_wdt|css|images|js), roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    #   - { path: ^/(rooms/add|requests), roles: ROLE_ADMIN }
-        - { path: ^/, roles: ROLE_USER }
-        
-        
+        - { path: ^/(login|lang|logout|$), roles: [IS_AUTHENTICATED_ANONYMOUSLY] }   
+        - { path: ^/(_profiler|_wdt|css|images|js)/, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
+    #   - { path: ^/(room/add|request), roles: ROLE_ADMIN }
+        - { path: ^/, roles: [ROLE_USER] }
+

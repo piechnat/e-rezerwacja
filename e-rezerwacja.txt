@@ -7,19 +7,22 @@ Aplikacja internetowa umożliwiająca rezerwowanie sal przez pracowników i stud
 Funkcje dostępne z poziomu konta użytkownika:
 - wybór wersji językowej (EN/PL)
 - uwierzytelnienie użytkownika
-- dodanie do wybranej sali rezerwacji w podanym terminie z uwzględnieniem autoryzacji (porównanie praw dostępu do sali z przywilejami grupy oraz indywidualnymi ograniczeniami użytkownika)
+- dodanie do wybranej sali rezerwacji w podanym terminie z uwzględnieniem autoryzacji (porównanie znaczników dostępu sali z poziomem i ograniczeniami użytkownika)
 - przekazanie żądania rezerwacji do użytkownika o wyższych przywilejach w przypadku niepomyślnej autoryzacji
 - edycja własnych rezerwacji
-- wyświetlenie rezerwacji dla jednej sali w widoku tygodnia (godzinowo), miesiąca (kolejnościowo)
-- wyświetlenie rezerwacji dla wielu sal w widoku dnia (godzinowo)
-- wyświetlenie rezerwacji dla jednego użytkownika w widoku tygodnia (godzinowo)
+- wyświetlenie rezerwacji dla jednej sali w widoku tygodnia (miesiąca)
+- wyświetlenie rezerwacji dla wielu sal w widoku dnia
+- wyświetlenie rezerwacji dla jednego użytkownika w widoku tygodnia
+
+Opcjonalnie:
 - wyświetlenie faktycznych pobrań i zdań kluczy jako półprzezroczyste warstwy zachodzące na rezerwacje (dla jednej sali w widoku tygodnia, dla wielu sal w widoku dnia, dla jednego użytkownika w widoku tygodnia)
 
-Funkcje dostępne z poziomu konta administratora:
+Funkcje dostępne z poziomu konta uprzywilejowanego:
 - dodanie/edycja rezerwacji dowolnego użytkownika
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu
 - zaakceptowanie lub odrzucenie żądania rezerwacji
 - zarządzanie salami
+- dodanie/edycja znaczników dostępu
 
 ------------------------------------------------
 		MENU
@@ -81,7 +84,7 @@ Użytkownik [logged]
 users
 - id		INT
 - email		VARCHAR(255)
-- username	VARCHAR(255)
+- fullname	VARCHAR(255)
 - roles		JSON
 - rights	SET('d1', 'd2', ...) ???
 - login_time	DATETIME ???

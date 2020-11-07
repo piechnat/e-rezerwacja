@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lista tagów{% endblock %}
+
+{% block main %}
+    <h1>Lista tagów</h1>
+
+<style type="text/css">
+    .tag_table {
+        max-width: 100%;
+        overflow: auto;
+    }
+    .tag_table table {
+        border-collapse: separate;
+        border-spacing: 0;
+
+    }
+    .tag_table table td, .tag_table table th { 
+        padding: 0 1em 1em 0; 
+    }
+</style>
+
+    <div class="tag_table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Sz.</th>
+                    <th>Ogranicz.</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for tag in tags %}
+                <tr>
+                    <td><a href="{{ path('tag_edit', {'id': tag.id}) }}">{{ tag.name }}</a></td>
+                    <td>{{ tag.search ? 'Tak' : 'Nie' }}</td>
+                    <td>{{ access_levels[tag.access] }}</td>
+                    <td><a href="{{ path('tag_edit', {'id': tag.id, 'mode': 'rooms'}) }}">Sale</a></td>
+                    <td><a href="{{ path('tag_edit', {'id': tag.id, 'mode': 'users'}) }}">Użytkow.</a></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Nie znaleziono tagów.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-group button-row">
+        <a class="button" href="{{ path('tag_add') }}"><i class="fas fa-plus"></i>Dodaj</a>
+    </div>
+
+{% endblock %}

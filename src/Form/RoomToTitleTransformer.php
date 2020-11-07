@@ -2,18 +2,17 @@
 
 namespace App\Form;
 
-use App\Entity\Room;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\RoomRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class RoomToTitleTransformer implements DataTransformerInterface
 {
-    private $entityManager;
+    private $roomRepo;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(RoomRepository $roomRepo)
     {
-        $this->entityManager = $entityManager;
+        $this->roomRepo = $roomRepo;
     }
 
     public function transform($room)
@@ -30,8 +29,7 @@ class RoomToTitleTransformer implements DataTransformerInterface
         if (!$roomTitle) {
             return;
         }
-        $room = $this->entityManager
-            ->getRepository(Room::class)->findOneBy(['title' => $roomTitle]);
+        $room = $this->roomRepo->findOneBy(['title' => $roomTitle]);
 
         if (null === $room) {
             throw new TransformationFailedException();

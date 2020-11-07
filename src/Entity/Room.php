@@ -27,6 +27,16 @@ class Room
      */
     private $title;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Tag::class, mappedBy="rooms")
+     */
+    private $tags;
+
+    public function __construct()
+    {
+        $this->tags = new ArrayCollection();
+    }
+
     public function __toString(): string
     {
         return $this->title; 
@@ -45,6 +55,33 @@ class Room
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+            $tag->addRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeRoom($this);
+        }
 
         return $this;
     }

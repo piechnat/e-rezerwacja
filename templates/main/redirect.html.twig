@@ -12,10 +12,10 @@
     <p>
       {{ content|default('')|trans }}
     </p>
-    <p>
-      <form action="{{ path(path|default('main'), params|default([])) }}">
+    <form action="{{ path(path|default('main'), params|default([])) }}">
+      <p class="form-group">
         <button type="submit" /><i class="fas fa-check"></i>OK</button>
-      </form>
-    </p>
+      </p>
+    </form>
 </div>
 {% endblock %}

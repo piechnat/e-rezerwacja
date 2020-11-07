@@ -4,7 +4,22 @@ html, body {
   -moz-text-size-adjust: none;
   -ms-text-size-adjust: 100%;
   margin: 0; border: 0; padding: 0;
+  height: 100%;
+}
+.main-wrapper {
+  position: relative;
+  height: calc(100% - var(--navigation-bar-height));
+  overflow: auto;
+  background-color: #fff;
+}
+.main-container {
+  max-width: 800px;
+  min-height: 100%;
+  overflow: auto; 
+  margin: 0 auto;
+  padding: 0 2%;
   background-color: #fcfcfc;
+  box-shadow: 0 0 4rem 0.05rem rgba(45,45,45,0.3);
 }
 body, select, input, button, textarea, a.button   {
   -webkit-font-smoothing: antialiased;
@@ -16,9 +31,7 @@ body, select, input, button, textarea, a.button   {
   color: #000;
 }
 main, footer {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 1em;
+  padding: 1% 0.4em;
 }
 footer {
   font-size: 0.8em;
@@ -79,49 +92,56 @@ i.fas, i.fab, i.far {
 
 /* MENU RECONFIGURATION - END */
 
-select, input, button, textarea, a.button {
+.form-group > select, .form-group > input, .form-group > button, .form-group > textarea, 
+.form-group > a.button {
   margin: 0 1rem 1rem 0;
 }
-select:focus, input:focus, textarea:focus, button:focus, a:focus, a.button:focus {
+.form-group > select:focus, .form-group > input:focus, .form-group > textarea:focus, 
+.form-group > button:focus, .form-group > a:focus, a.button:focus {
   outline: none;
 }
-select, input, textarea {
+.form-group > select, .form-group > input, .form-group > textarea {
   padding: 0.3em 0.5em;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 0.3rem;
   background: #fff;
   box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
   box-sizing: border-box;
 }
-input[type=date] {
-  height: 2.25em; /* bug in input type="date" line-height */
+.form-group > input, .form-group > select, .form-group > button, .form-group > a.button {
+  min-height: 2.3em; /* bug in input type="date" line-height */
   width: auto;
 }
-label {
+.form-group > input[type=time] {
+  width: auto;
+}
+.form-group > label {
   display: block;
   font-size: 1em;
   padding: 0.4em 0.4em 0.4em 0.1em;
 }
-input[type=checkbox] { margin: 0 0.6rem 1rem 0.4rem; }
-input[type=checkbox] + label {
+.form-group > input[type=checkbox] { 
+  min-height: auto; /* bug in input type="date" line-height */
+  margin: 0 0.6rem 1rem 0.4rem; 
+}
+.form-group > input[type=checkbox] + label {
   display: inline-block;
   margin-right: 0.5rem;
 }
-select:focus, input:focus, textarea:focus, a.button {
+.form-group > select:focus, .form-group > input:focus, .form-group > textarea:focus, a.button {
   border: 1px solid #888;
-  /* transform: translateY(-0.05rem) translateX(-0.05rem); */
   box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
 }
-select, button {
+.form-group > select, .form-group > button {
   appearance: none;
 }
-button, a.button {
+.form-group > button, a.button {
   font-size: 1em;
   padding: 0.3em 0.7em 0.3em 0.5em;
-  border: 0;
+  border: 1px solid #ddd;
   border-radius: 0.3rem;
   background: #fff;
-  box-shadow: 0 0 0.3rem 0.05rem rgba(45,45,45,0.3);
+  box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
   box-sizing: border-box;
   transition: 0.3s;
   white-space: nowrap;
@@ -135,7 +155,7 @@ button, a.button {
   color: initial;
   font-weight: 400;
 }
-button:active, a.button:active {
+.form-group > button:active, a.button:active {
   border: 1px solid #888;
   background: #eee;
   transform: translateY(0.05rem) translateX(0.05rem);
@@ -144,7 +164,29 @@ button:active, a.button:active {
   -webkit-tap-highlight-color: transparent;
   transition: none;
 }
-form ul {
+.form-group > ul.form-errors {
   color: red;
   margin-top: 0;
+}
+
+.form-group > .select2 {
+  margin: 0 1rem 1rem 0;
+}
+.select2-container {
+  max-width: 100%;
+}
+.select2-selection {
+  border-color: #ccc !important;
+  box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
+}
+.select2-selection[aria-expanded=true], .select2-dropdown {
+  border-color: #888 !important;
+  box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
+}
+.select2-selection--single, .select2-selection__arrow {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+.select2-selection--single {
+  height: auto !important;
 }
