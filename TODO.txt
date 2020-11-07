@@ -1,3 +1,4 @@
+- ograniczenia czasowe i godziny otwarcia
 - zrobić tło w table-view-header
 - max_hour 21:30
 - dodawanie rezerwacji przez kliknięcie na nagłówku kolumny
