@@ -31,13 +31,14 @@ class TagType extends AbstractType
         if ('rooms' === $options['edit_mode']) {
             $builder->add('rooms', null, [
                 'label' => 'Przyporządkowane sale',
-                'attr' => ['style' => 'width: 100%', 'class' => 'jqslct2-multiple-select'],
+                'attr' => ['class' => 'jqslct2-multiple-select'],
             ]);
         }
         if ('users' === $options['edit_mode']) {
             $builder->add('users', null, [
+                'choice_label' => 'title',
                 'label' => 'Przyporządkowani użytkownicy',
-                'attr' => ['style' => 'width: 100%', 'class' => 'jqslct2-multiple-select'],
+                'attr' => ['class' => 'jqslct2-multiple-select'],
             ]);
         }
     }

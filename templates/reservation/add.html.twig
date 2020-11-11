@@ -6,6 +6,12 @@
   <h2>{{ 'Dodawanie rezerwacji'|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
+    {% if send_request == true %}
+    <div class="form-group">
+      <input type="checkbox" id="reservation_send_request" name="reservation[send_request]" required="required" value="1" />
+      <label for="reservation_send_request" class="required">Złóż wniosek o rezerwację sali</label>
+    </div>
+    {% endif %}
     <div class="form-group button-row">
       <button type="submit" name="send" value="send">
         <i class="fas fa-share-square"></i>{{ 'Wyślij'|trans }}

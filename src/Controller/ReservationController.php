@@ -40,28 +40,34 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/add/{id}/{beginTime}/{endTime}", name="reservation_add",
-     * defaults={"id":null,"beginTime":"now","endTime":"now +60 minutes"})
-     * @ParamConverter("room", options={"strip_null":true})
+     * @Route("/reservation/add/{room_id}/{beginTime}/{endTime}", name="reservation_add", 
+     *     defaults={"room_id":null,"beginTime":"now","endTime":"now +60 minutes"})
+     * @ParamConverter("room", class="App\Entity\Room", options={"id"="room_id"})
+     *
+     * @Route("/reservation/edit/{id}", name="reservation_edit")
+     * @ParamConverter("rsvn", class="App\Entity\Reservation")
      */
-    public function add(
+    public function addOrEdit(
         Room $room = null,
         DateTimeImmutable $beginTime = null,
         DateTimeImmutable $endTime = null,
+        Reservation $rsvn = null,
         Request $request,
         ReservationRepository $rsvnRepo,
         AppHelper $helper
     ) {
-        $rsvn = new Reservation();
-        $rsvn->setRequester($this->getUser());
-        if ($room) $rsvn->setRoom($room);
-        $rsvn->setBeginTime($beginTime);
-        $rsvn->setEndTime($endTime);
+        if ('reservation_add' === $request->attributes->get('_route')) {
+            $rsvn = new Reservation();
+            $rsvn->setRequester($this->getUser());
+            $rsvn->setRoom($room);
+            $rsvn->setBeginTime($beginTime);
+            $rsvn->setEndTime($endTime);
+        } elseif (null === $rsvn) { // reservation_edit
+            throw $this->createNotFoundException();
+        }
+        $formSendRequest = false;
+        $formOptions = ['modify_requester' => false];
 
-        $formOptions = [
-            'modify_requester' => true,
-            'send_request' => false,
-        ];
         $form = $this->createForm(ReservationType::class, $rsvn, $formOptions);
         $form->handleRequest($request);
 
@@ -99,7 +105,7 @@ class ReservationController extends AbstractController
 
                         throw $e;
                     }
-                } else {
+                } else { // reservation is not allowed
                     $conflictIds = $rsvnRepo->getConflictIds($rsvn);
                     if (count($conflictIds) > 0) {
                         throw new ReservationConflictException($conflictIds[0]);
@@ -111,7 +117,7 @@ class ReservationController extends AbstractController
                 $form->get('room')->addError($helper->createFormError($e));
             } catch (NotAllowedException $e) {
                 if (!isset($request->get('reservation', [])['send_request'])) {
-                    $formOptions['send_request'] = true;
+                    $formSendRequest = true;
                     $form->addError($helper->createFormError($e));
                 } else {
                     return $this->render('main/redirect.html.twig', [
@@ -122,16 +128,11 @@ class ReservationController extends AbstractController
                 }
             }
         }
-        if ($form->isSubmitted()) {
-            $errors = $form->getErrors(true);
-            $form = $this->createForm(ReservationType::class, $form->getData(), $formOptions);
-            foreach ($errors as $error) {
-                $name = $error->getOrigin()->getName();
-                $form->has($name) ? $form->get($name)->addError($error) : $form->addError($error);
-            }
-        }
 
-        return $this->render('reservation/add.html.twig', ['form' => $form->createView()]);
+        return $this->render('reservation/add.html.twig', [
+            'form' => $form->createView(),
+            'send_request' => $formSendRequest,
+        ]);
     }
 
     /**

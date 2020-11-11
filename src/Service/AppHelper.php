@@ -6,6 +6,7 @@ use App\CustomTypes\NotAllowedException;
 use App\CustomTypes\ReservationConflictException;
 use App\Entity\Reservation;
 use App\CustomTypes\ReservationError as RsvnErr;
+use App\CustomTypes\ReservationError;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;

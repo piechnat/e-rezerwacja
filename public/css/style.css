@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
 html, body {
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: none;
@@ -92,6 +91,31 @@ i.fas, i.fab, i.far {
 
 /* MENU RECONFIGURATION - END */
 
+.logo-wrapper .logo-title {
+  margin: -0.15em 0 0 0.5em;
+  font-size: 1.4em;
+  font-family: 'Open Sans', sans-serif;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0.08em 0.06em 0.05em rgba(20, 20, 20, 0.7);
+  user-select: none;
+}
+.logo-wrapper .logo-title > span:first-child {
+  color: #f00;
+  font-size: 1.4em;
+  margin: -0.2em 0.05em 0 0;
+  font-style: italic;
+  text-shadow: 0.07em 0.05em 0.06em rgba(0, 0, 0, 1);
+}
+.logo-wrapper .logo-title > span:last-child {
+  transform: skewY(-5deg) rotate(5deg);
+}
+.logo-wrapper a:hover {
+  text-decoration: none;
+}
+
 .form-group > select, .form-group > input, .form-group > button, .form-group > textarea, 
 .form-group > a.button {
   margin: 0 1rem 1rem 0;
@@ -164,7 +188,7 @@ i.fas, i.fab, i.far {
   -webkit-tap-highlight-color: transparent;
   transition: none;
 }
-.form-group > ul.form-errors {
+ul.form-errors {
   color: red;
   margin-top: 0;
 }
@@ -172,8 +196,11 @@ i.fas, i.fab, i.far {
 .form-group > .select2 {
   margin: 0 1rem 1rem 0;
 }
+.jqslct2-multiple-select + .select2-container {
+  width: 99%;
+}
 .select2-container {
-  max-width: 100%;
+  max-width: 99%;
 }
 .select2-selection {
   border-color: #ccc !important;

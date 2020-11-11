@@ -5,52 +5,83 @@ namespace App\Form;
 use App\Entity\Reservation;
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ReservationType extends AbstractType
 {
     private $roomToTitle;
     private $userToEmail;
-    private $em;
+    private $security;
 
     public function __construct(
         RoomToTitleTransformer $roomToTitle,
         UserToEmailTransformer $userToEmail,
-        EntityManagerInterface $em
+        Security $security
     ) {
         $this->roomToTitle = $roomToTitle;
         $this->userToEmail = $userToEmail;
-        $this->em = $em;
+        $this->security = $security;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($options['modify_requester']) {
-            $fullname = $builder->getData()->getRequester()->getFullname();
+        $rsvn = $builder->getData();
+        if (null === $rsvn) {
+            $rsvn = new Reservation();
+            $builder->setData($rsvn);
+        }
+        // PRE_SET_DATA
+        $now = new DateTimeImmutable();
+        $beginTime = $rsvn->getBeginTime();
+        $endTime = $rsvn->getEndTime();
+        if (null === $beginTime) {
+            $beginTime = $now;
+            $rsvn->setBeginTime($beginTime);
+        }
+        if ($endTime < $now && false === $options['past_time_edit']) {
+            $endTime = $beginTime->modify('+60 minutes');
+            $rsvn->setEndTime($endTime);
+        }
+        
+        if (true === $options['modify_requester']) {
+            $user = $rsvn->getRequester();
+            $fullname = $user ? $user->getFullname() : null;
             $builder
                 ->add('requester', TextType::class, [
                     'label' => 'Użytkownik',
                     'attr' => [
-                        'class' => 'jqslct2-single-user', 
-                        'style' => 'min-width: 15em', 
-                        'data-text' => $fullname
+                        'class' => 'jqslct2-single-user',
+                        'style' => 'min-width: 15em',
+                        'data-text' => $fullname,
                     ],
                 ])
+                ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($user) {
+                    // modify data-text attribute if the requester has changed
+                    $newUser = $event->getData()->getRequester();
+                    if ($user !== $newUser) {
+                        $form = $event->getForm();
+                        $options = $form->get('requester')->getConfig()->getOptions();
+                        $options['attr']['data-text'] = $newUser ? $newUser->getFullname() : null;
+                        $form->add('requester', TextType::class, $options);
+                    }
+                })
+                ->get('requester')->addModelTransformer($this->userToEmail)
             ;
         } else {
-            $builder->add('requester', HiddenType::class);
+            if (null === $rsvn->getRequester()) {
+                $rsvn->setRequester($this->security->getUser());
+            }
         }
         $builder
             ->add('room', TextType::class, [
@@ -63,6 +94,7 @@ class ReservationType extends AbstractType
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
                 'attr' => ['class' => 'form-group'],
+                'date_attr' => ['min' => $now->format('Y-m-d')],
             ])
             ->add('end_time', TimeType::class, [
                 'input' => 'datetime_immutable',
@@ -72,85 +104,52 @@ class ReservationType extends AbstractType
             ->add('details', TextareaType::class, [
                 'required' => false,
                 'empty_data' => 'Ćwiczenie',
-                'attr' => ['style' => 'width: 100%', 'placeholder' => 'Ćwiczenie'],
+                'attr' => ['style' => 'width: 99%', 'placeholder' => 'Ćwiczenie'],
                 'label' => 'Cel rezerwacji',
             ])
+            ->get('room')->addModelTransformer($this->roomToTitle);
         ;
-        if ($options['send_request']) {
-            $builder->add('send_request', CheckboxType::class, [
-                'mapped' => false,
-                'label' => 'Złóż wniosek o rezerwację sali',
-            ]);
-        }
-
-        $builder->get('requester')->addModelTransformer($this->userToEmail);
-        $builder->get('room')->addModelTransformer($this->roomToTitle);
-
-        if (false === $options['past_begin_time']) {
-            $field = $builder->get('begin_time');
-
-            $type = $field->get('date')->getType()->getInnerType();
-            $options = $field->get('date')->getOptions();
-            $attr = $options['attr'] ?? [];
-            $attr['min'] = (new DateTimeImmutable())->format('Y-m-d');
-            $options['attr'] = $attr;
-            $field->add('date', get_class($type), $options);
-
-            $field->addModelTransformer(new CallbackTransformer(
-                function ($beginTime) {
-                    return $beginTime;
-                },
-                function ($beginTime) {
-                    return max(new DateTimeImmutable(), $beginTime);
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
+            $rsvn = $event->getData();
+            $beginTime = $rsvn->getBeginTime();
+            if (false === $options['past_time_edit']) {
+                $now = new DateTimeImmutable();
+                if ($beginTime < $now) {
+                    $rsvn->setBeginTime($now);
+                    $form = $event->getForm();
+                    $options = $form->get('begin_time')->getConfig()->getOptions();
+                    $form->add('begin_time', DateTimeType::class, $options);
+                    $beginTime = $now;
                 }
-            ));
-        }
+            }
+            // change end_time to a date on the same day as begin_time
+            $endTime = $rsvn->getEndTime();
+            $endTime = $endTime->modify($beginTime->format('Y-m-d'));
+            if ($endTime < $beginTime) {
+                $endTime = $endTime->modify('+1 day'); // or next day if it is earlier
+            }
+            $rsvn->setEndTime($endTime);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
-            'constraints' => [
-                new Assert\Callback([$this, 'validateReservation']),
-            ],
+            'constraints' => [new Callback([$this, 'validateReservation'])],
             'allow_extra_fields' => true,
-            'send_request' => false,
             'modify_requester' => false,
-            'past_begin_time' => false,
+            'past_time_edit' => false,
         ]);
     }
 
     public function validateReservation(Reservation $rsvn, ExecutionContextInterface $context)
     {
-        if (!$rsvn->getRoom() || !$rsvn->getRequester()) {
-            // transformation failed therefore validation is unnecessary
-            return;
-        }
-
-        $tmpTime = DateTime::createFromImmutable($rsvn->getBeginTime());
-        $endTime = DateTime::createFromImmutable($rsvn->getEndTime());
-        // change end time to a date on the same day as begin time
-        $endTime->modify($tmpTime->format('Y-m-d'));
-        if ($endTime <= $tmpTime) {
-            $endTime->modify('+1 day'); // or next day if it is earlier
-        }
-        $rsvn->setEndTime(DateTimeImmutable::createFromMutable($endTime));
-
-        $tmpTime->modify('+15 minutes');
-        if ($endTime < $tmpTime) {
+        /** @var DateTimeImmutable */ 
+        $beginTime = $rsvn->getBeginTime();
+        if ($rsvn->getEndTime() < $beginTime->modify('+15 minutes')) {
             $context->buildViolation('Rezerwacja nie może być krótsza niż 15 minut.')
                 ->atPath('end_time')->addViolation();
-
-            return;
-        }
-
-        $tmpTime->modify('+23 hours +45 minutes');
-        if ($endTime > $tmpTime) {
-            $context->buildViolation('Rezerwacja nie może być dłuższa niż 24 godziny.')
-                ->atPath('end_time')->addViolation();
-
-            return;
         }
     }
 }

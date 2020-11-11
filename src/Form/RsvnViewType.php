@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Tag;
+use App\Repository\TagRepository;
 use DateTimeImmutable;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -44,7 +45,10 @@ class RsvnViewType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => false,
-                'attr' => ['style' => 'width: 100%', 'class' => 'jqslct2-multiple-select'],
+                'attr' => ['class' => 'jqslct2-multiple-select'],
+                'query_builder' => function (TagRepository $e) {
+                    return $e->createQueryBuilder('t')->where('t.search = 1');
+                },
             ])
             ->add('operation', ChoiceType::class, [
                 'label' => 'Znaczniki',

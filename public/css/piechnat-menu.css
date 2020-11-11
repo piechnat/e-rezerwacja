@@ -32,14 +32,13 @@ HTML TEMPLATE:
 
 /* CONFIGURATION - BEGIN */
 
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
-
 #navigation-bar .container {
   position: relative;
   background-color: darkgreen;
   min-height: 3.2em;
   color: white;
   font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
 }
 #navigation-bar.sticky .container {
   position: fixed;
@@ -103,7 +102,8 @@ HTML TEMPLATE:
   padding: 0 0.5em;
 }
 #navigation-bar .logo-wrapper * {
-  display: block;
+  display: inline-block;
+  vertical-align: middle;
   width: auto;
   max-height: 2.8em;
 }

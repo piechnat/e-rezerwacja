@@ -7,7 +7,12 @@
   <p>Nazwa użytkownika: {{ rsvn.requester.fullname }}</p>
   <p>Adres e-mail: {{ rsvn.requester.email }}</p>
   <p>Sala: {{ rsvn.room.title }}</p>
-  <p>Termin rozpoczęcia: {{ rsvn.beginTime|date('Y-m-d H:i:s') }}</p>
-  <p>Godzina zakończenia: {{ rsvn.endTime|date('H:i:s') }}</p>
+  <p>Termin rozpoczęcia: {{ rsvn.beginTime|date('d.m.Y H:i') }}</p>
+  <p>Godzina zakończenia: {{ rsvn.endTime|date('H:i') }}</p>
   <p>Cel rezerwacji: {{ rsvn.details }}</p>
+  <p class="form-group button-row">
+    <a class="button" href="{{ path('reservation_edit', {id: rsvn.id}) }}">
+      <i class="fas fa-edit"></i>{{ 'Edytuj'|trans }}
+    </a>
+  </p>
 {% endblock %}

@@ -34,10 +34,12 @@ class ReservationRepository extends ServiceEntityRepository
                 'roomId' => $rsvn->getRoom()->getId(),
                 'beginTime' => $rsvn->getBeginTime(),
                 'endTime' => $rsvn->getEndTime(),
-            ])
-            ->getQuery()->getScalarResult();
-
-        return array_column($result, 'id');
+            ]);
+        if ($rsvn->getId() > 0) {
+            $result->andWhere('rsvn.id != :id')->setParameter('id', $rsvn->getId());
+        }
+        
+        return array_column($result->getQuery()->getScalarResult(), 'id');
     }
 
     public function getTableByRoom(

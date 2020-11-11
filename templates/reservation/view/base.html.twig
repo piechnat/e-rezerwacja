@@ -48,7 +48,7 @@
   min-width: 6em;
 }
 .table-view td {
-  background-image: url("{{ asset('table-view-bg.png') }}");
+  background-image: url("{{ asset('images/table_view_bg.png') }}");
   background-size: 1px 1.875em;
   overflow: hidden;
 }
@@ -62,7 +62,7 @@
   white-space: nowrap;
 }
 .table-view th.marked {
-  font-weight: 700;
+  font-weight: bold;
 }
 .table-view thead th {
   top: 0;
@@ -168,7 +168,7 @@
               </a>
               {% else %}
               <a href="{{ path('reservation_add', {
-                  id: table_view.headers[key]['id'],
+                  room_id: table_view.headers[key]['id'],
                   beginTime: item.begin_time|date('Y-m-d H:i'),
                   endTime: item.end_time|date('Y-m-d H:i')
                 }) }}">

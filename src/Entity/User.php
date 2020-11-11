@@ -60,7 +60,7 @@ class User implements UserInterface
 
     public function __toString(): string
     {
-        return "{$this->fullname} <{$this->email}>"; 
+        return $this->email; 
     }
 
     public function getId(): ?int
@@ -71,6 +71,11 @@ class User implements UserInterface
     public function getFullname(): ?string
     {
         return $this->fullname;
+    }
+
+    public function getTitle()
+    {
+        return "{$this->fullname} <{$this->email}>"; 
     }
 
     public function setFullname(string $fullname): self
