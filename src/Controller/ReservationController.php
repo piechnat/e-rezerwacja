@@ -56,13 +56,14 @@ class ReservationController extends AbstractController
         ReservationRepository $rsvnRepo,
         AppHelper $helper
     ) {
-        if ('reservation_add' === $request->attributes->get('_route')) {
+        $actionAdd = 'reservation_add' === $request->attributes->get('_route');
+        if (true === $actionAdd) {
             $rsvn = new Reservation();
             $rsvn->setRequester($this->getUser());
             $rsvn->setRoom($room);
             $rsvn->setBeginTime($beginTime);
             $rsvn->setEndTime($endTime);
-        } elseif (null === $rsvn) { // reservation_edit
+        } elseif (false === $actionAdd && null === $rsvn) {
             throw $this->createNotFoundException();
         }
         $formSendRequest = false;
@@ -129,7 +130,8 @@ class ReservationController extends AbstractController
             }
         }
 
-        return $this->render('reservation/add.html.twig', [
+        return $this->render('reservation/add-edit.html.twig', [
+            'form_title' => ($actionAdd ? 'Dodawanie' : 'Edycja') . ' rezerwacji',
             'form' => $form->createView(),
             'send_request' => $formSendRequest,
         ]);

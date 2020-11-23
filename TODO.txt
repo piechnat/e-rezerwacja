@@ -5,3 +5,17 @@
 - edycja rezerwacji
 - dodatkowe opcje logowania
 - przełączanie typu konta dla SUPER_ADMIN
+
+Użytkownik
+	Profil
+	Rezerwacje
+	Język
+	Wyloguj
+
+Sala
+	Wszystkie sale
+	Widok tygodnia
+
+Rezerwacja
+	Dodaj
+	Widok dnia
