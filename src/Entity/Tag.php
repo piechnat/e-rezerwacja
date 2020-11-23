@@ -35,7 +35,7 @@ class Tag
     /**
      * @ORM\Column(type="smallint")
      */
-    private $access = 0;
+    private $level = 0;
 
     /**
      * @ORM\ManyToMany(targetEntity=Room::class, inversedBy="tags")
@@ -87,14 +87,14 @@ class Tag
         return $this;
     }
 
-    public function getAccess(): ?int
+    public function getLevel(): ?int
     {
-        return $this->access;
+        return $this->level;
     }
 
-    public function setAccess(int $access): self
+    public function setLevel(int $level): self
     {
-        $this->access = $access;
+        $this->level = $level;
 
         return $this;
     }

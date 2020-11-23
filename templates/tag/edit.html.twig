@@ -3,12 +3,12 @@
 {% block title %}Edycja tagu{% endblock %}
 
 {% block main %}
-    <h1>Edycja tagu</h1>
+    <h2>Edycja tagu</h2>
 
     {% if edit_mode != 'entity' %}
         <p>Nazwa: {{ tag.name }}</p>
         <p>Funkcja wyszukiwania: {{ tag.search ? 'Tak' : 'Nie' }}</p>
-        <p>Ograniczenie dostępu: {{ access_levels[tag.access] }}</p>
+        <p>Ograniczenie dostępu: {{ access_levels[tag.level] }}</p>
     {% endif %}
 
     {{ form_start(form) }}

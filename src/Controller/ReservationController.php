@@ -2,22 +2,23 @@
 
 namespace App\Controller;
 
-use App\CustomTypes\NotAllowedException;
 use App\CustomTypes\ReservationConflictException;
-use App\CustomTypes\ReservationError;
+use App\CustomTypes\ReservationNotAllowedException;
+use App\CustomTypes\UserLevel;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
-use App\Service\AppHelper;
+use App\Service\ReservationHelper;
 use DateTimeImmutable;
 use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class ReservationController extends AbstractController
 {
@@ -40,7 +41,7 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/add/{room_id}/{beginTime}/{endTime}", name="reservation_add", 
+     * @Route("/reservation/add/{room_id}/{beginTime}/{endTime}", name="reservation_add",
      *     defaults={"room_id":null,"beginTime":"now","endTime":"now +60 minutes"})
      * @ParamConverter("room", class="App\Entity\Room", options={"id"="room_id"})
      *
@@ -53,73 +54,62 @@ class ReservationController extends AbstractController
         DateTimeImmutable $endTime = null,
         Reservation $rsvn = null,
         Request $request,
-        ReservationRepository $rsvnRepo,
-        AppHelper $helper
+        ReservationHelper $rsvnHelper
     ) {
         $actionAdd = 'reservation_add' === $request->attributes->get('_route');
-        if (true === $actionAdd) {
+        if ($actionAdd) {
             $rsvn = new Reservation();
             $rsvn->setRequester($this->getUser());
             $rsvn->setRoom($room);
             $rsvn->setBeginTime($beginTime);
             $rsvn->setEndTime($endTime);
-        } elseif (false === $actionAdd && null === $rsvn) {
+        } elseif (!$actionAdd && null === $rsvn) {
             throw $this->createNotFoundException();
         }
         $formSendRequest = false;
-        $formOptions = ['modify_requester' => false];
+        $formOptions = ['modify_requester' => $this->isGranted(UserLevel::ADMIN)];
 
         $form = $this->createForm(ReservationType::class, $rsvn, $formOptions);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $rsvn = $form->getData();
+            $rsvn->setEditor($this->getUser());
+            $rsvn->setEditTime(new DateTimeImmutable());
 
             try {
-                $rsvnErr = $helper->isReservationAllowed($rsvn);
-                if (ReservationError::RSVN_ALLOWED === $rsvnErr) {
+                $rsvnHelper->checkConstraints($rsvn);
+
+                /** @var Connection */
+                $conn = $this->getDoctrine()->getConnection();
+                $conn->beginTransaction();
+
+                try {
                     /** @var EntityManagerInterface */
                     $mngr = $this->getDoctrine()->getManager();
-                    /** @var Connection */
-                    $conn = $this->getDoctrine()->getConnection();
-                    $rsvn->setEditorId($this->getUser()->getId());
-                    $rsvn->setEditTime(new DateTimeImmutable());
-                    $conn->beginTransaction();
+                    $mngr->find(
+                        Room::class,
+                        $rsvn->getRoom()->getId(),
+                        LockMode::PESSIMISTIC_WRITE // SELECT ... FOR UPDATE
+                    );
+                    $rsvnHelper->checkConflicts($rsvn);
 
-                    try {
-                        $mngr->find(
-                            Room::class,
-                            $rsvn->getRoom()->getId(),
-                            LockMode::PESSIMISTIC_WRITE // SELECT ... FOR UPDATE
-                        );
-                        $conflictIds = $rsvnRepo->getConflictIds($rsvn);
-                        if (count($conflictIds) > 0) {
-                            throw new ReservationConflictException($conflictIds[0]);
-                        }
-                        $mngr->persist($rsvn);
-                        $mngr->flush();
-                        $conn->commit();
+                    $mngr->persist($rsvn);
+                    $mngr->flush();
+                    $conn->commit();
 
-                        return $this->redirectToRoute('reservation_show', ['id' => $rsvn->getId()]);
-                    } catch (\Exception $e) {
-                        $conn->rollback();
+                    return $this->redirectToRoute('reservation_show', ['id' => $rsvn->getId()]);
+                } catch (Exception $e) {
+                    $conn->rollback();
 
-                        throw $e;
-                    }
-                } else { // reservation is not allowed
-                    $conflictIds = $rsvnRepo->getConflictIds($rsvn);
-                    if (count($conflictIds) > 0) {
-                        throw new ReservationConflictException($conflictIds[0]);
-                    }
-
-                    throw new NotAllowedException($rsvnErr);
+                    throw $e;
                 }
             } catch (ReservationConflictException $e) {
-                $form->get('room')->addError($helper->createFormError($e));
-            } catch (NotAllowedException $e) {
+                $form->get('room')->addError($rsvnHelper->createFormError($e));
+            } catch (ReservationNotAllowedException $e) {
                 if (!isset($request->get('reservation', [])['send_request'])) {
                     $formSendRequest = true;
-                    $form->addError($helper->createFormError($e));
+                    $form->addError($rsvnHelper->createFormError($e));
                 } else {
                     return $this->render('main/redirect.html.twig', [
                         'path' => 'reservation_add',
@@ -131,7 +121,7 @@ class ReservationController extends AbstractController
         }
 
         return $this->render('reservation/add-edit.html.twig', [
-            'form_title' => ($actionAdd ? 'Dodawanie' : 'Edycja') . ' rezerwacji',
+            'form_title' => ($actionAdd ? 'Dodawanie' : 'Edycja').' rezerwacji',
             'form' => $form->createView(),
             'send_request' => $formSendRequest,
         ]);
@@ -142,6 +132,9 @@ class ReservationController extends AbstractController
      */
     public function requests()
     {
-        return $this->render('main/redirect.html.twig');
+        return $this->render('main/redirect.html.twig', [
+            'title' => 'Żądania rezerwacji',
+            'content' => 'Under construction',
+        ]);
     }
 }

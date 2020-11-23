@@ -82,6 +82,9 @@ i.fas, i.fab, i.far {
     content: '';
     margin-left: 0.5em;
   }
+  #navigation-bar .menu-panel ul ul li {
+    width: 11em;
+  }
 }
 @media (max-width: 1024px) {
   #navigation-bar .menu-panel {
@@ -107,7 +110,7 @@ i.fas, i.fab, i.far {
   font-size: 1.4em;
   margin: -0.2em 0.05em 0 0;
   font-style: italic;
-  text-shadow: 0.07em 0.05em 0.06em rgba(0, 0, 0, 1);
+  text-shadow: 0.06em 0.04em 0.06em rgba(0, 0, 0, 1);
 }
 .logo-wrapper .logo-title > span:last-child {
   transform: skewY(-5deg) rotate(5deg);

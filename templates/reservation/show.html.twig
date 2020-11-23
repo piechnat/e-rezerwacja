@@ -9,7 +9,7 @@
   <p>Sala: {{ rsvn.room.title }}</p>
   <p>Termin rozpoczęcia: {{ rsvn.beginTime|date('d.m.Y H:i') }}</p>
   <p>Godzina zakończenia: {{ rsvn.endTime|date('H:i') }}</p>
-  <p>Cel rezerwacji: {{ rsvn.details }}</p>
+  <p>Cel rezerwacji: {{ rsvn.details|default('Ćwiczenie')|trans }}</p>
   <p class="form-group button-row">
     <a class="button" href="{{ path('reservation_edit', {id: rsvn.id}) }}">
       <i class="fas fa-edit"></i>{{ 'Edytuj'|trans }}

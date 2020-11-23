@@ -36,32 +36,26 @@ class MenuBuilder
         $menu = $factory->createItem('root');
 
         if (!$security->isGranted(UserLevel::USER)) {
-            $this->ac($menu, 'Strona główna', ['route' => 'main'], '<i class="fas fa-home"></i>');
             $this->ac($menu, 'Zaloguj', ['route' => 'login'], '<i class="fas fa-sign-in-alt"></i>');
             $this->ac($menu, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
         } else {
-            $child = $this->ac($menu, 'Aplikacja', ['uri' => '#'], '<i class="fas fa-globe"></i>');
-            $this->ac($child, 'Strona główna', ['route' => 'main'], '<i class="fas fa-home"></i>');
-            $this->ac($child, 'Wyloguj', ['route' => 'logout'], '<i class="fas fa-sign-out-alt"></i>');
+            $child = $this->ac($menu, 'Użytkownik', ['uri' => '#'], '<i class="fas fa-user"></i>');
+            $this->ac($child, 'Profil', ['route' => 'user_self_show'], '<i class="far fa-address-card"></i>');
+            $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_user'], '<i class="far fa-eye"></i>');
             $this->ac($child, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
+            $this->ac($child, 'Wyloguj', ['route' => 'logout'], '<i class="fas fa-sign-out-alt"></i>');
 
-            $child = $this->ac($menu, 'Użytkownicy', ['uri' => '#'], '<i class="fas fa-users"></i>');
-            $this->ac($child, 'Pokaż', ['route' => 'user_index'], '<i class="far fa-eye"></i>');
-            $this->ac($child, 'Mój profil', ['route' => 'user_self_show'], '<i class="far fa-user"></i>');
-
+            $child = $this->ac($menu, 'Sala', ['uri' => '#'], '<i class="fas fa-door-closed"></i>');
+            $this->ac($child, 'Indeks', ['route' => 'room_index'], '<i class="far fa-list-alt"></i>');
+            $this->ac($child, 'Kalendarz', ['route' => 'reservation_view_week'], '<i class="far fa-eye"></i>');
             if ($security->isGranted(UserLevel::ADMIN)) {
-                $child = $this->ac($menu, 'Sale', ['uri' => '#'], '<i class="fas fa-door-closed"></i>');
                 $this->ac($child, 'Dodaj', ['route' => 'room_add'], '<i class="far fa-plus-square"></i>');
-                $this->ac($child, 'Pokaż', ['route' => 'room_index'], '<i class="far fa-eye"></i>');
                 $this->ac($child, 'Tagi', ['route' => 'tag_index'], '<i class="fas fa-tags"></i>');
-            } else {
-                $child = $this->ac($menu, 'Sale', ['route' => 'room_index'], '<i class="fas fa-door-closed"></i>');
             }
+
             $child = $this->ac($menu, 'Rezerwacje', ['uri' => '#'], '<i class="fas fa-calendar"></i>');
             $this->ac($child, 'Dodaj', ['route' => 'reservation_add'], '<i class="far fa-calendar-plus"></i>');
-            $this->ac($child, 'Pokaż dzień', ['route' => 'reservation_view_day'], '<i class="far fa-eye"></i>');
-            $this->ac($child, 'Pokaż tydzień', ['route' => 'reservation_view_week'], '<i class="far fa-eye"></i>');
-            $this->ac($child, 'Moje', ['route' => 'reservation_index'], '<i class="far fa-check-square"></i>');
+            $this->ac($child, 'Wykaz dzienny', ['route' => 'reservation_view_day'], '<i class="far fa-eye"></i>');
             if ($security->isGranted(UserLevel::ADMIN)) {
                 $this->ac($child, 'Żądania', ['route' => 'request'], '<i class="far fa-bell"></i>');
             }

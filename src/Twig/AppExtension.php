@@ -2,6 +2,8 @@
 
 namespace App\Twig;
 
+use DateTime;
+use DateTimeInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -34,8 +36,8 @@ class AppExtension extends AbstractExtension
 
     public function getWeekDay($date): string
     {
-        if (!($date instanceof \DateTimeInterface)) {
-            $date = new \DateTime($date);
+        if (!($date instanceof DateTimeInterface)) {
+            $date = new DateTime($date);
         }
 
         return self::DAYS_OF_WEEK[$date->format('w')];

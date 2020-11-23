@@ -1,21 +1,69 @@
-- ograniczenia czasowe i godziny otwarcia
+FUNKCJE:
 - zrobić tło w table-view-header
-- max_hour 21:30
 - dodawanie rezerwacji przez kliknięcie na nagłówku kolumny
-- edycja rezerwacji
-- dodatkowe opcje logowania
 - przełączanie typu konta dla SUPER_ADMIN
 
-Użytkownik
-	Profil
-	Rezerwacje
-	Język
-	Wyloguj
+a) Rezerwacja sal
+- możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 
+  (zaakceptowanie lub odrzucenie żądania rezerwacji)
+- widok dla jednego użytkownika w widoku tygodnia
+- obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu
+- Student nie może zgłosić żądania rezerwacji sali, której ograniczenie obejmuje poziom konta 
+  Zarządcy
+- Nie można dodać rezerwacji w przeszłości, ani edytować przeszłej rezerwacji.
+- Rezerwację można dodać jedynie w czasie przypadającym na godziny pracy uczelni (zgodnie 
+  z wprowadzonym harmonogramem)
+- użytkownik nie posiada innej rezerwacji w proponowanym terminie (dla Zarządcy)
 
-Sala
-	Wszystkie sale
-	Widok tygodnia
+b) Ewidencja obecności pracowników oraz pobrań i zwrotów kluczy
+- stworzenie tabel user_presnce i key_events oraz przyporządkowania RFID users i rooms
+- wyświetlenie pobrań i zwrotów kluczy w aplikacji internetowej w formie półprzeźroczystych warstw 
+  zachodzących na rezerwacje (we wszystkich widokach)
+- zdalne uwierzytelnienie wejścia, wyjścia lub poboru klucza
+- sprawdzenie czasu pracy Pracownika w określonym przedziale
 
-Rezerwacja
-	Dodaj
-	Widok dnia
+----------------------------------------------------------------------------------------------------
+
+user_presence
+- user_id - foreign key
+- begin_time
+- end_time (NULL)
+
+key_event
+- user_presence_id - foreign key
+- room_id - foreign key
+- begin_time
+- end_time (NULL)
+
+IN_MODE(USER, KEY = null):
+    - znajdź najmłodszy rekord user_presence z user_id = USER z ostatnich 24 godzin !!!
+    - jeśli end_time != NULL & begin_time > now - 1minute to zapisz NULL do end_time
+    - jeśli nie istnieje to utwórz nowy user_presence(USER)
+    - jeżeli podano KEY:
+        - znajdź najmłodszy rekord key_event z room_id = KEY & end_time = NULL z ostatnich 24 godzin !!!
+        - jeśli istnieje to 
+            - jeśli user_presence_id != user_presence to zaktualizuj end_time
+        - utwórz key_event(user_presence, KEY)
+        
+
+OUT_MODE(KEY):
+    - znajdź najmłodszy rekord key_event z room_id = KEY z ostatnich 24 godzin !!!
+    - jeśli end_time == NULL to
+        - jeśli begin_time > now - 1minute to usuń key_event i ZWRÓĆ komunikat anulowania
+        - zaktualizuj end_time
+        - znajdź rezerwację która pokrywaja się czasowo 
+          a jej room_id = KEY & requester = user_presence_id.user_id
+        - zapisz do niej key_event ID
+    - ZWRÓĆ end_time
+    
+OUT_MODE(USER):
+    - znajdź najmłodszy rekord user_presence z user_id == USER z ostatnich 24 godzin !!!
+    - jeśli end_time == NULL to 
+        - jeśli istnieje rekord key_event z user_presence_id = user_presence & end_time == NULL 
+          to ZWRÓĆ BŁĄD key_event.room_id.title
+        - zaktualizuj end_time
+    - ZWRÓĆ end_time
+
+
+
+

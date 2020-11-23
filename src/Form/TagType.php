@@ -21,7 +21,7 @@ class TagType extends AbstractType
                     'attr' => ['maxlength' => 32],
                 ])
                 ->add('search', null, ['label' => 'Funkcja wyszukiwania'])
-                ->add('access', ChoiceType::class, [
+                ->add('level', ChoiceType::class, [
                     'choices' => $choices,
                     'label' => 'Ograniczenie dostępu do poziomu',
                     //'attr' => ['class' => 'jqslct2-single-select'],

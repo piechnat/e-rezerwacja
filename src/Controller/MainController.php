@@ -3,10 +3,7 @@
 namespace App\Controller;
 
 use App\CustomTypes\Lang;
-use App\CustomTypes\UserLevel;
-use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -37,7 +34,7 @@ class MainController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
         }
         $response->headers->setCookie(Lang::createCookie($lang));
-        
+
         return $response;
     }
 }

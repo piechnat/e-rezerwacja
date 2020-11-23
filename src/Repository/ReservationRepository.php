@@ -34,12 +34,38 @@ class ReservationRepository extends ServiceEntityRepository
                 'roomId' => $rsvn->getRoom()->getId(),
                 'beginTime' => $rsvn->getBeginTime(),
                 'endTime' => $rsvn->getEndTime(),
-            ]);
+            ])
+        ;
         if ($rsvn->getId() > 0) {
             $result->andWhere('rsvn.id != :id')->setParameter('id', $rsvn->getId());
         }
-        
+
         return array_column($result->getQuery()->getScalarResult(), 'id');
+    }
+
+    public function getUserReservations(
+        int $userId,
+        DateTimeImmutable $beginTime,
+        DateTimeImmutable $endTime,
+        bool $selfAddedOnly = false
+    ): array {
+        $result = $this->createQueryBuilder('rsvn')
+            ->select(['rsvn.id', 'rsvn.begin_time', 'rsvn.end_time',
+                'room.id AS room_id', 'room.title AS room_title', ])
+            ->innerJoin('rsvn.room', 'room')
+            ->where('rsvn.requester = :userId')
+            ->andWhere('rsvn.end_time > :beginTime')
+            ->andWhere('rsvn.begin_time < :endTime')
+            ->orderBy('rsvn.begin_time', 'ASC')
+            ->setParameters([
+                'userId' => $userId,
+                'beginTime' => $beginTime,
+                'endTime' => $endTime,
+            ]);
+        if ($selfAddedOnly) {
+            $result->andWhere('rsvn.requester = rsvn.editor');
+        }
+        return $result->getQuery()->getArrayResult();
     }
 
     public function getTableByRoom(
@@ -114,7 +140,7 @@ class ReservationRepository extends ServiceEntityRepository
             $endTime = $date->modify('next day');
             $reservations = $this->createQueryBuilder('rsvn')
                 ->select(['rsvn.id', 'rsvn.begin_time', 'rsvn.end_time',
-                    'user.fullname AS user_fullname', 'room.id AS room_id'])
+                    'user.fullname AS user_fullname', 'room.id AS room_id', ])
                 ->innerJoin('rsvn.requester', 'user')
                 ->innerJoin('rsvn.room', 'room')
                 ->where('rsvn.room IN (:roomIds)')

@@ -81,4 +81,15 @@ class ReservationViewController extends AbstractController
             'table_view' => $tableView,
         ]);
     }
+
+    /**
+     * @Route("/user", name="reservation_view_user")
+     */
+    public function user()
+    {
+        return $this->render('main/redirect.html.twig', [
+            'title' => 'Rezerwacje użytkownika',
+            'content' => 'Under construction',
+        ]);
+    }
 }

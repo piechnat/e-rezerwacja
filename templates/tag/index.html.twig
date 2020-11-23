@@ -3,12 +3,13 @@
 {% block title %}Lista tagów{% endblock %}
 
 {% block main %}
-    <h1>Lista tagów</h1>
+    <h2>Lista tagów</h2>
 
 <style type="text/css">
     .tag_table {
         max-width: 100%;
         overflow: auto;
+        text-align: left;
     }
     .tag_table table {
         border-collapse: separate;
@@ -34,7 +35,7 @@
                 <tr>
                     <td><a href="{{ path('tag_edit', {'id': tag.id}) }}">{{ tag.name }}</a></td>
                     <td>{{ tag.search ? 'Tak' : 'Nie' }}</td>
-                    <td>{{ access_levels[tag.access] }}</td>
+                    <td>{{ access_levels[tag.level] }}</td>
                     <td><a href="{{ path('tag_edit', {'id': tag.id, 'mode': 'rooms'}) }}">Sale</a></td>
                     <td><a href="{{ path('tag_edit', {'id': tag.id, 'mode': 'users'}) }}">Użytkow.</a></td>
                 </tr>

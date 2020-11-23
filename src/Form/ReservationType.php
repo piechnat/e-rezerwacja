@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Reservation;
-use DateTime;
 use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -54,7 +53,7 @@ class ReservationType extends AbstractType
             $rsvn->setEndTime($endTime);
         }
         
-        if (true === $options['modify_requester']) {
+        if ($options['modify_requester']) {
             $user = $rsvn->getRequester();
             $fullname = $user ? $user->getFullname() : null;
             $builder
@@ -103,7 +102,6 @@ class ReservationType extends AbstractType
             ])
             ->add('details', TextareaType::class, [
                 'required' => false,
-                'empty_data' => 'Ćwiczenie',
                 'attr' => ['style' => 'width: 99%', 'placeholder' => 'Ćwiczenie'],
                 'label' => 'Cel rezerwacji',
             ])
@@ -145,10 +143,8 @@ class ReservationType extends AbstractType
 
     public function validateReservation(Reservation $rsvn, ExecutionContextInterface $context)
     {
-        /** @var DateTimeImmutable */ 
-        $beginTime = $rsvn->getBeginTime();
-        if ($rsvn->getEndTime() < $beginTime->modify('+15 minutes')) {
-            $context->buildViolation('Rezerwacja nie może być krótsza niż 15 minut.')
+        if ($rsvn->getEndTime() < $rsvn->getBeginTime()->modify('+45 minutes')) {
+            $context->buildViolation('Rezerwacja nie może być krótsza niż 45 minut.')
                 ->atPath('end_time')->addViolation();
         }
     }

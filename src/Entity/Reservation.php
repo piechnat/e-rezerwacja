@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ReservationRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,7 +20,7 @@ class Reservation
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Room::class,cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Room::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $room;
@@ -46,9 +47,10 @@ class Reservation
     private $requester;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $editorId;
+    private $editor;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -77,24 +79,24 @@ class Reservation
         return $this;
     }
 
-    public function getBeginTime(): ?\DateTimeInterface
+    public function getBeginTime(): ?DateTimeImmutable
     {
         return $this->begin_time;
     }
 
-    public function setBeginTime(\DateTimeInterface $begin_time): self
+    public function setBeginTime(DateTimeImmutable $begin_time): self
     {
         $this->begin_time = $begin_time;
 
         return $this;
     }
 
-    public function getEndTime(): ?\DateTimeInterface
+    public function getEndTime(): ?DateTimeImmutable
     {
         return $this->end_time;
     }
 
-    public function setEndTime(\DateTimeInterface $end_time): self
+    public function setEndTime(DateTimeImmutable $end_time): self
     {
         $this->end_time = $end_time;
 
@@ -125,24 +127,24 @@ class Reservation
         return $this;
     }
 
-    public function getEditorId(): ?int
+    public function getEditor(): ?User
     {
-        return $this->editorId;
+        return $this->editor;
     }
 
-    public function setEditorId(?int $editorId): self
+    public function setEditor(?User $editor): self
     {
-        $this->editorId = $editorId;
+        $this->editor = $editor;
 
         return $this;
     }
 
-    public function getEditTime(): ?\DateTimeInterface
+    public function getEditTime(): ?DateTimeImmutable
     {
         return $this->edit_time;
     }
 
-    public function setEditTime(\DateTimeInterface $edit_time): self
+    public function setEditTime(DateTimeImmutable $edit_time): self
     {
         $this->edit_time = $edit_time;
 
