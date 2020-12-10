@@ -3,7 +3,7 @@
 {% block title %}{{ 'Rezerwacja'|trans }}{% endblock %}
 
 {% block main %}
-  <h2>{{ 'Rezerwacja'|trans }}</h2>
+  <h2 class="main-title">{{ 'bx bx-calendar-alt'|ico }}{{ 'Rezerwacja'|trans }}</h2>
   <p>Nazwa użytkownika: {{ rsvn.requester.fullname }}</p>
   <p>Adres e-mail: {{ rsvn.requester.email }}</p>
   <p>Sala: {{ rsvn.room.title }}</p>
@@ -12,7 +12,7 @@
   <p>Cel rezerwacji: {{ rsvn.details|default('Ćwiczenie')|trans }}</p>
   <p class="form-group button-row">
     <a class="button" href="{{ path('reservation_edit', {id: rsvn.id}) }}">
-      <i class="fas fa-edit"></i>{{ 'Edytuj'|trans }}
+      {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
     </a>
   </p>
 {% endblock %}

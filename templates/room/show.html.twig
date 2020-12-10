@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Katalog sal'|trans }}{% endblock %}
+
+{% block main %}
+
+  <h2 class="main-title">{{ 'bx bx-folder-open'|ico }}{{ 'Katalog sal'|trans }}</h2>
+
+  {{ form_start(form) }}
+    <div class="form-group">
+      {{ form_label(form.room) }}
+      {{ form_errors(form.room) }}
+      {{ form_widget(form.room) }}
+      <button id="jqslct2-submit" type="submit">
+        {{ 'bx bx-refresh'|ico }}OK
+      </button>
+    </div>
+  {{ form_end(form) }}
+
+  <script>
+    $('select.jqslct2-single-select').select2({
+      minimumInputLength: 1, 
+      width: 'style',
+      matcher: function(params, data) {
+        return new RegExp(params.term, 'i').test(data.text) ? data : null;
+      },
+      placeholder: { id: '', text: '\u200B' },
+    });
+    $('#jqslct2-submit').hide();
+    $('select.jqslct2-single-select').change(function() {
+      $(this.form).submit();
+      $(this).prop('disabled', true);
+    });
+  </script>
+
+  {% if not room is null %}
+    <p class="form-group button-row">
+      <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
+        {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
+      </a>
+    </p>
+  {% endif %}
+
+{% endblock %}

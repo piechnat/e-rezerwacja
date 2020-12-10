@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Room;
+use App\Form\RoomToTitleTransformer;
 use App\Form\RoomType;
 use App\Repository\RoomRepository;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +23,34 @@ class RoomController extends AbstractController
     public function index(RoomRepository $roomRepository)
     {
         return $this->render('room/index.html.twig', ['rooms' => $roomRepository->findAll()]);
+    }
+    
+    /**
+     * @Route("/show", name="room_form_show")
+     * @Route("/show/{id}", name="room_show")
+     */
+    public function show(Room $room = null, Request $request, RoomToTitleTransformer $roomToTitle)
+    {
+        $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
+        $builder->setAction($this->generateUrl('room_form_show'))->setMethod('GET')
+            ->add('room', EntityType::class, [
+                'class' => Room::class,
+                'label' => 'Nazwa sali',
+                'placeholder' => "\u{200B}",
+                'attr' => ['class' => 'jqslct2-single-select'],
+            ])
+        ;
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $room = $form->get('room')->getData();
+        }
+
+        return $this->render('room/show.html.twig', [
+            'room' => $room,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**

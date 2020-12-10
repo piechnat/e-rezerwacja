@@ -27,6 +27,8 @@ security:
                 path:     /
                 always_remember_me: true
 
+            switch_user: true
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -43,7 +45,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/(login|lang|logout|$), roles: [IS_AUTHENTICATED_ANONYMOUSLY] }   
+        - { path: ^/(login|lang|about|logout|$), roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
         - { path: ^/(_profiler|_wdt|css|images|js)/, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
     #   - { path: ^/(room/add|request), roles: ROLE_ADMIN }
         - { path: ^/, roles: [ROLE_USER] }

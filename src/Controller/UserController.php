@@ -5,9 +5,13 @@ namespace App\Controller;
 use App\CustomTypes\Lang;
 use App\CustomTypes\UserLevel;
 use App\Entity\User;
+use App\Form\UserShowType;
+use App\Form\UserToEmailTransformer;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,16 +32,36 @@ class UserController extends AbstractController
      * @Route("/show", name="user_self_show")
      * @Route("/show/{id}", name="user_show")
      */
-    public function show(User $user = null)
+    public function show(User $user = null, Request $request, UserToEmailTransformer $userToEmail)
     {
         if (!$user) {
             $user = $this->getUser();
+        }
+        $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
+        $builder->setAction($this->generateUrl('user_self_show'))->setMethod('GET')
+            ->add('email', TextType::class, [
+                'data' => $user,
+                'data_class' => null,
+                'label' => 'Pełna nazwa',
+                'attr' => [
+                    'class' => 'jqslct2-single-user',
+                    'style' => 'min-width: 15em',
+                ],
+            ]);
+        $builder->get('email')->addModelTransformer($userToEmail);
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->get('email')->getData();
         }
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
             'lang' => Lang::getValue($user->getLang()),
             'can_modify' => $this->canModify($user),
+            'userFullname' => $user->getFullname(),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -67,7 +91,10 @@ class UserController extends AbstractController
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
         }
 
-        return $this->render('user/edit.html.twig', ['form' => $form->createView()]);
+        return $this->render('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
     }
 
     private function canModify(User $user): bool

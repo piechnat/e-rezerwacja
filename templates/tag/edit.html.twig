@@ -3,7 +3,7 @@
 {% block title %}Edycja tagu{% endblock %}
 
 {% block main %}
-    <h2>Edycja tagu</h2>
+    <h2 class="main-title">Edycja tagu</h2>
 
     {% if edit_mode != 'entity' %}
         <p>Nazwa: {{ tag.name }}</p>
@@ -15,11 +15,11 @@
         {{ form_widget(form) }}
         <p class="form-group button-row">
             <a class="button" href="{{ path('tag_index') }}">
-                <i class="fas fa-arrow-left"></i>Lista
+                {{ 'bx bx-arrow-back'|ico }}Lista
             </a>
-            <button type="submit" name="save" value="save"><i class="fas fa-save"></i>Zapisz</button>
+            <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}Zapisz</button>
             {% if edit_mode == 'entity' %}
-                <button type="submit" name="delete" value="delete"><i class="fas fa-trash"></i>Usuń</button>
+                <button type="submit" name="delete" value="delete">{{ 'bx bx-trash'|ico }}Usuń</button>
             {% endif %}
         </p>
 

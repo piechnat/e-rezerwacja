@@ -19,6 +19,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('col_css', [$this, 'getColumnCss']),
             new TwigFilter('week_day', [$this, 'getWeekDay']),
+            new TwigFilter('ico', [$this, 'getIconTag'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -41,5 +42,9 @@ class AppExtension extends AbstractExtension
         }
 
         return self::DAYS_OF_WEEK[$date->format('w')];
+    }
+
+    public function getIconTag($class) {
+        return '<i class="'. $class .'"></i>';
     }
 }

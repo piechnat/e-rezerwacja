@@ -40,7 +40,7 @@ class RsvnViewType extends AbstractType
         }
         if ($options['route_name'] === 'reservation_view_day') {
             $builder->add('tags', EntityType::class, [
-                'label' => 'Pokaż sale posiadające znaczniki',
+                'label' => 'Pokaż sale posiadające etykiety',
                 'class' => Tag::class,
                 'choice_label' => 'name',
                 'multiple' => true,
@@ -51,7 +51,7 @@ class RsvnViewType extends AbstractType
                 },
             ])
             ->add('operation', ChoiceType::class, [
-                'label' => 'Znaczniki',
+                'label' => 'Etykiety',
                 'choices' => ['Wszystkie' => 1, 'Dowolne' => 0],
                 'expanded' => false,
                 'multiple' => false,

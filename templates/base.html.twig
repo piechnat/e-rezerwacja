@@ -3,18 +3,27 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#ac271e">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    <title>e-rezerwacja » {% block title %}{% endblock %}</title>
-    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />
+    <meta name="theme-color" content="#bc1e12">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <title>E-rezerwacja » {% block title %}{% endblock %}</title>
+    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
     <script src="{{ asset('js/piechnat-menu.js') }}"></script>
-    <link href="{{ asset('css/piechnat-menu.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/style.css') }}?{{ random() }}" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/2a434de389.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/pl.js"></script>
+    <link href="{{ asset('css/piechnat-menu.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}?{{ random() }}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" 
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" 
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" 
+      integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" 
+      crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" 
+      integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" 
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/pl.min.js" 
+      integrity="sha512-zXISX8YFu4dxrDDHJ27XNfF4Zs4oV+l3gWjuGqsZoINDEYW++MPGHdr/hVT2ahUi7vMP6lRkeh+m74oKUTcBKw==" 
+      crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+    {% block before_head %}{% endblock %}
   </head>
   <body>
     <header id="navigation-bar">
@@ -47,17 +56,15 @@
         </main>
         <footer>
           {% block footer %}
-          <p>
-          © 2020 {% trans %}Akademia Muzyczna w Łodzi. Wszelkie prawa zastrzeżone.{% endtrans %}
-          {% trans %}Uwagi można kierować na adres{% endtrans %}
-          <a href="#" class="cryptedmail" data-name="mateusz.piechnat" data-domain="amuz.lodz" data-tld="pl"
-            onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
-          </a>
-          </p>
+            <hr>
+            <p>
+              © 2020 {% trans %}Akademia Muzyczna w Łodzi. Wszelkie prawa zastrzeżone.{% endtrans %}
+              <a href="{{ path('about') }}">E-rezerwacja » Informacje i pomoc.</a>
+            </p>
           {% endblock %}
         </footer>
       </div>
     </div>
-    {% block javascripts %}{% endblock %}  
+    {% block before_body %}{% endblock %}  
   </body>
 </html>

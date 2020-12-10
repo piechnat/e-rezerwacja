@@ -3,12 +3,12 @@
 {% block title %}{{ 'Edytowanie sali'|trans }}{% endblock %}
 
 {% block main %}
-  <h2>{{ 'Edytowanie sali'|trans }}</h2>
+  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ 'Edytowanie sali'|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
-      <button type="submit" name="save" value="save"><i class="fas fa-save"></i>{{ 'Zapisz'|trans }}</button>
-      <button type="submit" name="delete" value="delete"><i class="fas fa-trash"></i>{{ 'Usuń'|trans }}</button>
+      <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}</button>
+      <button type="submit" name="delete" value="delete">{{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}</button>
     </div>
   {{ form_end(form) }}
 {% endblock %}

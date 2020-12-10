@@ -5,18 +5,22 @@
 {% block table_view_form %}
 
   {{ form_start(form) }}
-    <div class="form-wrapper">
-      <div style="flex-basis: 100%">
-        {{ form_row(form.tags) }}
+    <div class="form-flex-wrapper">
+      <div class="form-group" style="flex-basis: 100%">
+        {{ form_label(form.tags) }}
+        {{ form_errors(form.tags) }}
+        {{ form_widget(form.tags) }}
       </div>
       {{ form_row(form.operation) }}
       <div class="form-group">
+      {% apply spaceless %}
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
         <button type="submit">
-          <i class="fas fa-redo"></i>OK
+          {{ 'bx bx-refresh'|ico }}OK
         </button>
+      {% endapply %}
       </div>
     </div>
   {{ form_end(form) }}

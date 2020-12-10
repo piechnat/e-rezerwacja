@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\CustomTypes\Lang;
+use App\CustomTypes\UserLevel;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +15,16 @@ class MainController extends AbstractController
      */
     public function main()
     {
-        return $this->render('main/index.html.twig');
+        return $this->forward('App\\Controller\\'.
+            ($this->isGranted(UserLevel::USER) ? 'UserController::show' : 'MainController::about'));
+    }
+
+    /**
+     * @Route("/about", name="about")
+     */
+    public function about(Request $request)
+    {
+        return $this->render('main/about.html.twig');
     }
 
     /**

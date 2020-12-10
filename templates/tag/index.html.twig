@@ -3,7 +3,7 @@
 {% block title %}Lista tagów{% endblock %}
 
 {% block main %}
-    <h2>Lista tagów</h2>
+    <h2 class="main-title">Lista tagów</h2>
 
 <style type="text/css">
     .tag_table {
@@ -49,7 +49,7 @@
     </div>
 
     <div class="form-group button-row">
-        <a class="button" href="{{ path('tag_add') }}"><i class="fas fa-plus"></i>Dodaj</a>
+        <a class="button" href="{{ path('tag_add') }}">{{ 'bx bx-plus'|ico }}Dodaj</a>
     </div>
 
 {% endblock %}

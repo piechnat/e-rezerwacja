@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ form_title|trans }}{% endblock %}
+{% block title %}{{ main_title|trans }}{% endblock %}
 
 {% block main %}
-  <h2>{{ form_title|trans }}</h2>
+  <h2 class="main-title">{{ main_icon|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
     {{ form_errors(form) }}
     {% if form.requester is defined %}
@@ -21,7 +21,7 @@
     {% endif %}
     <div class="form-group button-row">
       <button type="submit" name="send" value="send">
-        <i class="fas fa-share-square"></i>{{ 'Wyślij'|trans }}
+        {{ 'bx bx-upload'|ico }}{{ 'Wyślij'|trans }}
       </button>
     </div>
   {{ form_end(form) }}

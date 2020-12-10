@@ -3,16 +3,16 @@
 {% block title %}Dodawanie tagu{% endblock %}
 
 {% block main %}
-    <h2>Dodawanie tagu</h2>
+    <h2 class="main-title">Dodawanie tagu</h2>
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
         <p class="form-group button-row">
             <a class="button" href="{{ path('tag_index') }}">
-                <i class="fas fa-arrow-left"></i>Lista
+                {{ 'bx bx-arrow-back'|ico }}Lista
             </a>
             <button type="submit" name="send" value="send">
-                <i class="fas fa-plus"></i>Dodaj
+                {{ 'bx bx-plus'|ico }}Dodaj
             </button>
         </p>
     {{ form_end(form) }}

@@ -3,12 +3,15 @@
 {% block title %}{{ 'Edycja użytkownika'|trans }}{% endblock %}
 
 {% block main %}
-  <h2>{{ 'Edycja użytkownika'|trans }}</h2>
+  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ 'Edycja użytkownika'|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
+      <a class="button" href="{{ path('user_show', {id: user.id}) }}">
+        {{ 'bx bx-arrow-back'|ico }}Profil
+      </a>
       <button type="submit" name="save" value="save">
-        <i class="fas fa-save"></i>{{ 'Zapisz'|trans }}
+        {{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}
       </button>
     </div>
   {{ form_end(form) }}

@@ -3,12 +3,12 @@
 {% block title %}{{ 'Dodawanie sali'|trans }}{% endblock %}
 
 {% block main %}
-  <h2>{{ 'Dodawanie sali'|trans }}</h2>
+  <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ 'Dodawanie sali'|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
       <button type="submit" name="save" value="save">
-        <i class="fas fa-plus"></i>{{ 'Dodaj'|trans }}
+        {{ 'bx bx-plus'|ico }}{{ 'Dodaj'|trans }}
       </button>
     </div>
   {{ form_end(form) }}

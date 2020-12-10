@@ -5,15 +5,17 @@
 {% block table_view_form %}
 
   {{ form_start(form) }}
-    <div class="form-wrapper">
+    <div class="form-flex-wrapper">
       {{ form_row(form.room) }}
       <div class="form-group">
+      {% apply spaceless %}
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
         <button type="submit">
-          <i class="fas fa-redo"></i>OK
+          {{ 'bx bx-refresh'|ico }}OK
         </button>
+      {% endapply %}
       </div>
     </div>
   {{ form_end(form) }}

@@ -6,15 +6,15 @@
 
 {% block main %}
 <div>
-    <h2>
-      {{ title|default('Wystąpił błąd')|trans }}
+    <h2 class="main-title">
+      {{ 'bx bx-info-circle'|ico }}{{ title|default('Wystąpił błąd')|trans }}
     </h2>
     <p>
       {{ content|default('')|trans }}
     </p>
     <form action="{{ path(path|default('main'), params|default([])) }}">
       <p class="form-group">
-        <button type="submit" /><i class="fas fa-check"></i>OK</button>
+        <button type="submit" />{{ 'bx bx-check'|ico }}OK</button>
       </p>
     </form>
 </div>

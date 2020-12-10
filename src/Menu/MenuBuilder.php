@@ -34,31 +34,36 @@ class MenuBuilder
         $lang = $lang === Lang::PL ? Lang::EN : Lang::PL;
         $langButton = $twig->render('main/lang-'. $lang .'.html.twig');
         $menu = $factory->createItem('root');
+        $isAdmin = $security->isGranted(UserLevel::ADMIN);
 
         if (!$security->isGranted(UserLevel::USER)) {
-            $this->ac($menu, 'Zaloguj', ['route' => 'login'], '<i class="fas fa-sign-in-alt"></i>');
+            $this->ac($menu, 'Zaloguj', ['route' => 'login'], '<i class="bx bx-log-in"></i>');
             $this->ac($menu, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
         } else {
-            $child = $this->ac($menu, 'Użytkownik', ['uri' => '#'], '<i class="fas fa-user"></i>');
-            $this->ac($child, 'Profil', ['route' => 'user_self_show'], '<i class="far fa-address-card"></i>');
-            $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_user'], '<i class="far fa-eye"></i>');
+
+            $child = $this->ac($menu, 'Użytkownik', ['uri' => '#'], '<i class="bx bxs-user"></i>');
+            $this->ac($child, 'Profil', ['route' => 'user_self_show'], '<i class="bx bx-id-card"></i>');
+            $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_user'], '<i class="bx bx-calendar-week"></i>');
             $this->ac($child, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
-            $this->ac($child, 'Wyloguj', ['route' => 'logout'], '<i class="fas fa-sign-out-alt"></i>');
+            $this->ac($child, 'Wyloguj', ['route' => 'logout'], '<i class="bx bx-log-out"></i>');
 
-            $child = $this->ac($menu, 'Sala', ['uri' => '#'], '<i class="fas fa-door-closed"></i>');
-            $this->ac($child, 'Indeks', ['route' => 'room_index'], '<i class="far fa-list-alt"></i>');
-            $this->ac($child, 'Kalendarz', ['route' => 'reservation_view_week'], '<i class="far fa-eye"></i>');
-            if ($security->isGranted(UserLevel::ADMIN)) {
-                $this->ac($child, 'Dodaj', ['route' => 'room_add'], '<i class="far fa-plus-square"></i>');
-                $this->ac($child, 'Tagi', ['route' => 'tag_index'], '<i class="fas fa-tags"></i>');
+            $child = $this->ac($menu, 'Sala', ['uri' => '#'], '<i class="bx bxs-door-open"></i>');
+            if ($isAdmin) {
+                $this->ac($child, 'Dodaj', ['route' => 'room_add'], '<i class="bx bx-add-to-queue"></i>');
+            }
+            $this->ac($child, 'Katalog', ['route' => 'room_form_show'], '<i class="bx bx-folder-open"></i>');
+            $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_week'], '<i class="bx bx-calendar-week"></i>');
+            if ($isAdmin) {
+                $this->ac($child, 'Tagi', ['route' => 'tag_index'], '<i class="bx bx-purchase-tag"></i>');
             }
 
-            $child = $this->ac($menu, 'Rezerwacje', ['uri' => '#'], '<i class="fas fa-calendar"></i>');
-            $this->ac($child, 'Dodaj', ['route' => 'reservation_add'], '<i class="far fa-calendar-plus"></i>');
-            $this->ac($child, 'Wykaz dzienny', ['route' => 'reservation_view_day'], '<i class="far fa-eye"></i>');
-            if ($security->isGranted(UserLevel::ADMIN)) {
-                $this->ac($child, 'Żądania', ['route' => 'request'], '<i class="far fa-bell"></i>');
+            $child = $this->ac($menu, 'Rezerwacja', ['uri' => '#'], '<i class="bx bxs-calendar"></i>');
+            $this->ac($child, 'Dodaj', ['route' => 'reservation_add'], '<i class="bx bx-calendar-plus"></i>');
+            $this->ac($child, 'Wykaz dzienny', ['route' => 'reservation_view_day'], '<i class="bx bx-calendar-week"></i>');
+            if ($isAdmin) {
+                $this->ac($child, 'Żądania', ['route' => 'request'], '<i class="bx bx-bell"></i>');
             }
+
         }
 
         return $menu;
