@@ -63,13 +63,14 @@ class RoomController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $room = $form->getData();
             $em = $this->getDoctrine()->getManager();
-            $em->persist($form->getData());
+            $em->persist($room);
             $em->flush();
 
-            return $this->redirectToRoute('room_index');
+            return $this->redirectToRoute('room_show', ['id' => $room->getId()]);
         }
-
+        
         return $this->render('room/add.html.twig', ['form' => $form->createView()]);
     }
 
