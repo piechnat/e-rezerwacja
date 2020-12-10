@@ -38,6 +38,9 @@
       <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
         {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
       </a>
+      <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
+        {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+      </a>
     </p>
   {% endif %}
 

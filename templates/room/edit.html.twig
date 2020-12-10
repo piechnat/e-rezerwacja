@@ -7,6 +7,9 @@
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
+      <a class="button" href="{{ path('room_show', {id: room.id}) }}">
+        {{ 'bx bx-arrow-back'|ico }}Katalog
+      </a>
       <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}</button>
       <button type="submit" name="delete" value="delete">{{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}</button>
     </div>

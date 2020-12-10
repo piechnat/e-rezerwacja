@@ -35,6 +35,7 @@ class RoomController extends AbstractController
         $builder->setAction($this->generateUrl('room_form_show'))->setMethod('GET')
             ->add('room', EntityType::class, [
                 'class' => Room::class,
+                'data' => $room,
                 'label' => 'Nazwa sali',
                 'placeholder' => "\u{200B}",
                 'attr' => ['class' => 'jqslct2-single-select'],
@@ -60,6 +61,7 @@ class RoomController extends AbstractController
     {
         $form = $this->createForm(RoomType::class);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($form->getData());
