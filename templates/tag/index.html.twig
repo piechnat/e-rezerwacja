@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Lista tagów{% endblock %}
+{% block title %}Lista etykiet{% endblock %}
 
 {% block main %}
-    <h2 class="main-title">Lista tagów</h2>
+    <h2 class="main-title">{{ 'bx bx-purchase-tag'|ico }}Lista etykiet</h2>
 
 <style type="text/css">
     .tag_table {
@@ -41,7 +41,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5">Nie znaleziono tagów.</td>
+                    <td colspan="5">Nie znaleziono etykiet.</td>
                 </tr>
             {% endfor %}
             </tbody>

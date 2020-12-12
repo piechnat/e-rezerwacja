@@ -12,18 +12,23 @@
   bottom: 0;
 }
 .table-view .table-view-header {
-  max-width: calc(800px + 4%);
-  margin: 0 auto;
   position: sticky;
   left: 0;
-  padding: 0.4em calc(2% + 0.4em);
-  box-sizing: border-box;
+  background-color: #fff;
+  box-shadow: inset 0 -0.5rem 0.5rem -0.5rem rgba(45,45,45,0.3);
+}
+.table-view .table-view-header > div {
+  box-shadow: 
+    0 0 4rem 0.05rem rgba(45,45,45,0.3),
+    inset 0 -0.5rem 0.5rem -0.5rem rgba(45,45,45,0.3);
+}
+.table-view .table-view-header > div > div {
+  padding: 0.5em 0.4em;
 }
 .table-view .table-view-body {
   position: relative;
   z-index: 1;
   background-color: #f0f0f0;
-  box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
 }
 .table-view table {
   border-collapse: separate;
@@ -115,70 +120,69 @@
 }
 </style>
 
-<div class="table-view">
-  <div class="table-view-header">
+{% if table_view is null %}
 
-  {% if table_view is null %}
+  <h2 class="main-title">{{ 'bx bx-calendar-week'|ico }}{{ block('title')|trans }}</h2>
+  {{ block('table_view_form') }}
 
-      <h2 class="main-title">{{ 'bx bx-calendar-week'|ico }}{{ block('title')|trans }}</h2>
-      {{ block('table_view_form') }}
+{% elseif table_view.columns|length == 0 %}
 
-  {% elseif table_view.columns|length == 0 %}
+  <h2 class="main-title">{{ 'bx bx-calendar-week'|ico }}{{ block('title')|trans }}</h2>
+  {{ block('table_view_form') }}
+  <p>Nie znaleziono sal spełniających zadane kryteria.</p>
 
-      {{ block('table_view_form') }}
-      <p>Nie znaleziono sal spełniających zadane kryteria.</p>
+{% elseif table_view.columns|length > 0 %}
 
-  {% elseif table_view.columns|length > 0 %}
-
-      {{ block('table_view_form') }}
-    
-  </div> 
-  <div class="table-view-body">
-    <table>
-      <thead>
-        <tr>
-          <th></th>
-
-          {% block table_view_headers %}{% endblock %}
-
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th class="hours-header">
-          {% for i in (table_view.meta.min_hour + 1)..(table_view.meta.max_hour - 1) %}
-            {{ '%02d'|format(i) }}:00<br>
-          {% endfor %}
-          </th>
-          {% for key, column in table_view.columns %}
-          <td>
-            {% for item in column %}
-              {% if item.id > 0 %}
-              <a href="{{ path('reservation_show', {id: item.id}) }}">
-                <div class="rsvn-item" style="{{ item|col_css }}">
-                  <div class="rsvn-fullname">{{ item.user_fullname }}</div>
-                </div>
-              </a>
-              {% else %}
-              <a href="{{ path('reservation_add', {
-                  room_id: table_view.headers[key]['id'],
-                  beginTime: item.begin_time|date('Y-m-d H:i'),
-                  endTime: item.end_time|date('Y-m-d H:i')
-                }) }}">
-                <div class="add-item" style="{{ item|col_css }}"></div>
-              </a>
-              {% endif %}
+  <div class="table-view">
+    <div class="table-view-header">
+      <div class="main-container">
+        <div class="">
+          {{ block('table_view_form') }}
+        </div>
+      </div>
+    </div> 
+    <div class="table-view-body">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {% block table_view_headers %}{% endblock %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="hours-header">
+            {% for i in (table_view.meta.min_hour + 1)..(table_view.meta.max_hour - 1) %}
+              {{ '%02d'|format(i) }}:00<br>
             {% endfor %}
-          </td>
-          {% endfor %}
-        </tr>
-      </tbody>
-    </table>
+            </th>
+            {% for key, column in table_view.columns %}
+            <td>
+              {% for item in column %}
+                {% if item.id > 0 %}
+                <a href="{{ path('reservation_show', {id: item.id}) }}">
+                  <div class="rsvn-item" style="{{ item|col_css }}">
+                    <div class="rsvn-fullname">{{ item.user_fullname }}</div>
+                  </div>
+                </a>
+                {% else %}
+                <a href="{{ path('reservation_add', {
+                    room_id: table_view.headers[key]['id'],
+                    beginTime: item.begin_time|date('Y-m-d H:i'),
+                    endTime: item.end_time|date('Y-m-d H:i')
+                  }) }}">
+                  <div class="add-item" style="{{ item|col_css }}"></div>
+                </a>
+                {% endif %}
+              {% endfor %}
+            </td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  {% endif %}
-</div>
+{% endif %}
 
 {% endblock %}
-
-{% block footer %}{% endblock %}

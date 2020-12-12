@@ -4,9 +4,15 @@
 
 {% block main %}
   <h2 class="main-title">{{ 'bx bx-calendar-alt'|ico }}{{ 'Rezerwacja'|trans }}</h2>
-  <p>Nazwa użytkownika: {{ rsvn.requester.fullname }}</p>
-  <p>Adres e-mail: {{ rsvn.requester.email }}</p>
-  <p>Sala: {{ rsvn.room.title }}</p>
+  <p>Nazwa użytkownika: 
+    <a href="{{ path('user_show', {id: rsvn.requester.id}) }}">{{ rsvn.requester.fullname }}</a>
+  </p>
+  <p>Adres e-mail: 
+    <a href="mailto:{{ rsvn.requester.email }}">{{ rsvn.requester.email }}</a>
+  </p>
+  <p>Sala: 
+    <a href="{{ path('room_show', {id: rsvn.room.id}) }}">{{ rsvn.room.title }}</a>
+  </p>
   <p>Termin rozpoczęcia: {{ rsvn.beginTime|date('d.m.Y H:i') }}</p>
   <p>Godzina zakończenia: {{ rsvn.endTime|date('H:i') }}</p>
   <p>Cel rezerwacji: {{ rsvn.details|default('Ćwiczenie')|trans }}</p>

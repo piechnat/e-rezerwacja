@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dodawanie tagu{% endblock %}
+{% block title %}Dodawanie etykiety{% endblock %}
 
 {% block main %}
-    <h2 class="main-title">Dodawanie tagu</h2>
+    <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}Dodawanie etykiety</h2>
 
     {{ form_start(form) }}
         {{ form_widget(form) }}

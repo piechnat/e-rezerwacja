@@ -1,5 +1,5 @@
 FUNKCJE:
-- zrobić tło w table-view-header
+- usuwanie rezerwacji
 - side menu: zamykanie sąsiednich menu podczas otwarcia
 - wczytywanie sal przez AJAX
 - rozwiązać kwestię tytułów stron

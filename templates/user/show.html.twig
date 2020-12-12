@@ -39,13 +39,15 @@
       </a>
     {% endif %}
     {% if is_granted('IS_IMPERSONATOR') %}
-      <a class="button" href="{{ path('main', {_switch_user: '_exit'}) }}">
-        {{ 'bx bx-user'|ico }}{{ 'Opuść tożsamość'|trans }}
-      </a> 
+      {% if app.user.id == user.id %}
+        <a class="button" href="{{ path('main', {_switch_user: '_exit'}) }}">
+          {{ 'bx bx-user'|ico }}{{ 'Porzuć tożsamość'|trans }}
+        </a> 
+      {% endif %}
     {% else %}
       {% if is_granted('ROLE_ALLOWED_TO_SWITCH') and app.user.id != user.id %}
         <a class="button" href="{{ path('main', {_switch_user: user.email}) }}">
-          {{ 'bx bx-user'|ico }}{{ 'Przełącz tożsamość'|trans }}
+          {{ 'bx bx-user'|ico }}{{ 'Przyjmij tożsamość'|trans }}
         </a> 
       {% endif %}
     {% endif %}

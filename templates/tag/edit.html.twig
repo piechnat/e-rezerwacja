@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edycja tagu{% endblock %}
+{% block title %}Edycja etykiety{% endblock %}
 
 {% block main %}
-    <h2 class="main-title">Edycja tagu</h2>
+    <h2 class="main-title">{{ 'bx bx-edit'|ico }}Edycja etykiety</h2>
 
     {% if edit_mode != 'entity' %}
         <p>Nazwa: {{ tag.name }}</p>

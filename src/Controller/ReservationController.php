@@ -129,12 +129,23 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/request", name="request")
+     * @Route("/requests", name="requests")
      */
     public function requests()
     {
         return $this->render('main/redirect.html.twig', [
             'title' => 'Żądania rezerwacji',
+            'content' => 'Under construction',
+        ]);
+    }
+
+    /**
+     * @Route("/constraints", name="constraints")
+     */
+    public function constraints()
+    {
+        return $this->render('main/redirect.html.twig', [
+            'title' => 'Ograniczenia rezerwacji',
             'content' => 'Under construction',
         ]);
     }
