@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Edytowanie sali'|trans }}{% endblock %}
-
+{% set main_title = 'Edytowanie sali' %}
 {% block main %}
-  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ 'Edytowanie sali'|trans }}</h2>
+
+  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
@@ -11,7 +10,10 @@
         {{ 'bx bx-arrow-back'|ico }}Katalog
       </a>
       <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}</button>
-      <button type="submit" name="delete" value="delete">{{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}</button>
+      <button type="submit" name="delete" value="delete"
+        onclick="return confirm('{{ 'Czy na pewno chcesz usunąć salę?'|trans }}')">
+        {{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}
+      </button>
     </div>
   {{ form_end(form) }}
 {% endblock %}

@@ -1,29 +1,31 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Edycja etykiety{% endblock %}
-
+{% set main_title = 'Edycja etykiety' %}
 {% block main %}
-    <h2 class="main-title">{{ 'bx bx-edit'|ico }}Edycja etykiety</h2>
 
-    {% if edit_mode != 'entity' %}
-        <p>Nazwa: {{ tag.name }}</p>
-        <p>Funkcja wyszukiwania: {{ tag.search ? 'Tak' : 'Nie' }}</p>
-        <p>Ograniczenie dostępu: {{ access_levels[tag.level] }}</p>
-    {% endif %}
+  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <p class="form-group button-row">
-            <a class="button" href="{{ path('tag_index') }}">
-                {{ 'bx bx-arrow-back'|ico }}Lista
-            </a>
-            <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}Zapisz</button>
-            {% if edit_mode == 'entity' %}
-                <button type="submit" name="delete" value="delete">{{ 'bx bx-trash'|ico }}Usuń</button>
-            {% endif %}
-        </p>
+  {% if edit_mode != 'entity' %}
+    <p>Nazwa: {{ tag.name }}</p>
+    <p>Funkcja wyszukiwania: {{ tag.search ? 'Tak' : 'Nie' }}</p>
+    <p>Ograniczenie dostępu: {{ access_levels[tag.level] }}</p>
+  {% endif %}
 
-    {{ form_end(form) }}
-    {{ include('jqslct2-load.html.twig') }}
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <p class="form-group button-row">
+      <a class="button" href="{{ path('tag_index') }}">
+        {{ 'bx bx-arrow-back'|ico }}Lista
+      </a>
+      <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}Zapisz</button>
+      {% if edit_mode == 'entity' %}
+        <button type="submit" name="delete" value="delete"
+          onclick="return confirm('{{ 'Czy na pewno chcesz usunąć etykietę?'|trans }}')">
+          {{ 'bx bx-trash'|ico }}Usuń
+        </button>
+      {% endif %}
+    </p>
+
+  {{ form_end(form) }}
+  {{ include('jqslct2-load.html.twig') }}
 
 {% endblock %}

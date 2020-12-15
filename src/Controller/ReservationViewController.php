@@ -88,8 +88,8 @@ class ReservationViewController extends AbstractController
     public function user()
     {
         return $this->render('main/redirect.html.twig', [
-            'title' => 'Rezerwacje użytkownika',
-            'content' => 'Under construction',
+            'main_title' => 'Rezerwacje użytkownika',
+            'main_content' => 'Under construction',
         ]);
     }
 }

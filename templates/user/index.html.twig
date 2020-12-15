@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Lista użytkowników'|trans }}{% endblock %}
-
+{% set main_title = 'Lista użytkowników' %}
 {% block main %}
-  <h2 class="main-title">{{ 'Lista użytkowników'|trans }}</h2>
+
+  <h2 class="main-title">{{ main_title|trans }}</h2>
   <ul>
   {% for user in users %}
     <li>
@@ -11,4 +10,5 @@
     </li>
   {% endfor %}
   </ul>
+  
 {% endblock %}

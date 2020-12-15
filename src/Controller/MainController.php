@@ -24,7 +24,10 @@ class MainController extends AbstractController
      */
     public function about(Request $request)
     {
-        return $this->render('main/about.html.twig');
+        return $this->render('main/about.html.twig', ['tech_stack' => [
+            'PHP '. PHP_VERSION,
+            'Symfony '. \Symfony\Component\HttpKernel\Kernel::VERSION,
+        ]]);
     }
 
     /**

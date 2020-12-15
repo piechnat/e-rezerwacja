@@ -11,6 +11,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use App\CustomTypes\UserLevel;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/room")
@@ -24,7 +26,7 @@ class RoomController extends AbstractController
     {
         return $this->render('room/index.html.twig', ['rooms' => $roomRepository->findAll()]);
     }
-    
+
     /**
      * @Route("/show", name="room_form_show")
      * @Route("/show/{id}", name="room_show")
@@ -56,6 +58,7 @@ class RoomController extends AbstractController
 
     /**
      * @Route("/add", name="room_add")
+     * @IsGranted(UserLevel::SUPER_ADMIN)
      */
     public function add(Request $request)
     {
@@ -70,12 +73,13 @@ class RoomController extends AbstractController
 
             return $this->redirectToRoute('room_show', ['id' => $room->getId()]);
         }
-        
+
         return $this->render('room/add.html.twig', ['form' => $form->createView()]);
     }
 
     /**
      * @Route("/edit/{id}", name="room_edit")
+     * @IsGranted(UserLevel::SUPER_ADMIN)
      */
     public function edit(Room $room, Request $request)
     {
@@ -90,12 +94,12 @@ class RoomController extends AbstractController
                 }
                 $em->flush();
 
-                return $this->redirectToRoute('room_index');
+                return $this->redirectToRoute('room_form_show');
             } catch (ForeignKeyConstraintViolationException $e) {
                 return $this->render('main/redirect.html.twig', [
                     'path' => 'room_edit',
                     'params' => ['id' => $room->getId()],
-                    'content' => 'Nie można usunąć sali, 
+                    'main_content' => 'Nie można usunąć sali, 
                         do której przyporządkowane są rezerwacje.',
                 ]);
             }

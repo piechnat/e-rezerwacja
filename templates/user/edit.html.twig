@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Edycja użytkownika'|trans }}{% endblock %}
-
+{% set main_title = 'Edycja użytkownika' %}
 {% block main %}
-  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ 'Edycja użytkownika'|trans }}</h2>
+
+  <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
@@ -16,4 +15,5 @@
     </div>
   {{ form_end(form) }}
   {{ include('jqslct2-load.html.twig') }}
+  
 {% endblock %}

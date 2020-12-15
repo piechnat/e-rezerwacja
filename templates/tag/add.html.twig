@@ -1,21 +1,20 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Dodawanie etykiety{% endblock %}
-
+{% set main_title = 'Dodawanie etykiety' %}
 {% block main %}
-    <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}Dodawanie etykiety</h2>
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <p class="form-group button-row">
-            <a class="button" href="{{ path('tag_index') }}">
-                {{ 'bx bx-arrow-back'|ico }}Lista
-            </a>
-            <button type="submit" name="send" value="send">
-                {{ 'bx bx-plus'|ico }}Dodaj
-            </button>
-        </p>
-    {{ form_end(form) }}
-    {{ include('jqslct2-load.html.twig') }}
+  <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ main_title|trans }}</h2>
+
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <p class="form-group button-row">
+      <a class="button" href="{{ path('tag_index') }}">
+        {{ 'bx bx-arrow-back'|ico }}Lista
+      </a>
+      <button type="submit" name="send" value="send">
+        {{ 'bx bx-plus'|ico }}Dodaj
+      </button>
+    </p>
+  {{ form_end(form) }}
+  {{ include('jqslct2-load.html.twig') }}
 
 {% endblock %}

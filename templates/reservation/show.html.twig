@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Rezerwacja'|trans }}{% endblock %}
-
+{% set main_title = 'Rezerwacja' %}
 {% block main %}
-  <h2 class="main-title">{{ 'bx bx-calendar-alt'|ico }}{{ 'Rezerwacja'|trans }}</h2>
+
+  <h2 class="main-title">{{ 'bx bx-calendar-alt'|ico }}{{ main_title|trans }}</h2>
   <p>Nazwa użytkownika: 
     <a href="{{ path('user_show', {id: rsvn.requester.id}) }}">{{ rsvn.requester.fullname }}</a>
   </p>
@@ -16,9 +15,23 @@
   <p>Termin rozpoczęcia: {{ rsvn.beginTime|date('d.m.Y H:i') }}</p>
   <p>Godzina zakończenia: {{ rsvn.endTime|date('H:i') }}</p>
   <p>Cel rezerwacji: {{ rsvn.details|default('Ćwiczenie')|trans }}</p>
-  <p class="form-group button-row">
-    <a class="button" href="{{ path('reservation_edit', {id: rsvn.id}) }}">
-      {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+  <div class="form-group button-row">
+    <a class="button" href="{{ 
+      path('reservation_view_week', {'id': rsvn.room.id, 'date': rsvn.beginTime|date('Y-m-d')}) }}">
+      {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
     </a>
-  </p>
+    {% if can_edit_rsvn %}
+      <a class="button" href="{{ path('reservation_edit', {id: rsvn.id}) }}">
+        {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+      </a>
+      <form action="{{ path('reservation_delete', { id: rsvn.id }) }}" method="post">
+        <input type="hidden" name="token" value="{{ csrf_token('reservation_delete') }}"/>
+        <button type="submit" name="delete" value="delete" class="button" 
+          onclick="return confirm('{{ 'Czy na pewno chcesz usunąć rezerwację?'|trans }}')">
+          {{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
 {% endblock %}

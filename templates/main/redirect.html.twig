@@ -1,21 +1,15 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}
-  {{ title|default('Wystąpił błąd')|trans }}
-{% endblock %}
-
+{% set main_title = main_title|default('Wystąpił błąd')|trans %}
 {% block main %}
-<div>
-    <h2 class="main-title">
-      {{ 'bx bx-info-circle'|ico }}{{ title|default('Wystąpił błąd')|trans }}
-    </h2>
-    <p>
-      {{ content|default('')|trans }}
+
+  <h2 class="main-title">{{ 'bx bx-info-circle'|ico }}{{ main_title|trans }}</h2>
+  <p>
+    {{ main_content|default('')|trans }}
+  </p>
+  <form action="{{ path(path|default('main'), params|default([])) }}">
+    <p class="form-group">
+      <button type="submit" />{{ 'bx bx-check'|ico }}OK</button>
     </p>
-    <form action="{{ path(path|default('main'), params|default([])) }}">
-      <p class="form-group">
-        <button type="submit" />{{ 'bx bx-check'|ico }}OK</button>
-      </p>
-    </form>
-</div>
+  </form>
+
 {% endblock %}

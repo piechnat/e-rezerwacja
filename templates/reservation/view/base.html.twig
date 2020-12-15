@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% set main_icon = 'bx bx-calendar-week' %}
 {% block main %}
 
 <style type="text/css">
@@ -122,12 +122,12 @@
 
 {% if table_view is null %}
 
-  <h2 class="main-title">{{ 'bx bx-calendar-week'|ico }}{{ block('title')|trans }}</h2>
+  <h2 class="main-title">{{ main_icon|ico }}{{ main_title|trans }}</h2>
   {{ block('table_view_form') }}
 
 {% elseif table_view.columns|length == 0 %}
 
-  <h2 class="main-title">{{ 'bx bx-calendar-week'|ico }}{{ block('title')|trans }}</h2>
+  <h2 class="main-title">{{ main_icon|ico }}{{ main_title|trans }}</h2>
   {{ block('table_view_form') }}
   <p>Nie znaleziono sal spełniających zadane kryteria.</p>
 

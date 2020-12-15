@@ -1,10 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Katalog sal'|trans }}{% endblock %}
-
+{% set main_title = 'Katalog sal' %}
 {% block main %}
 
-  <h2 class="main-title">{{ 'bx bx-folder-open'|ico }}{{ 'Katalog sal'|trans }}</h2>
+  <h2 class="main-title">{{ 'bx bx-folder-open'|ico }}{{ main_title|trans }}</h2>
 
   {{ form_start(form) }}
     <div class="form-group">
@@ -34,13 +32,16 @@
   </script>
 
   {% if not room is null %}
+    <p>Przyporządkowane etykiety: {{ room.tags|join(', ') }}</p>
     <p class="form-group button-row">
       <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
         {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
       </a>
+      {% if is_granted(constant('App\\CustomTypes\\UserLevel::SUPER_ADMIN')) %}
       <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
         {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
       </a>
+      {% endif %}
     </p>
   {% endif %}
 

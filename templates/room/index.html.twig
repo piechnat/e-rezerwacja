@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Indeks sali'|trans }}{% endblock %}
-
+{% set main_title = 'Indeks sali' %}
 {% block main %}
-  <h2 class="main-title">{{ 'Indeks sali'|trans }}</h2>
+
+  <h2 class="main-title">{{ main_title|trans }}</h2>
   <ul>
   {% for room in rooms %}
     <li>
@@ -11,4 +10,5 @@
     </li>
   {% endfor %}
   </ul>
+
 {% endblock %}

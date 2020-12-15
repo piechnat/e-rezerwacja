@@ -20,7 +20,7 @@ html, body {
   background-color: #fcfcfc;
   box-shadow: 0 0 4rem 0.05rem rgba(45,45,45,0.3);
 }
-body, select, input, button, textarea, a.button   {
+body, select, input, button, textarea, .button   {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: 'Work Sans', sans-serif;
@@ -134,18 +134,18 @@ i.bx {
 .logo-wrapper a:hover {
   text-decoration: none;
 }
+
 .form-group {
   margin: 0.83em 0;
 }
 .form-group > .form-group {
   margin: 0;
 }
-.form-group > select, .form-group > input, .form-group > button, .form-group > textarea, 
-.form-group > a.button {
+.form-group > select, .form-group > input, .form-group > button, .form-group > textarea, .button {
   margin: 0 0.83em 0 0;
 }
 .form-group > select:focus, .form-group > input:focus, .form-group > textarea:focus, 
-.form-group > button:focus, .form-group > a:focus, a.button:focus {
+.form-group > button:focus, .form-group > a:focus, .button:focus {
   outline: none;
 }
 .form-group > select, .form-group > input, .form-group > textarea {
@@ -156,11 +156,11 @@ i.bx {
   box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
   box-sizing: border-box;
 }
-.form-group > input, .form-group > select, .form-group > button, .form-group > a.button {
+.form-group > input, .form-group > select, .form-group > button, .button {
   min-height: 2.3em; /* bug in input type="date" line-height */
   width: auto;
 }
-.form-group > a.button {
+.button {
   line-height: 1.6; /* vertically centre text */
 }
 .form-group > input[type=time] {
@@ -179,14 +179,14 @@ i.bx {
   display: inline-block;
   margin-right: 0.5em;
 }
-.form-group > select:focus, .form-group > input:focus, .form-group > textarea:focus, a.button {
+.form-group > select:focus, .form-group > input:focus, .form-group > textarea:focus, .button {
   border: 1px solid #888;
   box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
 }
 .form-group > select, .form-group > button {
   appearance: none;
 }
-.form-group > button, a.button {
+.form-group > button, a.button, .button {
   font-size: 1em;
   padding: 0.3em 0.7em 0.3em 0.5em;
   border: 1px solid #ddd;
@@ -210,7 +210,7 @@ i.bx {
 .form-group > button[type=submit] {
   font-weight: 400;
 }
-.form-group > button:active, a.button:active {
+.form-group > button:active, .button:active {
   border: 1px solid #888;
   background: #eee;
   transform: translateY(0.05rem) translateX(0.05rem);
@@ -219,18 +219,22 @@ i.bx {
   -webkit-tap-highlight-color: transparent;
   transition: none;
 }
-.form-group > button:last-child, .form-group > a.button:last-child {
+.form-group > button:last-child, .form-group > .button:last-child {
   margin-right: 0;
 }
+
 ul.form-errors {
   color: red;
-  margin-top: 0;
+  margin: 0 0.83em 0.83em 0;
 }
 
-
-.button-row > button, .button-row > a.button {
+.button-row > * {
+  display: inline-block;
+}
+.button-row button, .button-row .button {
   margin: 0.6em 0.83em 0.6em 0;
 }
+
 .form-flex-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -238,6 +242,8 @@ ul.form-errors {
 .form-flex-wrapper .form-group {
   margin-top: 0;
 }
+
+/* SELECT2 RECONFIGURATION - BEGIN */
 
 .form-group > .select2 {
   margin: 0 0.83em 0 0;
@@ -269,3 +275,7 @@ ul.form-errors {
 .select2-selection--single {
   height: auto !important;
 }
+.select2-container .select2-search--inline input.select2-search__field {
+  border: 1px solid transparent;
+}
+/* SELECT2 RECONFIGURATION - END */

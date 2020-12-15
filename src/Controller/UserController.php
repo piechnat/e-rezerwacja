@@ -59,7 +59,7 @@ class UserController extends AbstractController
         return $this->render('user/show.html.twig', [
             'user' => $user,
             'lang' => Lang::getValue($user->getLang()),
-            'can_modify' => $this->canModify($user),
+            'can_edit_user' => $this->canEditUser($user),
             'userFullname' => $user->getFullname(),
             'form' => $form->createView(),
         ]);
@@ -74,7 +74,7 @@ class UserController extends AbstractController
         if (!$user) {
             $user = $this->getUser();
         }
-        if (!$this->canModify($user)) {
+        if (!$this->canEditUser($user)) {
             throw $this->createAccessDeniedException();
         }
         $formOptions = [];
@@ -97,7 +97,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    private function canModify(User $user): bool
+    private function canEditUser(User $user): bool
     {
         if ($this->getUser()->getId() === $user->getId()) {
             return true;

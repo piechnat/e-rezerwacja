@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ main_title|trans }}{% endblock %}
-
 {% block main %}
+
   <h2 class="main-title">{{ main_icon|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -26,4 +24,5 @@
     </div>
   {{ form_end(form) }}
   {{ include('jqslct2-load.html.twig') }}
+
 {% endblock %}

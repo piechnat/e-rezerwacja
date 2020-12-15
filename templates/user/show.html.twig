@@ -1,10 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Profil użytkownika'|trans }}{% endblock %}
-
+{% set main_title = 'Profil użytkownika' %}
 {% block main %}
 
-  <h2 class="main-title">{{ 'bx bx-id-card'|ico }}{{ 'Profil użytkownika'|trans }}</h2>
+  <h2 class="main-title">{{ 'bx bx-id-card'|ico }}{{ main_title|trans }}</h2>
 
   {{ form_start(form) }}
     <div class="form-group">
@@ -33,7 +31,7 @@
     <a class="button" href="{{ path('reservation_view_user') }}">
       {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
     </a>
-    {% if can_modify %}
+    {% if can_edit_user %}
       <a class="button" href="{{ path('user_edit', {id: user.id}) }}">
         {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
       </a>

@@ -37,7 +37,32 @@ class ReservationController extends AbstractController
      */
     public function show(Reservation $rsvn)
     {
-        return $this->render('reservation/show.html.twig', ['rsvn' => $rsvn]);
+        return $this->render('reservation/show.html.twig', [
+            'rsvn' => $rsvn,
+            'can_edit_rsvn' => $this->canEditRsvn($rsvn),
+        ]);
+    }
+
+    /**
+     * @Route("/reservation/delete/{id}", name="reservation_delete")
+     */
+    public function delete(Reservation $rsvn, Request $request)
+    {
+        if (
+            $this->canEditRsvn($rsvn) &&
+            $this->isCsrfTokenValid('reservation_delete', $request->request->get('token'))
+        ) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($rsvn);
+            $em->flush();
+
+            return $this->redirectToRoute('reservation_view_week', [
+                'id' => $rsvn->getRoom()->getId(),
+                'date' => $rsvn->getBeginTime()->format('Y-m-d'),
+            ]);
+        }
+
+        throw $this->createAccessDeniedException();
     }
 
     /**
@@ -63,8 +88,10 @@ class ReservationController extends AbstractController
             $rsvn->setRoom($room);
             $rsvn->setBeginTime($beginTime);
             $rsvn->setEndTime($endTime);
-        } elseif (!$actionAdd && null === $rsvn) {
+        } elseif (null === $rsvn) {
             throw $this->createNotFoundException();
+        } elseif (false === $this->canEditRsvn($rsvn)) {
+            throw $this->createAccessDeniedException();
         }
         $formSendRequest = false;
         $formOptions = ['modify_requester' => $this->isGranted(UserLevel::ADMIN)];
@@ -113,8 +140,8 @@ class ReservationController extends AbstractController
                 } else {
                     return $this->render('main/redirect.html.twig', [
                         'path' => 'reservation_add',
-                        'title' => 'Under construction',
-                        'content' => 'Send request confirmation screen',
+                        'main_title' => 'Under construction',
+                        'main_content' => 'Send request confirmation screen',
                     ]);
                 }
             }
@@ -134,8 +161,8 @@ class ReservationController extends AbstractController
     public function requests()
     {
         return $this->render('main/redirect.html.twig', [
-            'title' => 'Żądania rezerwacji',
-            'content' => 'Under construction',
+            'main_title' => 'Żądania rezerwacji',
+            'main_content' => 'Under construction',
         ]);
     }
 
@@ -145,8 +172,17 @@ class ReservationController extends AbstractController
     public function constraints()
     {
         return $this->render('main/redirect.html.twig', [
-            'title' => 'Ograniczenia rezerwacji',
-            'content' => 'Under construction',
+            'main_title' => 'Ograniczenia rezerwacji',
+            'main_content' => 'Under construction',
         ]);
+    }
+
+    private function canEditRsvn(Reservation $rsvn): bool
+    {
+        if ($this->getUser()->getId() === $rsvn->getRequester()->getId()) {
+            return true;
+        }
+
+        return $this->isGranted(UserLevel::ADMIN);
     }
 }

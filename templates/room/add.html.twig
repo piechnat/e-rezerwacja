@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ 'Dodawanie sali'|trans }}{% endblock %}
-
+{% set main_title = 'Dodawanie sali' %}
 {% block main %}
-  <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ 'Dodawanie sali'|trans }}</h2>
+
+  <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="form-group button-row">
@@ -12,5 +11,6 @@
       </button>
     </div>
   {{ form_end(form) }}
+
 {% endblock %}
 

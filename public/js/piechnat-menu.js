@@ -50,6 +50,17 @@ addEventListener('DOMContentLoaded', () => {
             node.style.height = node.scrollHeight + 'px';
             node.parentNode.classList.remove(CLOSE);
             openMenus[index] = 1;
+/**************************************************************************************************/
+            // close sibling nodes
+            $$('li > ul', node.parentNode.parentNode).forEach(elm => {
+              if (elm !== node) {
+                elm.style.height = elm.getBoundingClientRect().height + 'px';
+                elm.parentNode.classList.add(CLOSE);
+                forceReflowJS(elm);
+                elm.style.height = '';
+              }
+            });
+/**************************************************************************************************/
           } else {
             node.style.height = node.getBoundingClientRect().height + 'px';
             node.parentNode.classList.add(CLOSE);
