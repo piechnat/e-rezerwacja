@@ -1,16 +1,27 @@
 {% extends 'base.html.twig' %}
+{% if action_add %}
+  {% set main_title = 'Dodawanie rezerwacji' %}
+  {% set main_icon = 'bx bx-calendar-plus' %}
+{% else %}
+  {% set main_title = 'Edycja rezerwacji' %}
+  {% set main_icon = 'bx bx-calendar-edit' %}
+{% endif %}
 {% block main %}
 
   <h2 class="main-title">{{ main_icon|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
     {{ form_errors(form) }}
     {% if form.requester is defined %}
-      {{ form_row(form.requester) }}
+      {{ form_row(form.requester, {attr: {class: 'jqslct2-single-user'}}) }}
     {% endif %}
-    {{ form_row(form.room) }}
-    {{ form_row(form.begin_time) }}
+    {{ form_row(form.room, {attr: {size: 12}}) }}
+    {{ form_row(form.begin_time, {attr: {class: 'form-group'}}) }}
     {{ form_row(form.end_time) }}
-    {{ form_row(form.details, {attr: {required: send_request}}) }}
+    {{ form_row(form.details, {attr: {
+      required: send_request, 
+      style: 'width: 99%', 
+      placeholder: 'Ćwiczenie'
+    }}) }}
     {% if send_request %}
     <div class="form-group">
       <input type="checkbox" id="reservation_send_request" name="reservation[send_request]" required="required" value="1" />
@@ -18,6 +29,11 @@
     </div>
     {% endif %}
     <div class="form-group button-row">
+      {% if not action_add %}
+        <a class="button" href="{{ path('reservation_show', {id: rsvn.id}) }}">
+          {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
+        </a>
+      {% endif %}
       <button type="submit" name="send" value="send">
         {{ 'bx bx-upload'|ico }}{{ 'Wyślij'|trans }}
       </button>

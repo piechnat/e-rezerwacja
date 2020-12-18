@@ -1,9 +1,9 @@
 FUNKCJE:
-- wczytywanie sal przez AJAX
-- rozwiązać kwestię tytułów stron
 - zapamiętanie ostanich tagów wyszukiwania, ostatniej sali, ostatniego dnia
-- select2: zwiększanie height po wybraniu opcji w multiple
-- sprawdzić róznice między: Select2, selectize.js, Chosen
+- wczytywanie sal przez AJAX
+- rezerwacje użykownika
+- ogranicznia
+- żądania
 
 a) Rezerwacja sal
 - możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 

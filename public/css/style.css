@@ -156,6 +156,11 @@ i.bx {
   box-shadow: 0 0 0.3rem 0.05rem rgba(85,85,85,0.2);
   box-sizing: border-box;
 }
+.form-group > textarea {
+  min-height: 3em;
+  min-width: 10em;
+  max-width: 99%;
+}
 .form-group > input, .form-group > select, .form-group > button, .button {
   min-height: 2.3em; /* bug in input type="date" line-height */
   width: auto;
@@ -244,18 +249,21 @@ ul.form-errors {
 }
 
 /* SELECT2 RECONFIGURATION - BEGIN */
-
-.form-group > .select2 {
-  margin: 0 0.83em 0 0;
-}
+/*
 .jqslct2-multiple-select + .select2-container {
   width: 99%;
 }
+*/
+
 .select2-container {
   max-width: 99%;
 }
-.select2-dropdown, .select2-container {
+.jqslct2-min-width .select2-dropdown, .jqslct2-min-width .select2-container {
   min-width: 10em;
+}
+
+.form-group > .select2 {
+  margin: 0 0.83em 0 0;
 }
 .select2-results__options {
   overflow-x: hidden;
@@ -277,5 +285,8 @@ ul.form-errors {
 }
 .select2-container .select2-search--inline input.select2-search__field {
   border: 1px solid transparent;
+}
+.select2-container--default .select2-selection--single span.select2-selection__rendered {
+  color: #000;
 }
 /* SELECT2 RECONFIGURATION - END */

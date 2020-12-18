@@ -18,27 +18,23 @@ class TagType extends AbstractType
             $builder
                 ->add('name', null, [
                     'label' => 'Nazwa',
-                    'attr' => ['maxlength' => 32],
                 ])
                 ->add('search', null, ['label' => 'Funkcja wyszukiwania'])
                 ->add('level', ChoiceType::class, [
                     'choices' => $choices,
                     'label' => 'Ograniczenie dostępu do poziomu',
-                    //'attr' => ['class' => 'jqslct2-single-select'],
                 ])
             ;
         }
         if ('rooms' === $options['edit_mode']) {
             $builder->add('rooms', null, [
                 'label' => 'Przyporządkowane sale',
-                'attr' => ['class' => 'jqslct2-multiple-select'],
             ]);
         }
         if ('users' === $options['edit_mode']) {
             $builder->add('users', null, [
                 'choice_label' => 'title',
                 'label' => 'Przyporządkowani użytkownicy',
-                'attr' => ['class' => 'jqslct2-multiple-select'],
             ]);
         }
     }

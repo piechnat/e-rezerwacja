@@ -4,16 +4,21 @@
 
   <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.title, {attr: {maxlength: 32}}) }}
+    {{ form_row(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
     <div class="form-group button-row">
       <a class="button" href="{{ path('room_show', {id: room.id}) }}">
-        {{ 'bx bx-arrow-back'|ico }}Katalog
+        {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
       </a>
-      <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}</button>
-      <button type="submit" name="delete" value="delete"
-        onclick="return confirm('{{ 'Czy na pewno chcesz usunąć salę?'|trans }}')">
-        {{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}
+      <button type="submit" name="save" value="save">
+        {{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}
       </button>
     </div>
   {{ form_end(form) }}
+  <script>
+    $('select.jqslct2-multiple-select').select2({
+      width: '99%',
+    });
+  </script>
+  
 {% endblock %}

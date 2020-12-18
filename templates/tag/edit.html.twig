@@ -11,21 +11,42 @@
   {% endif %}
 
   {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {% if edit_mode == 'entity' %}
+      {{ form_row(form.name) }}
+      {{ form_row(form.search) }}
+      {{ form_row(form.level, {attr: {class: 'jqslct2-single-select'}}) }}
+    {% elseif edit_mode == 'rooms' %}
+      {{ form_row(form.rooms, {attr: {class: 'jqslct2-multiple-select-no-close'}}) }}
+    {% elseif edit_mode == 'users' %}
+      {{ form_row(form.users, {attr: {class: 'jqslct2-multiple-select-no-close'}}) }}
+    {% endif %}
     <p class="form-group button-row">
       <a class="button" href="{{ path('tag_index') }}">
-        {{ 'bx bx-arrow-back'|ico }}Lista
+        {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
       </a>
-      <button type="submit" name="save" value="save">{{ 'bx bx-save'|ico }}Zapisz</button>
+      <button type="submit" name="save" value="save">
+        {{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}
+      </button>
       {% if edit_mode == 'entity' %}
         <button type="submit" name="delete" value="delete"
           onclick="return confirm('{{ 'Czy na pewno chcesz usunąć etykietę?'|trans }}')">
-          {{ 'bx bx-trash'|ico }}Usuń
+          {{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}
         </button>
       {% endif %}
     </p>
-
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
+  <script>
+  {% if edit_mode == 'entity' %}
+    $('select.jqslct2-single-select').select2({
+      minimumResultsForSearch: Infinity, 
+      width: '10em',
+    });
+  {% else %}
+    $('select.jqslct2-multiple-select-no-close').select2({
+      closeOnSelect: false,
+      width: '99%',
+    });
+  {% endif %}
+  </script>
 
 {% endblock %}

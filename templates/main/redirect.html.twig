@@ -6,9 +6,10 @@
   <p>
     {{ main_content|default('')|trans }}
   </p>
+  {% if no_trans_msg is defined %}<p>{{ no_trans_msg }}</p>{% endif %}
   <form action="{{ path(path|default('main'), params|default([])) }}">
     <p class="form-group">
-      <button type="submit" />{{ 'bx bx-check'|ico }}OK</button>
+      <button type="submit">{{ 'bx bx-check'|ico }}OK</button>
     </p>
   </form>
 

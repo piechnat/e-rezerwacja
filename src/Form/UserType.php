@@ -36,13 +36,15 @@ class UserType extends AbstractType
             'label' => 'Nazwa wyświetlana',
             'constraints' => new Length(['min' => 3]),
         ]);
-        if (count($options['access_names']) > 0) {
+        if ($options['admin_edit']) {
             $builder->add('access', ChoiceType::class, [
                 'choices' => $options['access_names'],
                 'label' => 'Typ konta',
                 'expanded' => false,
                 'multiple' => false,
-                'attr' => ['class' => 'jqslct2-single-select'],
+            ])->add('tags', null, [
+                'by_reference' => false,
+                'label' => 'Nadane etykiety',
             ]);
         }
     }
@@ -51,6 +53,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'admin_edit' => false,
             'access_names' => [],
             'constraints' => [new Assert\Callback([$this, 'validateUserLevel'])],
         ]);

@@ -5,44 +5,52 @@
   <h2 class="main-title">{{ 'bx bx-folder-open'|ico }}{{ main_title|trans }}</h2>
 
   {{ form_start(form) }}
-    <div class="form-group">
+    <div class="form-group jqslct2-min-width">
       {{ form_label(form.room) }}
       {{ form_errors(form.room) }}
-      {{ form_widget(form.room) }}
-      <button id="jqslct2-submit" type="submit">
-        {{ 'bx bx-refresh'|ico }}OK
-      </button>
+      {{ form_widget(form.room, {attr: {class: 'jqslct2-single-select'}}) }}
+      <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
     </div>
   {{ form_end(form) }}
-
   <script>
-    $('select.jqslct2-single-select').select2({
-      minimumInputLength: 1, 
+    var roomList = $('select.jqslct2-single-select');
+    roomList.select2({
       width: 'style',
-      matcher: function(params, data) {
-        return new RegExp(params.term, 'i').test(data.text) ? data : null;
-      },
       placeholder: { id: '', text: '\u200B' },
     });
     $('#jqslct2-submit').hide();
-    $('select.jqslct2-single-select').change(function() {
+    roomList.change(function() {
       $(this.form).submit();
       $(this).prop('disabled', true);
+    });
+    $(window).on('load', function() {
+      if (!roomList.select2('data')[0].id) {
+        roomList.select2('open');
+      }
     });
   </script>
 
   {% if not room is null %}
-    <p>Przyporządkowane etykiety: {{ room.tags|join(', ') }}</p>
-    <p class="form-group button-row">
+    <p>{{ 'Nadane etykiety'|trans }}: {{ room.tags|join(', ')|default('żadne')|trans }}</p>
+    <div class="form-group button-row">
       <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
         {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
       </a>
-      {% if is_granted(constant('App\\CustomTypes\\UserLevel::SUPER_ADMIN')) %}
-      <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
-        {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
-      </a>
+      {% if is_granted(constant('App\\CustomTypes\\UserLevel::ADMIN')) %}
+        <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
+          {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+        </a>
       {% endif %}
-    </p>
+      {% if is_granted(constant('App\\CustomTypes\\UserLevel::SUPER_ADMIN')) %}
+        <form action="{{ path('room_delete', { id: room.id }) }}" method="post">
+          <input type="hidden" name="token" value="{{ csrf_token('room_delete') }}"/>
+          <button type="submit" class="button" 
+            onclick="return confirm('{{ 'Czy na pewno chcesz usunąć salę?'|trans }}')">
+            {{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}
+          </button>
+        </form>
+      {% endif %}
+    </div>
   {% endif %}
 
 {% endblock %}

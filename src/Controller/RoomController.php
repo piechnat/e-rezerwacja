@@ -2,17 +2,18 @@
 
 namespace App\Controller;
 
+use App\CustomTypes\UserLevel;
 use App\Entity\Room;
 use App\Form\RoomToTitleTransformer;
 use App\Form\RoomType;
 use App\Repository\RoomRepository;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use App\CustomTypes\UserLevel;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/room")
@@ -40,14 +41,13 @@ class RoomController extends AbstractController
                 'data' => $room,
                 'label' => 'Nazwa sali',
                 'placeholder' => "\u{200B}",
-                'attr' => ['class' => 'jqslct2-single-select'],
             ])
         ;
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $room = $form->get('room')->getData();
+            $room = $form->getData()['room'];
         }
 
         return $this->render('room/show.html.twig', [
@@ -62,16 +62,31 @@ class RoomController extends AbstractController
      */
     public function add(Request $request)
     {
-        $form = $this->createForm(RoomType::class);
+        $form = $this->createForm(RoomType::class, null, [
+            'route_name' => 'room_add',
+            'data_class' => null,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $room = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($room);
-            $em->flush();
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $titles = array_filter(
+                    array_map('trim', explode("\n", $form->getData()['titles']))
+                );
+                foreach ($titles as $title) {
+                    $em->persist(new Room($title));
+                }
+                $em->flush();
 
-            return $this->redirectToRoute('room_show', ['id' => $room->getId()]);
+                return $this->redirectToRoute('room_form_show');
+            } catch (UniqueConstraintViolationException $e) {
+                return $this->render('main/redirect.html.twig', [
+                    'path' => 'room_add',
+                    'main_content' => 'Jedna z podanych nazw już istnieje.',
+                    'no_trans_msg' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $this->render('room/add.html.twig', ['form' => $form->createView()]);
@@ -79,35 +94,48 @@ class RoomController extends AbstractController
 
     /**
      * @Route("/edit/{id}", name="room_edit")
-     * @IsGranted(UserLevel::SUPER_ADMIN)
+     * @IsGranted(UserLevel::ADMIN)
      */
     public function edit(Room $room, Request $request)
     {
-        $form = $this->createForm(RoomType::class, $room);
+        $form = $this->createForm(RoomType::class, $room, ['route_name' => 'room_edit']);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $em = $this->getDoctrine()->getManager();
-                if ('delete' === $request->get('delete')) {
-                    $em->remove($room);
-                }
-                $em->flush();
+            $this->getDoctrine()->getManager()->flush();
 
-                return $this->redirectToRoute('room_form_show');
-            } catch (ForeignKeyConstraintViolationException $e) {
-                return $this->render('main/redirect.html.twig', [
-                    'path' => 'room_edit',
-                    'params' => ['id' => $room->getId()],
-                    'main_content' => 'Nie można usunąć sali, 
-                        do której przyporządkowane są rezerwacje.',
-                ]);
-            }
+            return $this->redirectToRoute('room_show', ['id' => $room->getId()]);
         }
 
         return $this->render('room/edit.html.twig', [
             'form' => $form->createView(),
             'room' => $room,
         ]);
+    }
+
+    /**
+     * @Route("/delete/{id}", name="room_delete")
+     * @IsGranted(UserLevel::SUPER_ADMIN)
+     */
+    public function delete(Room $room, Request $request)
+    {
+        if ($this->isCsrfTokenValid('room_delete', $request->request->get('token'))) {
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($room);
+                $em->flush();
+
+                return $this->redirectToRoute('room_form_show');
+            } catch (ForeignKeyConstraintViolationException $e) {
+                return $this->render('main/redirect.html.twig', [
+                    'path' => 'room_show',
+                    'params' => ['id' => $room->getId()],
+                    'main_content' => 'Nie można usunąć sali, '.
+                        'do której przyporządkowane są rezerwacje.',
+                ]);
+            }
+        }
+
+        throw $this->createAccessDeniedException();
     }
 }

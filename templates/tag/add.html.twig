@@ -5,16 +5,23 @@
   <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ main_title|trans }}</h2>
 
   {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.search) }}
+    {{ form_row(form.level, {attr: {class: 'jqslct2-single-select'}}) }}
     <p class="form-group button-row">
       <a class="button" href="{{ path('tag_index') }}">
-        {{ 'bx bx-arrow-back'|ico }}Lista
+        {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
       </a>
-      <button type="submit" name="send" value="send">
-        {{ 'bx bx-plus'|ico }}Dodaj
+      <button type="submit">
+        {{ 'bx bx-plus'|ico }}{{ 'Dodaj'|trans }}
       </button>
     </p>
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
+  <script>
+    $('select.jqslct2-single-select').select2({
+      minimumResultsForSearch: Infinity, 
+      width: '10em',
+    });
+  </script>
 
 {% endblock %}

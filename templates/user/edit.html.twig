@@ -4,16 +4,32 @@
 
   <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.fullname) }}
+    {% if form.access is defined %}
+      {{ form_row(form.access, {attr: {class: 'jqslct2-single-select'}}) }}
+      <script>
+        $('select.jqslct2-single-select').select2({
+          minimumResultsForSearch: Infinity, 
+          width: '10em',
+        });
+      </script>
+    {% endif %}
+    {% if form.tags is defined %}
+      {{ form_row(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
+      <script>
+        $('select.jqslct2-multiple-select').select2({
+          width: '99%',
+        });
+      </script>
+    {% endif %}
     <div class="form-group button-row">
       <a class="button" href="{{ path('user_show', {id: user.id}) }}">
-        {{ 'bx bx-arrow-back'|ico }}Profil
+        {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
       </a>
       <button type="submit" name="save" value="save">
         {{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}
       </button>
     </div>
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
   
 {% endblock %}

@@ -5,15 +5,13 @@
 
   {{ form_start(form) }}
     <div class="form-flex-wrapper">
-      {{ form_row(form.room) }}
+      {{ form_row(form.room, {attr: {size: 12}}) }}
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
-        <button type="submit">
-          {{ 'bx bx-refresh'|ico }}OK
-        </button>
+        <button type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
       {% endapply %}
       </div>
     </div>

@@ -43,17 +43,13 @@ class UserController extends AbstractController
                 'data' => $user,
                 'data_class' => null,
                 'label' => 'Pełna nazwa',
-                'attr' => [
-                    'class' => 'jqslct2-single-user',
-                    'style' => 'min-width: 15em',
-                ],
             ]);
         $builder->get('email')->addModelTransformer($userToEmail);
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->get('email')->getData();
+            $user = $form->getData()['email'];
         }
 
         return $this->render('user/show.html.twig', [
@@ -78,10 +74,9 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $formOptions = [];
-        if ($this->isGranted(UserLevel::ADMIN)) {
-            $formOptions['access_names'] = array_flip(UserLevel::getValues());
-            array_splice($formOptions['access_names'], $this->getUser()->getAccessLevel() + 1);
-        }
+        $formOptions['admin_edit'] = $this->isGranted(UserLevel::ADMIN);
+        $formOptions['access_names'] = array_flip(UserLevel::getValues());
+        array_splice($formOptions['access_names'], $this->getUser()->getAccessLevel() + 1);
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
 

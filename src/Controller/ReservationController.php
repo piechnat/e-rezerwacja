@@ -148,8 +148,8 @@ class ReservationController extends AbstractController
         }
 
         return $this->render('reservation/add-edit.html.twig', [
-            'main_title' => ($actionAdd ? 'Dodawanie' : 'Edycja').' rezerwacji',
-            'main_icon' => ($actionAdd ? 'bx bx-calendar-plus' : 'bx bx-calendar-edit'),
+            'rsvn' => $rsvn,
+            'action_add' => $actionAdd,
             'form' => $form->createView(),
             'send_request' => $formSendRequest,
         ]);

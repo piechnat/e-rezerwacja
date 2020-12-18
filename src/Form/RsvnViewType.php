@@ -34,7 +34,6 @@ class RsvnViewType extends AbstractType
         if ($options['route_name'] === 'reservation_view_week') {
             $builder->add('room', TextType::class, [
                 'label' => 'Sala',
-                'attr' => ['size' => 12],
             ])
             ->get('room')->addModelTransformer($this->roomToTitle);
         }
@@ -45,7 +44,6 @@ class RsvnViewType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => false,
-                'attr' => ['class' => 'jqslct2-multiple-select'],
                 'query_builder' => function (TagRepository $e) {
                     return $e->createQueryBuilder('t')->where('t.search = 1');
                 },
@@ -55,7 +53,6 @@ class RsvnViewType extends AbstractType
                 'choices' => ['Wszystkie' => 1, 'Dowolne' => 0],
                 'expanded' => false,
                 'multiple' => false,
-                //'attr' => ['class' => 'jqslct2-single-select'],
             ]);
         }
         $builder->add('date', DateType::class, [

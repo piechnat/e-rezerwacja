@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
-{% set main_title = 'Dodawanie sali' %}
+{% set main_title = 'Dodawanie sal' %}
 {% block main %}
 
   <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.titles, {attr: {style: 'width: 20em; height: 10em;'}}) }}
     <div class="form-group button-row">
-      <button type="submit" name="save" value="save">
+      <button type="submit">
         {{ 'bx bx-plus'|ico }}{{ 'Dodaj'|trans }}
       </button>
     </div>

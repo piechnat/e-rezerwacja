@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Entity\Room;
+use App\Entity\Tag;
 use App\Form\RsvnViewType;
 use App\Repository\ReservationRepository;
 use DateTimeImmutable;
@@ -34,8 +35,9 @@ class ReservationViewController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $room = $form->get('room')->getData();
-            $date = $form->get('date')->getData();
+            $formData = $form->getData();
+            $room = $formData['room'];
+            $date = $formData['date'];
         } elseif ($room) {
             $form->get('room')->setData($room);
         }
@@ -65,15 +67,12 @@ class ReservationViewController extends AbstractController
 
         $tableView = null;
         if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
             $tagIds = [];
-            foreach ($form->get('tags')->getData()->getValues() as $tag) {
+            foreach ($formData['tags'] as $tag) {
                 $tagIds[] = $tag->getId();
             }
-            $tableView = $rsvnRepo->getDayTable(
-                $form->get('date')->getData(),
-                $tagIds,
-                $form->get('operation')->getData()
-            );
+            $tableView = $rsvnRepo->getDayTable($formData['date'], $tagIds, $formData['operation']);
         }
 
         return $this->render('reservation/view/day.html.twig', [

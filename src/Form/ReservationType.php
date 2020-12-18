@@ -59,11 +59,7 @@ class ReservationType extends AbstractType
             $builder
                 ->add('requester', TextType::class, [
                     'label' => 'Użytkownik',
-                    'attr' => [
-                        'class' => 'jqslct2-single-user',
-                        'style' => 'min-width: 15em',
-                        'data-text' => $fullname,
-                    ],
+                    'attr' => ['data-text' => $fullname],
                 ])
                 ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($user) {
                     // modify data-text attribute if the requester has changed
@@ -85,14 +81,12 @@ class ReservationType extends AbstractType
         $builder
             ->add('room', TextType::class, [
                 'label' => 'Sala',
-                'attr' => ['size' => 12],
             ])
             ->add('begin_time', DateTimeType::class, [
                 'input' => 'datetime_immutable',
                 'label' => 'Termin rozpoczęcia',
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'attr' => ['class' => 'form-group'],
                 'date_attr' => ['min' => $now->format('Y-m-d')],
             ])
             ->add('end_time', TimeType::class, [
@@ -102,7 +96,6 @@ class ReservationType extends AbstractType
             ])
             ->add('details', TextareaType::class, [
                 'required' => false,
-                'attr' => ['style' => 'width: 99%', 'placeholder' => 'Ćwiczenie'],
                 'label' => 'Cel rezerwacji',
             ])
             ->get('room')->addModelTransformer($this->roomToTitle);

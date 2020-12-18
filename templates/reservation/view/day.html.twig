@@ -8,22 +8,28 @@
       <div class="form-group" style="flex-basis: 100%">
         {{ form_label(form.tags) }}
         {{ form_errors(form.tags) }}
-        {{ form_widget(form.tags) }}
+        {{ form_widget(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
       </div>
-      {{ form_row(form.operation) }}
+      {{ form_row(form.operation, {attr: {class: 'jqslct2-single-select'}}) }}
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
-        <button type="submit">
-          {{ 'bx bx-refresh'|ico }}OK
-        </button>
+        <button type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
       {% endapply %}
       </div>
     </div>
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
+  <script>
+    $('select.jqslct2-multiple-select').select2({
+      width: '99%',
+    });
+    $('select.jqslct2-single-select').select2({
+      minimumResultsForSearch: Infinity, 
+      width: 'style',
+    });
+  </script>
 
 {% endblock %}
 

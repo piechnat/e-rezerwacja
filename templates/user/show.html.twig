@@ -8,10 +8,10 @@
     <div class="form-group">
       {{ form_label(form.email) }}
       {{ form_errors(form.email) }}
-      {{ form_widget(form.email, {'attr': {'data-text': userFullname}}) }}
-      <button id="jqslct2-submit" type="submit">
-        {{ 'bx bx-refresh'|ico }}OK
-      </button>
+      {{ form_widget(form.email, {'attr': {
+        class: 'jqslct2-single-user', 'data-text': userFullname,
+      }}) }}
+      <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
     </div>
   {{ form_end(form) }}
   {{ include('jqslct2-load.html.twig') }}
@@ -23,9 +23,10 @@
     });
   </script>
 
-  <p>Typ konta: {{ user.accessname|trans }}</p>
-  <p>Adres e-mail: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
-  <p>Język: {{ lang|trans }}</p>
+  <p>{{ 'Typ konta'|trans }}: {{ user.accessname|trans }}</p>
+  <p>{{ 'Adres e-mail'|trans }}: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+  <p>{{ 'Język'|trans }}: {{ lang|trans }}</p>
+  <p>{{ 'Nadane etykiety'|trans }}: {{ user.tags|join(', ')|default('żadne')|trans }}</p>
 
   <p class="form-group button-row">
     <a class="button" href="{{ path('reservation_view_user') }}">
