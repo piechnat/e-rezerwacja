@@ -44,7 +44,7 @@ class UserType extends AbstractType
                 'multiple' => false,
             ])->add('tags', null, [
                 'by_reference' => false,
-                'label' => 'Nadane etykiety',
+                'label' => 'Etykiety',
             ]);
         }
     }

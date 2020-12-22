@@ -24,7 +24,7 @@ class RoomType extends AbstractType
                 ->add('title', TextType::class, ['label' => 'Nazwa sali'])
                 ->add('tags', null, [
                     'by_reference' => false,
-                    'label' => 'Nadane etykiety',
+                    'label' => 'Etykiety',
                 ]);
         }
     }

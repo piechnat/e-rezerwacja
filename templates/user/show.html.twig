@@ -25,8 +25,17 @@
 
   <p>{{ 'Typ konta'|trans }}: {{ user.accessname|trans }}</p>
   <p>{{ 'Adres e-mail'|trans }}: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+  <div class="tag-list">
+    {{ 'Etykiety'|trans }}:
+    <ul>
+    {% for tag in user.tags %}
+      <li>{{ tag|trans }}</li>
+    {% else %}
+      <li>{{ 'żadne'|trans }}</li>
+    {% endfor %}
+    </ul>
+  </div>
   <p>{{ 'Język'|trans }}: {{ lang|trans }}</p>
-  <p>{{ 'Nadane etykiety'|trans }}: {{ user.tags|join(', ')|default('żadne')|trans }}</p>
 
   <p class="form-group button-row">
     <a class="button" href="{{ path('reservation_view_user') }}">
@@ -34,7 +43,7 @@
     </a>
     {% if can_edit_user %}
       <a class="button" href="{{ path('user_edit', {id: user.id}) }}">
-        {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+        {{ 'bx bx-edit'|ico }}{{ 'Edytuj profil'|trans }}
       </a>
     {% endif %}
     {% if is_granted('IS_IMPERSONATOR') %}

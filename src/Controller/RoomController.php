@@ -32,7 +32,7 @@ class RoomController extends AbstractController
      * @Route("/show", name="room_form_show")
      * @Route("/show/{id}", name="room_show")
      */
-    public function show(Room $room = null, Request $request, RoomToTitleTransformer $roomToTitle)
+    public function show(Room $room = null, Request $request, RoomRepository $roomRepo)
     {
         $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
         $builder->setAction($this->generateUrl('room_form_show'))->setMethod('GET')
@@ -50,6 +50,17 @@ class RoomController extends AbstractController
             $room = $form->getData()['room'];
         }
 
+        if (null !== $room) {
+            $request->getSession()->set('last_room_id', $room->getId());
+        } else {
+            $last_room_id = $request->getSession()->get('last_room_id');
+            if ($last_room_id && !$form->isSubmitted()) {
+                $options = $form->get('room')->getConfig()->getOptions();
+                $options['data'] = $room = $roomRepo->find($last_room_id);
+                $form->add('room', EntityType::class, $options);
+            }
+        }
+        
         return $this->render('room/show.html.twig', [
             'room' => $room,
             'form' => $form->createView(),

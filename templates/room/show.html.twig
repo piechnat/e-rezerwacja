@@ -31,14 +31,26 @@
   </script>
 
   {% if not room is null %}
-    <p>{{ 'Nadane etykiety'|trans }}: {{ room.tags|join(', ')|default('żadne')|trans }}</p>
+    <div class="tag-list">
+      {{ 'Etykiety'|trans }}:
+      <ul>
+      {% for tag in room.tags %}
+        <li>{{ tag|trans }}</li>
+      {% else %}
+        <li>{{ 'żadne'|trans }}</li>
+      {% endfor %}
+      </ul>
+    </div>
     <div class="form-group button-row">
       <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
         {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
       </a>
+      <a class="button" href="{{ path('reservation_add', {'room_id': room.id}) }}">
+        {{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj rezerwację'|trans }}
+      </a>
       {% if is_granted(constant('App\\CustomTypes\\UserLevel::ADMIN')) %}
         <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
-          {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+          {{ 'bx bx-edit'|ico }}{{ 'Edytuj salę'|trans }}
         </a>
       {% endif %}
       {% if is_granted(constant('App\\CustomTypes\\UserLevel::SUPER_ADMIN')) %}
@@ -46,7 +58,7 @@
           <input type="hidden" name="token" value="{{ csrf_token('room_delete') }}"/>
           <button type="submit" class="button" 
             onclick="return confirm('{{ 'Czy na pewno chcesz usunąć salę?'|trans }}')">
-            {{ 'bx bx-trash'|ico }}{{ 'Usuń'|trans }}
+            {{ 'bx bx-trash'|ico }}{{ 'Usuń salę'|trans }}
           </button>
         </form>
       {% endif %}
