@@ -1,6 +1,5 @@
 FUNKCJE:
-- zapamiętanie ostanich tagów wyszukiwania, ostatniej sali, ostatniego dnia
-- wczytywanie sal przez AJAX
+- zapamiętanie danych sesji w submicie
 - rezerwacje użykownika
 - ogranicznia
 - żądania

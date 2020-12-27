@@ -5,7 +5,11 @@
 
   {{ form_start(form) }}
     <div class="form-flex-wrapper">
-      {{ form_row(form.room, {attr: {size: 12}}) }}
+      <div class="form-group jqslct2-min-width">
+        {{ form_label(form.room) }}
+        {{ form_errors(form.room) }}
+        {{ form_widget(form.room, {attr: {size: 12, class: 'jqslct2-single-room'}}) }}
+      </div>
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}
@@ -16,6 +20,7 @@
       </div>
     </div>
   {{ form_end(form) }}
+  {{ include('jqslct2-load.html.twig') }}
 
 {% endblock %}
 

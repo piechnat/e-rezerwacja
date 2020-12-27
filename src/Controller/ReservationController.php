@@ -9,6 +9,8 @@ use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
+use App\Repository\RoomRepository;
+use App\Service\MyUtils;
 use App\Service\ReservationHelper;
 use DateTimeImmutable;
 use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
@@ -17,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -79,7 +82,8 @@ class ReservationController extends AbstractController
         DateTimeImmutable $endTime = null,
         Reservation $rsvn = null,
         Request $request,
-        ReservationHelper $rsvnHelper
+        ReservationHelper $rsvnHelper,
+        RoomRepository $roomRepo
     ) {
         $actionAdd = 'reservation_add' === $request->attributes->get('_route');
         if ($actionAdd) {
@@ -144,6 +148,17 @@ class ReservationController extends AbstractController
                         'main_content' => 'Send request confirmation screen',
                     ]);
                 }
+            }
+        }
+
+        $session = $request->getSession();
+        if (null !== $room) {
+            $session->set('last_room_id', $room->getId());
+        } else {
+            $lastRoomId = $session->get('last_room_id');
+            if ($lastRoomId && !$form->isSubmitted()) {
+                $room = $roomRepo->find($lastRoomId);
+                MyUtils::updateForm($form, 'room', TextType::class, ['data' => $room]);
             }
         }
 

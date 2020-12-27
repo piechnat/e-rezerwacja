@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Tag;
 use App\Repository\TagRepository;
+use DateTime;
 use DateTimeImmutable;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -33,6 +34,8 @@ class RsvnViewType extends AbstractType
 
         if ($options['route_name'] === 'reservation_view_week') {
             $builder->add('room', TextType::class, [
+                'data' => $options['room'],
+                'data_class' => null,
                 'label' => 'Sala',
             ])
             ->get('room')->addModelTransformer($this->roomToTitle);
@@ -44,11 +47,9 @@ class RsvnViewType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => false,
-                'query_builder' => function (TagRepository $e) {
-                    return $e->createQueryBuilder('t')->where('t.search = 1');
-                },
+                'choices' => $options['tags'],
             ])
-            ->add('operation', ChoiceType::class, [
+            ->add('tag_intersect', ChoiceType::class, [
                 'label' => 'Etykiety',
                 'choices' => ['Wszystkie' => 1, 'Dowolne' => 0],
                 'expanded' => false,
@@ -59,7 +60,6 @@ class RsvnViewType extends AbstractType
             'label' => 'Dzień',
             'input' => 'datetime_immutable',
             'widget' => 'single_text',
-            'empty_data' => $options['date']->format('Y-m-d'),
             'data' => $options['date'],
         ]);
     }
@@ -68,8 +68,10 @@ class RsvnViewType extends AbstractType
     {
         $resolver->setDefaults([
             'route_name' => 'reservation_view_week',
-            'date' => new DateTimeImmutable(),
+            'room' => null,
+            'date' => null,
             'csrf_protection' => false,
+            'tags' => [],
         ]);
     }
 }

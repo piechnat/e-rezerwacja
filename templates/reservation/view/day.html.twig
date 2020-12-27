@@ -10,7 +10,7 @@
         {{ form_errors(form.tags) }}
         {{ form_widget(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
       </div>
-      {{ form_row(form.operation, {attr: {class: 'jqslct2-single-select'}}) }}
+      {{ form_row(form.tag_intersect, {attr: {class: 'jqslct2-single-select'}}) }}
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}

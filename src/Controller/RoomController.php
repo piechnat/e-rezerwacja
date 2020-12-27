@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\CustomTypes\UserLevel;
 use App\Entity\Room;
-use App\Form\RoomToTitleTransformer;
 use App\Form\RoomType;
 use App\Repository\RoomRepository;
+use App\Service\MyUtils;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -45,22 +45,21 @@ class RoomController extends AbstractController
         ;
         $form = $builder->getForm();
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $room = $form->getData()['room'];
         }
 
+        $session = $request->getSession();
         if (null !== $room) {
-            $request->getSession()->set('last_room_id', $room->getId());
+            $session->set('last_room_id', $room->getId());
         } else {
-            $last_room_id = $request->getSession()->get('last_room_id');
-            if ($last_room_id && !$form->isSubmitted()) {
-                $options = $form->get('room')->getConfig()->getOptions();
-                $options['data'] = $room = $roomRepo->find($last_room_id);
-                $form->add('room', EntityType::class, $options);
+            $lastRoomId = $session->get('last_room_id');
+            if ($lastRoomId && !$form->isSubmitted()) {
+                $room = $roomRepo->find($lastRoomId);
+                MyUtils::updateForm($form, 'room', EntityType::class, ['data' => $room]);
             }
         }
-        
+
         return $this->render('room/show.html.twig', [
             'room' => $room,
             'form' => $form->createView(),

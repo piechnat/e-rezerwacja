@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Reservation;
+use App\Service\MyUtils;
 use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -52,7 +53,7 @@ class ReservationType extends AbstractType
             $endTime = $beginTime->modify('+60 minutes');
             $rsvn->setEndTime($endTime);
         }
-        
+
         if ($options['modify_requester']) {
             $user = $rsvn->getRequester();
             $fullname = $user ? $user->getFullname() : null;
@@ -65,10 +66,9 @@ class ReservationType extends AbstractType
                     // modify data-text attribute if the requester has changed
                     $newUser = $event->getData()->getRequester();
                     if ($user !== $newUser) {
-                        $form = $event->getForm();
-                        $options = $form->get('requester')->getConfig()->getOptions();
-                        $options['attr']['data-text'] = $newUser ? $newUser->getFullname() : null;
-                        $form->add('requester', TextType::class, $options);
+                        MyUtils::updateForm($event->getForm(), 'requester', TextType::class, [
+                            'attr' => ['data-text' => $newUser ? $newUser->getFullname() : null],
+                        ]);
                     }
                 })
                 ->get('requester')->addModelTransformer($this->userToEmail)
@@ -99,7 +99,7 @@ class ReservationType extends AbstractType
                 'label' => 'Cel rezerwacji',
             ])
             ->get('room')->addModelTransformer($this->roomToTitle);
-        ;
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
             $rsvn = $event->getData();
             $beginTime = $rsvn->getBeginTime();
@@ -107,9 +107,7 @@ class ReservationType extends AbstractType
                 $now = new DateTimeImmutable();
                 if ($beginTime < $now) {
                     $rsvn->setBeginTime($now);
-                    $form = $event->getForm();
-                    $options = $form->get('begin_time')->getConfig()->getOptions();
-                    $form->add('begin_time', DateTimeType::class, $options);
+                    MyUtils::updateForm($event->getForm(), 'begin_time', DateTimeType::class);
                     $beginTime = $now;
                 }
             }
