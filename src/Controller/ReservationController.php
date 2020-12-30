@@ -18,6 +18,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,8 +53,8 @@ class ReservationController extends AbstractController
     public function delete(Reservation $rsvn, Request $request)
     {
         if (
-            $this->canEditRsvn($rsvn) &&
-            $this->isCsrfTokenValid('reservation_delete', $request->request->get('token'))
+            $this->canEditRsvn($rsvn)
+            && $this->isCsrfTokenValid('reservation_delete', $request->request->get('token'))
         ) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($rsvn);
@@ -69,12 +70,12 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/add/{room_id}/{beginTime}/{endTime}", name="reservation_add",
-     *     defaults={"room_id":null,"beginTime":"now","endTime":"now +60 minutes"})
-     * @ParamConverter("room", class="App\Entity\Room", options={"id"="room_id"})
-     *
-     * @Route("/reservation/edit/{id}", name="reservation_edit")
-     * @ParamConverter("rsvn", class="App\Entity\Reservation")
+     * @Route("/reservation/add/{room_id?}/{beginTime}/{endTime}", name="reservation_add",
+     *     defaults={"beginTime":"now", "endTime":"now +60 minutes"})
+     * @ParamConverter("room", class="App:Room", options={"id":"room_id"})
+     *     
+     * @Route("/reservation/edit/{rsvn_id}", name="reservation_edit")
+     * @ParamConverter("rsvn", class="App:Reservation", options={"id":"rsvn_id"})
      */
     public function addOrEdit(
         Room $room = null,
@@ -96,7 +97,10 @@ class ReservationController extends AbstractController
             throw $this->createNotFoundException();
         } elseif (false === $this->canEditRsvn($rsvn)) {
             throw $this->createAccessDeniedException();
+        } else {
+            $room = $rsvn->getRoom();
         }
+        $session = $request->getSession();
         $formSendRequest = false;
         $formOptions = ['modify_requester' => $this->isGranted(UserLevel::ADMIN)];
 
@@ -107,6 +111,7 @@ class ReservationController extends AbstractController
             $rsvn = $form->getData();
             $rsvn->setEditor($this->getUser());
             $rsvn->setEditTime(new DateTimeImmutable());
+            $session->set('last_room_id', $rsvn->getRoom()->getId());
 
             try {
                 $rsvnHelper->checkConstraints($rsvn);
@@ -150,13 +155,8 @@ class ReservationController extends AbstractController
                 }
             }
         }
-
-        $session = $request->getSession();
-        if (null !== $room) {
-            $session->set('last_room_id', $room->getId());
-        } else {
-            $lastRoomId = $session->get('last_room_id');
-            if ($lastRoomId && !$form->isSubmitted()) {
+        if (!$form->isSubmitted() && null === $room) {
+            if (null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
                 MyUtils::updateForm($form, 'room', TextType::class, ['data' => $room]);
             }

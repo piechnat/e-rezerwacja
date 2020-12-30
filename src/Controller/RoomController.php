@@ -34,6 +34,7 @@ class RoomController extends AbstractController
      */
     public function show(Room $room = null, Request $request, RoomRepository $roomRepo)
     {
+        $session = $request->getSession();
         $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
         $builder->setAction($this->generateUrl('room_form_show'))->setMethod('GET')
             ->add('room', EntityType::class, [
@@ -47,14 +48,10 @@ class RoomController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $room = $form->getData()['room'];
-        }
-
-        $session = $request->getSession();
-        if (null !== $room) {
             $session->set('last_room_id', $room->getId());
-        } else {
-            $lastRoomId = $session->get('last_room_id');
-            if ($lastRoomId && !$form->isSubmitted()) {
+        }
+        if (!$form->isSubmitted() && null === $room) {
+            if (null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
                 MyUtils::updateForm($form, 'room', EntityType::class, ['data' => $room]);
             }

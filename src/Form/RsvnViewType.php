@@ -22,9 +22,11 @@ class RsvnViewType extends AbstractType
 
     public function __construct(
         RoomToTitleTransformer $roomToTitle, 
+        UserToEmailTransformer $userToEmail,
         UrlGeneratorInterface $generator
     ) {
         $this->roomToTitle = $roomToTitle;
+        $this->userToEmail = $userToEmail;
         $this->generator = $generator;
     }
 
@@ -39,6 +41,14 @@ class RsvnViewType extends AbstractType
                 'label' => 'Sala',
             ])
             ->get('room')->addModelTransformer($this->roomToTitle);
+        }
+        if ($options['route_name'] === 'reservation_view_user') {
+            $builder->add('user', TextType::class, [
+                'data' => $options['user'],
+                'data_class' => null,
+                'label' => 'Użytkownik',
+            ])
+            ->get('user')->addModelTransformer($this->userToEmail);
         }
         if ($options['route_name'] === 'reservation_view_day') {
             $builder->add('tags', EntityType::class, [
@@ -67,10 +77,11 @@ class RsvnViewType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'csrf_protection' => false,
             'route_name' => 'reservation_view_week',
+            'user' => null,
             'room' => null,
             'date' => null,
-            'csrf_protection' => false,
             'tags' => [],
         ]);
     }

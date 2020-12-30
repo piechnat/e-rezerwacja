@@ -21,7 +21,7 @@
       {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
     </a>
     {% if can_edit_rsvn %}
-      <a class="button" href="{{ path('reservation_edit', {id: rsvn.id}) }}">
+      <a class="button" href="{{ path('reservation_edit', {rsvn_id: rsvn.id}) }}">
         {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
       </a>
       <form action="{{ path('reservation_delete', { id: rsvn.id }) }}" method="post">

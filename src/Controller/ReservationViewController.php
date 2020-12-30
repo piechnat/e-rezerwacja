@@ -9,6 +9,7 @@ use App\Form\RsvnViewType;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserRepository;
 use App\Service\MyUtils;
 use DateTimeImmutable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -26,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ReservationViewController extends AbstractController
 {
     /**
-     * @Route("/week/{id}/{date}", name="reservation_view_week", defaults={"id":null})
+     * @Route("/week/{id?}/{date}", name="reservation_view_week", defaults={"date":"now"})
      * @ParamConverter("room", options={"strip_null":true})
      */
     public function week(
@@ -36,8 +37,9 @@ class ReservationViewController extends AbstractController
         ReservationRepository $rsvnRepo,
         RoomRepository $roomRepo
     ) {
+        $session = $request->getSession();
         $form = $this->createForm(RsvnViewType::class, null, [
-            'route_name' => 'reservation_view_week',
+            'route_name' => $request->attributes->get('_route'),
             'room' => $room,
             'date' => $date,
         ]);
@@ -46,37 +48,28 @@ class ReservationViewController extends AbstractController
             $formData = $form->getData();
             $room = $formData['room'];
             $date = $formData['date'];
-        }
-
-        $session = $request->getSession();
-        if (null !== $room) {
             $session->set('last_room_id', $room->getId());
-        } else {
-            $lastRoomId = $session->get('last_room_id');
-            if ($lastRoomId && !$form->isSubmitted()) {
+            $session->set('last_date', $date);
+        }
+        if (!$form->isSubmitted()) {
+            if (null === $room && null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
                 MyUtils::updateForm($form, 'room', TextType::class, ['data' => $room]);
             }
+            $date = $session->get('last_date', $date);
+            MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
-        if (null !== $date) {
-            $session->set('last_date', $date);
-        } else {
-            $date = $session->get('last_date', new DateTimeImmutable());
-            if (!$form->isSubmitted()) {
-                MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
-            }
-        }
-
         $tableView = null;
-        if ($room && $date) {
+        if ((null !== $room) && (null !== $date)) {
             $d = $date->modify('next monday');
             $tableView = $rsvnRepo->getTableByRoom($room->getId(), $d->modify('last monday'), $d);
         }
 
         return $this->render('reservation/view/week.html.twig', [
             'form' => $form->createView(),
+            'room' => $room,
+            'chosen_day' => $date ? $date->format('z') : null,
             'table_view' => $tableView,
-            'chosen_day' => $date->format('z'),
         ]);
     }
 
@@ -85,13 +78,14 @@ class ReservationViewController extends AbstractController
      */
     public function day(Request $request, ReservationRepository $rsvnRepo, TagRepository $tagRepo)
     {
+        $session = $request->getSession();
         $searchTags = $tagRepo->findBy(['search' => 1]);
         $form = $this->createForm(RsvnViewType::class, null, [
-            'route_name' => 'reservation_view_day',
+            'route_name' => $request->attributes->get('_route'),
             'tags' => $searchTags,
+            'date' => new DateTimeImmutable(),
         ]);
         $form->handleRequest($request);
-
         $tagIds = [];
         $tagInt = $date = null;
         if ($form->isSubmitted() && $form->isValid()) {
@@ -101,41 +95,27 @@ class ReservationViewController extends AbstractController
             }
             $tagInt = $formData['tag_intersect'];
             $date = $formData['date'];
-        }
-
-        $session = $request->getSession();
-        if (count($tagIds)) {
             $session->set('last_tag_ids', $tagIds);
-        } else {
-            $tagIds = $session->get('last_tag_ids', []);
-            if (count($tagIds) && !$form->isSubmitted()) {
+            $session->set('last_tag_int', $tagInt);
+            $session->set('last_date', $date);
+        }
+        if (!$form->isSubmitted()) {
+            $tagIds = $session->get('last_tag_ids', $tagIds);
+            if (count($tagIds)) {
                 MyUtils::updateForm($form, 'tags', EntityType::class, [
                     'data' => array_filter($searchTags, function (Tag $tag) use ($tagIds) {
                         return in_array($tag->getId(), $tagIds);
                     }),
                 ]);
             }
-        }
-        if (null !== $tagInt) {
-            $session->set('last_tag_int', $tagInt);
-        } else {
             $tagInt = $session->get('last_tag_int', true);
-            if (!$form->isSubmitted()) {
-                MyUtils::updateForm($form, 'tag_intersect', ChoiceType::class, ['data' => $tagInt]);
-            }
-        }
-        if (null !== $date) {
-            $session->set('last_date', $date);
-        } else {
+            MyUtils::updateForm($form, 'tag_intersect', ChoiceType::class, ['data' => $tagInt]);
             $date = $session->get('last_date', new DateTimeImmutable());
-            if (!$form->isSubmitted()) {
-                MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
-            }
+            MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
-
         $tableView = null;
-        if (count($tagIds) && $date) {
-            $tableView = $rsvnRepo->getDayTable($date, $tagIds, $tagInt);
+        if (count($tagIds) && (null !== $tagInt) && (null !== $date)) {
+            $tableView = $rsvnRepo->getTableByDay($date, $tagIds, $tagInt);
         }
 
         return $this->render('reservation/view/day.html.twig', [
@@ -145,13 +125,45 @@ class ReservationViewController extends AbstractController
     }
 
     /**
-     * @Route("/user", name="reservation_view_user")
+     * @Route("/user/{id?}/{date}", name="reservation_view_user", defaults={"date":"now"})
+     * @ParamConverter("user", options={"strip_null":true})
      */
-    public function user()
-    {
-        return $this->render('main/redirect.html.twig', [
-            'main_title' => 'Rezerwacje użytkownika',
-            'main_content' => 'Under construction',
+    public function user(
+        Room $user = null,
+        DateTimeImmutable $date = null,
+        Request $request,
+        ReservationRepository $rsvnRepo,
+        UserRepository $userRepo
+    ) {
+        $user = $user ?? $this->getUser();
+        $session = $request->getSession();
+        $form = $this->createForm(RsvnViewType::class, null, [
+            'route_name' => $request->attributes->get('_route'),
+            'user' => $user,
+            'date' => $date,
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
+            $user = $formData['user'];
+            $date = $formData['date'];
+            $session->set('last_date', $date);
+        }
+        if (!$form->isSubmitted()) {
+            $date = $session->get('last_date', $date);
+            MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
+        }
+        $tableView = null;
+        if ((null !== $user) && (null !== $date)) {
+            $d = $date->modify('next monday');
+            $tableView = $rsvnRepo->getTableByUser($user->getId(), $d->modify('last monday'), $d);
+        }
+
+        return $this->render('reservation/view/user.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+            'chosen_day' => $date ? $date->format('z') : null,
+            'table_view' => $tableView,
         ]);
     }
 }

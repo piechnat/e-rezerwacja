@@ -1,13 +1,12 @@
 FUNKCJE:
-- zapamiętanie danych sesji w submicie
-- rezerwacje użykownika
-- ogranicznia
+- ograniczenia
 - żądania
+- add auto-submit in table view
+- dodać AJAX select w edycji tagów (sale, użytkownicy)
 
 a) Rezerwacja sal
 - możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 
   (zaakceptowanie lub odrzucenie żądania rezerwacji)
-- widok tygodnia dla jednego użytkownika
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu
 - Student nie może zgłosić żądania rezerwacji sali, której ograniczenie obejmuje poziom konta 
   Zarządcy

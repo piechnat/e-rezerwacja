@@ -1,15 +1,16 @@
 {% extends 'reservation/view/base.html.twig' %}
-{% set main_title = 'Rezerwacje w dniu' %}
+{% set main_title = 'Rezerwacje użytkownika' %}
 
 {% block table_view_form %}
   {{ form_start(form) }}
     <div class="form-flex-wrapper">
-      <div class="form-group" style="flex-basis: 100%">
-        {{ form_label(form.tags) }}
-        {{ form_errors(form.tags) }}
-        {{ form_widget(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
+      <div class="form-group jqslct2-min-width">
+        {{ form_label(form.user) }}
+        {{ form_errors(form.user) }}
+        {{ form_widget(form.user, {attr: {
+          size: 12, class: 'jqslct2-single-user', 'data-text': user.fullname,
+        }}) }}
       </div>
-      {{ form_row(form.tag_intersect, {attr: {class: 'jqslct2-single-select'}}) }}
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}
@@ -20,28 +21,20 @@
       </div>
     </div>
   {{ form_end(form) }}
-  <script>
-    $('select.jqslct2-multiple-select').select2({
-      width: '99%',
-    });
-    $('select.jqslct2-single-select').select2({
-      minimumResultsForSearch: Infinity, 
-      width: 'style',
-    });
-  </script>
+  {{ include('jqslct2-load.html.twig') }}
 {% endblock %}
 
 {% block table_view_headers %}
   {% for header in table_view.headers %}
-    <th>
-      {{ header.title }}
+    <th class="{{ chosen_day == header.date|date('z') ? 'marked' : '' }}">
+      {{ header.date|week_day|trans }}
     </th>
   {% endfor %}
 {% endblock %}
 
 {% block reservation_add_link %}
   <a href="{{ path('reservation_add', {
-      room_id: table_view.headers[key]['id'],
+      room_id: 0,
       beginTime: item.begin_time|date('Y-m-d H:i'),
       endTime: item.end_time|date('Y-m-d H:i')
     }) }}">

@@ -2,7 +2,6 @@
 {% set main_title = 'Rezerwacje sali' %}
 
 {% block table_view_form %}
-
   {{ form_start(form) }}
     <div class="form-flex-wrapper">
       <div class="form-group jqslct2-min-width">
@@ -15,21 +14,28 @@
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
-        <button type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
+        <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
       {% endapply %}
       </div>
     </div>
   {{ form_end(form) }}
   {{ include('jqslct2-load.html.twig') }}
-
 {% endblock %}
 
 {% block table_view_headers %}
-
   {% for header in table_view.headers %}
     <th class="{{ chosen_day == header.date|date('z') ? 'marked' : '' }}">
       {{ header.date|week_day|trans }}
     </th>
   {% endfor %}
+{% endblock %}
 
+{% block reservation_add_link %}
+  <a href="{{ path('reservation_add', {
+      room_id: room.id,
+      beginTime: item.begin_time|date('Y-m-d H:i'),
+      endTime: item.end_time|date('Y-m-d H:i')
+    }) }}">
+    <div class="add-item" style="{{ item|col_css }}"></div>
+  </a>
 {% endblock %}

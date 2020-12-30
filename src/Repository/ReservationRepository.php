@@ -111,7 +111,7 @@ class ReservationRepository extends ServiceEntityRepository
         return new TableView($headers, $columns);
     }
 
-    public function getDayTable(
+    public function getTableByDay(
         DateTimeImmutable $date,
         array $tagIds,
         bool $intersection = false
@@ -163,6 +163,49 @@ class ReservationRepository extends ServiceEntityRepository
             }
             foreach ($reservations as &$rsvn) {
                 $columns[$rsvn['room_id']][] = $rsvn;
+            }
+        }
+
+        return new TableView($headers, $columns);
+    }
+    
+    public function getTableByUser(
+        int $userId,
+        DateTimeImmutable $beginTime,
+        DateTimeImmutable $endTime
+    ): TableView {
+        $headers = $columns = [];
+        $reservations = $this->createQueryBuilder('rsvn')
+            ->select(['rsvn.id', 'rsvn.begin_time', 'rsvn.end_time',
+                'user.id AS user_id', 'user.fullname AS user_fullname', ])
+            ->innerJoin('rsvn.requester', 'user')
+            ->where('user.id = :userId')
+            ->andWhere('rsvn.end_time > :beginTime')
+            ->andWhere('rsvn.begin_time < :endTime')
+            ->orderBy('rsvn.begin_time', 'ASC')
+            ->setParameters([
+                'userId' => $userId,
+                'beginTime' => $beginTime,
+                'endTime' => $endTime,
+            ])->getQuery()->getArrayResult();
+
+        $beginDate = $endDate = $beginTime->setTime(0, 0);
+        for (; $endDate < $endTime; $endDate = $endDate->modify('+1 day')) {
+            $day = $endDate->format('z');
+            $headers[$day] = ['date' => $endDate];
+            $columns[$day] = [];
+        }
+        foreach ($reservations as &$rsvn) {
+            $day = $rsvn['begin_time']->format('z');
+            if ($day === $rsvn['end_time']->format('z')) {
+                $columns[$day][] = $rsvn;
+            } else { // reservation which overlaps two days
+                if ($rsvn['begin_time'] >= $beginDate) {
+                    $columns[$day][] = $rsvn;
+                }
+                if ($rsvn['end_time'] < $endDate) {
+                    $columns[$rsvn['end_time']->format('z')][] = $rsvn;
+                }
             }
         }
 

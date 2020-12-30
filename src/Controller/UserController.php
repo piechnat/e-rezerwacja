@@ -34,9 +34,7 @@ class UserController extends AbstractController
      */
     public function show(User $user = null, Request $request, UserToEmailTransformer $userToEmail)
     {
-        if (!$user) {
-            $user = $this->getUser();
-        }
+        $user = $user ?? $this->getUser();
         $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
         $builder->setAction($this->generateUrl('user_self_show'))->setMethod('GET')
             ->add('email', TextType::class, [
@@ -67,9 +65,7 @@ class UserController extends AbstractController
      */
     public function edit(User $user = null, Request $request)
     {
-        if (!$user) {
-            $user = $this->getUser();
-        }
+        $user = $user ?? $this->getUser();
         if (!$this->canEditUser($user)) {
             throw $this->createAccessDeniedException();
         }
