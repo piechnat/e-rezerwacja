@@ -181,17 +181,6 @@ class ReservationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/constraints", name="constraints")
-     */
-    public function constraints()
-    {
-        return $this->render('main/redirect.html.twig', [
-            'main_title' => 'Ograniczenia rezerwacji',
-            'main_content' => 'Under construction',
-        ]);
-    }
-
     private function canEditRsvn(Reservation $rsvn): bool
     {
         if ($this->getUser()->getId() === $rsvn->getRequester()->getId()) {

@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% set main_title = 'Dodawanie etykiety' %}
+{% set main_title = 'Dodawanie ograniczenia' %}
 {% block main %}
 
   <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ main_title|trans }}</h2>
@@ -7,10 +7,17 @@
   {{ form_start(form) }}
     {{ form_errors(form) }}
     {{ form_row(form.name) }}
-    {{ form_row(form.search) }}
-    {{ form_row(form.level, {attr: {class: 'jqslct2-single-select'}}) }}
+    {{ form_row(form.begin_date) }}
+    {{ form_row(form.end_date) }}
+    {{ form_row(form.schedule) }}
+    {{ form_row(form.exclusions, {attr: {class: 'jqslct2-multiple-select'}}) }}
+    <script>
+      $('select.jqslct2-multiple-select').select2({
+        width: '99%',
+      });
+    </script>
     <p class="form-group button-row">
-      <a class="button" href="{{ path('tag_index') }}">
+      <a class="button" href="{{ path('constraint_index') }}">
         {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
       </a>
       <button type="submit">
@@ -18,11 +25,5 @@
       </button>
     </p>
   {{ form_end(form) }}
-  <script>
-    $('select.jqslct2-single-select').select2({
-      minimumResultsForSearch: Infinity, 
-      width: '10em',
-    });
-  </script>
 
 {% endblock %}

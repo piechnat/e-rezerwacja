@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% set main_title = 'Ograniczenia czasu' %}
+{% block main %}
+
+  <h2 class="main-title">{{ 'bx bx-time'|ico }}{{ main_title|trans }}</h2>
+
+  <div class="list-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Nazwa</th>
+          <th>Początek</th>
+          <th>Koniec</th>
+          <th>Rozkład</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for cstr in time_constraints %}
+        <tr>
+          <td><a href="{{ path('constraint_edit', {id: cstr.id}) }}">{{ cstr.name }}</a></td>
+          <td>{{ cstr.beginDate ? cstr.beginDate|date('d.m.Y') : '' }}</td>
+          <td>{{ cstr.endDate ? cstr.endDate|date('d.m.Y') : '' }}</td>
+          <td>{{ cstr.schedule ? 'Tak' : 'Nie' }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="4">Nie znaleziono ograniczeń.</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-group button-row">
+    <a class="button" href="{{ path('constraint_add') }}">
+      {{ 'bx bx-plus'|ico }}{{ 'Dodaj'|trans }}
+    </a>
+    <a class="button" href="{{ path('constraint_reservation') }}">
+      {{ 'bx bx-cog'|ico }}{{ 'Limity rezerwacji'|trans }}
+    </a>
+  </div>
+
+{% endblock %}

@@ -4,7 +4,7 @@
 
   <h2 class="main-title">{{ 'bx bx-info-circle'|ico }}{{ main_title|trans }}</h2>
   <p>
-    {{ main_content|default('')|trans }}
+    {{ main_content|default('')|trans|raw }}
   </p>
   {% if no_trans_msg is defined %}<p>{{ no_trans_msg }}</p>{% endif %}
   <form action="{{ path(path|default('main'), params|default([])) }}">

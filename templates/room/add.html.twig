@@ -4,6 +4,7 @@
 
   <h2 class="main-title">{{ 'bx bx-add-to-queue'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
+    {{ form_errors(form) }}
     {{ form_row(form.titles, {attr: {style: 'width: 20em; height: 10em;'}}) }}
     <div class="form-group button-row">
       <button type="submit">

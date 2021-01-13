@@ -7,6 +7,7 @@ use App\CustomTypes\ReservationError as RsvnErr;
 use App\CustomTypes\ReservationNotAllowedException;
 use App\CustomTypes\UserLevel;
 use App\Entity\Reservation;
+use App\Repository\ConstraintRepository;
 use App\Repository\ReservationRepository;
 use Exception;
 use Symfony\Component\Form\FormError;
@@ -20,17 +21,20 @@ class ReservationHelper
     private $trans;
     private $generator;
     private $rsvnRepo;
+    private $cstrRepo;
 
     public function __construct(
         Security $security,
         TranslatorInterface $translator,
         UrlGeneratorInterface $generator,
-        ReservationRepository $repo
+        ReservationRepository $repo,
+        ConstraintRepository $cstrRepo
     ) {
         $this->security = $security;
         $this->trans = $translator;
         $this->generator = $generator;
         $this->rsvnRepo = $repo;
+        $this->cstrRepo = $cstrRepo;
     }
 
     public function createFormError(Exception $exc): FormError
@@ -143,6 +147,11 @@ class ReservationHelper
             }
         }
 
+        // ------------------------------------------------------------------- RSVN_OUTSIDE_SCHEDULE
+        if (!$this->cstrRepo->isReservationOnSchedule($rsvn)) {
+            return new ReservationNotAllowedException(RsvnErr::RSVN_OUTSIDE_SCHEDULE);
+        }
+        
         // -------------------------------------------------------------------------------------- OK
         return null;
     }

@@ -12,6 +12,7 @@ abstract class ReservationError extends CustomType
     const RSVN_SELF_CONFLICT = 'RE_RSVN_SELF_CONFLICT';
     const WEEK_LIMIT_EXCEEDED = 'RE_WEEK_LIMIT_EXCEEDED';
     const ROOM_BREAK_VIOLATED = 'RE_ROOM_BREAK_VIOLATED';
+    const RSVN_OUTSIDE_SCHEDULE = 'RE_RSVN_OUTSIDE_SCHEDULE';
 
     protected const VALUES = [
         self::RSVN_ALLOWED => 'Rezerwacja sali jest dozwolona.',
@@ -21,6 +22,7 @@ abstract class ReservationError extends CustomType
         self::MAX_RSVN_LENGTH => 'Przekroczono limit długości pojedynczej rezerwacji.',
         self::RSVN_SELF_CONFLICT => 'Posiadasz inną rezerwację w proponowanym terminie.',
         self::WEEK_LIMIT_EXCEEDED => 'Przekroczono limit długości wszystkich rezerwacji w tygodniu.',
-        self::ROOM_BREAK_VIOLATED => 'Za krótka przerwa między rezerwacjami w tej samej sali.'
+        self::ROOM_BREAK_VIOLATED => 'Za krótka przerwa między rezerwacjami w tej samej sali.',
+        self::RSVN_OUTSIDE_SCHEDULE => 'Rezerwacja wykracza poza harmonogram pracy uczelni.',
     ];
 }

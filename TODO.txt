@@ -1,8 +1,10 @@
 FUNKCJE:
 - ograniczenia
+  + dostosować TableView
 - żądania
 - add auto-submit in table view
 - dodać AJAX select w edycji tagów (sale, użytkownicy)
+- usunąć "Składam wniosek o rezerwację sali" po modyfikacji formularza?
 
 a) Rezerwacja sal
 - możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 

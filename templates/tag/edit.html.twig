@@ -11,6 +11,7 @@
   {% endif %}
 
   {{ form_start(form) }}
+    {{ form_errors(form) }}
     {% if edit_mode == 'entity' %}
       {{ form_row(form.name) }}
       {{ form_row(form.search) }}

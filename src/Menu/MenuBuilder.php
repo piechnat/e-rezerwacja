@@ -66,7 +66,7 @@ class MenuBuilder
                 $this->ac($child, 'Żądania', ['route' => 'requests'], '<i class="bx bx-bell"></i>');
             }
             if ($isSuperAdmin) {
-                $this->ac($child, 'Ograniczenia', ['route' => 'constraints'], '<i class="bx bx-time"></i>');
+                $this->ac($child, 'Ograniczenia', ['route' => 'constraint_index'], '<i class="bx bx-time"></i>');
             }
 
         }

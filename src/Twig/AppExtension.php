@@ -35,13 +35,16 @@ class AppExtension extends AbstractExtension
         return "top: {$top}em; height: {$height}em;";
     }
 
-    public function getWeekDay($date): string
+    public function getWeekDay($param): string
     {
-        if (!($date instanceof DateTimeInterface)) {
-            $date = new DateTime($date);
+        if (is_numeric($param) && $param >= 0 && $param <= 6) {
+            return self::DAYS_OF_WEEK[$param]; 
+        }
+        if (!($param instanceof DateTimeInterface)) {
+            $param = new DateTime($param);
         }
 
-        return self::DAYS_OF_WEEK[$date->format('w')];
+        return self::DAYS_OF_WEEK[$param->format('w')];
     }
 
     public function getIconTag($class) {

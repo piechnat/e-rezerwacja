@@ -94,6 +94,19 @@ i.bx {
   white-space: nowrap;
 }
 
+.list-table {
+  max-width: 100%;
+  overflow: auto;
+  text-align: left;
+}
+.list-table table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.list-table table td, .list-table table th { 
+  padding: 0 1em 1em 0; 
+}
+
 /* MENU RECONFIGURATION - BEGIN */
 
 #navigation-bar .container {

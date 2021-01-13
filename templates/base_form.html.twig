@@ -1,33 +1,31 @@
 {% form_theme form _self %}
 
+
 {% block form_row %}
 {% apply spaceless %}
-
   <div class="form-group {{ errors|length > 0 ? 'has-error' : '' }}">
     {{ form_label(form) }}
     {{ form_errors(form) }}
     {{ form_widget(form) }}
   </div>
-
 {% endapply %}
-{% endblock form_row %}
+{% endblock %}
+
 
 {% block checkbox_row %}
 {% apply spaceless %}
-
   <div class="form-group">
     {{ form_widget(form) }}
     {{ form_label(form) }}
     {{ form_errors(form) }}
     {{ form_help(form) }}
   </div>
-
 {% endapply %}
 {% endblock %}
 
+
 {% block form_errors %}
 {% apply spaceless %}
-
   {% if errors|length > 0 %}
     <ul class="form-errors">
       {% for error in errors %}
@@ -35,6 +33,50 @@
       {% endfor %}
     </ul>
   {% endif %}
-
 {% endapply %}
 {% endblock %}
+
+
+{% block opening_hours_row %}
+{% apply spaceless %}
+  <style type="text/css">
+    .opening-hours {
+      margin-right: 1%;
+      padding: 0.8em 0 0 0.8em;
+      border: 1px solid #ccc;
+      border-radius: 0.3rem;
+    }
+    .opening-hours .form-group > label {
+      display: inline-block;
+    }
+    .opening-hours .form-group > input {
+      margin-right: 0.4em;
+      min-height: auto;
+      box-shadow: none;
+    }
+  </style>
+  <div class="form-group {{ errors|length > 0 ? 'has-error' : '' }}">
+    {{ form_label(form) }}
+    {{ form_errors(form) }}
+    <div class="opening-hours"> 
+      <div class="form-flex-wrapper">
+        <div class="form-group">
+          <label>{{ 'Codziennie'|trans }}:</label>
+        </div>
+        {{ form_row(form[0].from) }}
+        {{ form_row(form[0].to) }}
+      </div>
+      {% for i in 0..6 %}
+        <div class="form-flex-wrapper">
+          <div class="form-group">
+            <label>{{ i|week_day|trans }}:</label>
+          </div>
+          {{ form_row(form[i+1].from) }}
+          {{ form_row(form[i+1].to) }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endapply %}
+{% endblock %}
+

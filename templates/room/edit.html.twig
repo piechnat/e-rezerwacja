@@ -4,6 +4,7 @@
 
   <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
+    {{ form_errors(form) }}
     {{ form_row(form.title, {attr: {maxlength: 32}}) }}
     {{ form_row(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
     <div class="form-group button-row">

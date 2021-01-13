@@ -4,6 +4,7 @@
 
   <h2 class="main-title">{{ 'bx bx-edit'|ico }}{{ main_title|trans }}</h2>
   {{ form_start(form) }}
+    {{ form_errors(form) }}
     {{ form_row(form.fullname) }}
     {% if form.access is defined %}
       {{ form_row(form.access, {attr: {class: 'jqslct2-single-select'}}) }}
