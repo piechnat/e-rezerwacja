@@ -2,6 +2,7 @@
 
 namespace App\CustomTypes;
 
+use App\Repository\ConstraintRepository;
 use DateTimeImmutable;
 
 class TableView
@@ -9,22 +10,22 @@ class TableView
     private const MIN = 6;
     private const MAX = 22;
 
-    public $headers = [];
-    public $columns = [];
-    public $meta = [];
+    public $headers;
+    public $columns;
+    public $meta;
 
     public function __construct(array &$headers, array &$columns)
     {
         if (count($headers) !== count($columns)) {
             throw new \InvalidArgumentException();
         }
-        $this->headers = $headers;
-        $this->columns = $columns;
+        $this->headers = &$headers;
+        $this->columns = &$columns;
 
         // set hours boundaries
         $min = $this::MIN;
         $max = $this::MAX;
-        foreach ($this->columns as $key => &$items) {
+        foreach ($this->columns as $key => $items) {
             if (0 === count($items)) {
                 continue;
             }
@@ -77,7 +78,7 @@ class TableView
             }
             $newItems = [];
             $beginTime = max($now, $date->setTime($this->meta['min_hour'], 0));
-            foreach ($items as &$rsvn) {
+            foreach ($items as $rsvn) {
                 if ($rsvn['begin_time'] >= $beginTime->modify('+15 minutes')) {
                     $newItems[] = [
                         'id' => 0,
