@@ -81,13 +81,13 @@ class ReservationHelper
         // --------------------------------------------------------------------------- NO_PRIVILEGES
         foreach ($rsvn->getRoom()->getTags() as $tag) {
             if (
-                $tag->getLevel() >= $rsvn->getEditor()->getAccessLevel() &&
-                false === $rsvn->getEditor()->getTags()->contains($tag)
+                $tag->getLevel() >= $rsvn->getEditor()->getAccessLevel()
+                && false === $rsvn->getEditor()->getTags()->contains($tag)
             ) {
                 return new ReservationNotAllowedException(RsvnErr::NO_PRIVILEGES);
             }
         }
-        
+
         // --------------------------------------------------------------------- that's all if admin
         if ($this->security->isGranted(UserLevel::ADMIN, $rsvn->getEditor())) {
             return null;
@@ -139,19 +139,19 @@ class ReservationHelper
         $endTime = $rsvnET->modify('+2 hours');
         foreach ($weekRsvns as &$rec) {
             if (
-                $rec['room_id'] === $roomId &&
-                $rec['end_time'] > $beginTime &&
-                $rec['begin_time'] < $endTime
+                $rec['room_id'] === $roomId
+                && $rec['end_time'] > $beginTime
+                && $rec['begin_time'] < $endTime
             ) {
                 return new ReservationNotAllowedException(RsvnErr::ROOM_BREAK_VIOLATED);
             }
         }
 
         // ------------------------------------------------------------------- RSVN_OUTSIDE_SCHEDULE
-        if (!$this->cstrRepo->isReservationOnSchedule($rsvn)) {
+        if (false === $this->cstrRepo->isReservationOnSchedule($rsvn)) {
             return new ReservationNotAllowedException(RsvnErr::RSVN_OUTSIDE_SCHEDULE);
         }
-        
+
         // -------------------------------------------------------------------------------------- OK
         return null;
     }
