@@ -5,21 +5,31 @@ namespace App\Repository;
 use App\CustomTypes\TableView;
 use App\Entity\Reservation;
 use App\Entity\Room;
+use App\Service\MyUtils;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * @method null|Reservation find($id, $lockMode = null, $lockVersion = null)
- * @method null|Reservation findOneBy(array $criteria, array $orderBy = null)
+ * @method Reservation|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Reservation|null findOneBy(array $criteria, array $orderBy = null)
  * @method Reservation[]    findAll()
  * @method Reservation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ReservationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    private $cstrRepo;
+    private $security;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        ConstraintRepository $cstrRepo,
+        Security $security
+    ) {
         parent::__construct($registry, Reservation::class);
+        $this->cstrRepo = $cstrRepo;
+        $this->security = $security;
     }
 
     public function getConflictIds(Reservation $rsvn, int $limit = 1): array
@@ -65,6 +75,7 @@ class ReservationRepository extends ServiceEntityRepository
         if ($selfAddedOnly) {
             $result->andWhere('rsvn.requester = rsvn.editor');
         }
+
         return $result->getQuery()->getArrayResult();
     }
 
@@ -94,7 +105,7 @@ class ReservationRepository extends ServiceEntityRepository
             $headers[$day] = ['id' => $roomId, 'date' => $endDate];
             $columns[$day] = [];
         }
-        foreach ($reservations as &$rsvn) {
+        foreach ($reservations as $rsvn) {
             $day = $rsvn['begin_time']->format('z');
             if ($day === $rsvn['end_time']->format('z')) {
                 $columns[$day][] = $rsvn;
@@ -107,6 +118,7 @@ class ReservationRepository extends ServiceEntityRepository
                 }
             }
         }
+        MyUtils::addOpeningHours($headers, $this->cstrRepo, $this->security->getUser());
 
         return new TableView($headers, $columns);
     }
@@ -153,7 +165,7 @@ class ReservationRepository extends ServiceEntityRepository
                     'endTime' => $endTime,
                 ])->getQuery()->getArrayResult();
 
-            foreach ($rooms as &$room) {
+            foreach ($rooms as $room) {
                 $headers[$room['id']] = [
                     'id' => $room['id'],
                     'date' => $beginTime,
@@ -161,14 +173,15 @@ class ReservationRepository extends ServiceEntityRepository
                 ];
                 $columns[$room['id']] = [];
             }
-            foreach ($reservations as &$rsvn) {
+            foreach ($reservations as $rsvn) {
                 $columns[$rsvn['room_id']][] = $rsvn;
             }
         }
+        MyUtils::addOpeningHours($headers, $this->cstrRepo, $this->security->getUser());
 
         return new TableView($headers, $columns);
     }
-    
+
     public function getTableByUser(
         int $userId,
         DateTimeImmutable $beginTime,
@@ -195,7 +208,7 @@ class ReservationRepository extends ServiceEntityRepository
             $headers[$day] = ['date' => $endDate];
             $columns[$day] = [];
         }
-        foreach ($reservations as &$rsvn) {
+        foreach ($reservations as $rsvn) {
             $day = $rsvn['begin_time']->format('z');
             if ($day === $rsvn['end_time']->format('z')) {
                 $columns[$day][] = $rsvn;
@@ -208,6 +221,7 @@ class ReservationRepository extends ServiceEntityRepository
                 }
             }
         }
+        MyUtils::addOpeningHours($headers, $this->cstrRepo, $this->security->getUser());
 
         return new TableView($headers, $columns);
     }

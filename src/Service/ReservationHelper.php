@@ -112,7 +112,7 @@ class ReservationHelper
         $beginTime = $endTime->modify('last monday');
         $weekRsvns = $this->rsvnRepo->getUserReservations($requesterId, $beginTime, $endTime, true);
         $weekLength = 0;
-        foreach ($weekRsvns as $key => &$rec) {
+        foreach ($weekRsvns as $key => $rec) {
             if ($rec['id'] === $rsvn->getId()) {
                 unset($weekRsvns[$key]); // remove reservation if is edited
             } else {
@@ -122,7 +122,7 @@ class ReservationHelper
         }
 
         // ---------------------------------------------------------------------- RSVN_SELF_CONFLICT
-        foreach ($weekRsvns as &$rec) {
+        foreach ($weekRsvns as $rec) {
             if ($rec['end_time'] > $rsvnBT && $rec['begin_time'] < $rsvnET) {
                 return new ReservationConflictException(RsvnErr::RSVN_SELF_CONFLICT, $rec['id']);
             }
@@ -137,7 +137,7 @@ class ReservationHelper
         $roomId = $rsvn->getRoom()->getId();
         $beginTime = $rsvnBT->modify('-2 hours');
         $endTime = $rsvnET->modify('+2 hours');
-        foreach ($weekRsvns as &$rec) {
+        foreach ($weekRsvns as $rec) {
             if (
                 $rec['room_id'] === $roomId
                 && $rec['end_time'] > $beginTime
