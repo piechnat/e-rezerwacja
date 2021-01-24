@@ -72,7 +72,7 @@ class Reservation
         return $this->room;
     }
 
-    public function setRoom(?Room $room): self
+    public function setRoom(Room $room): self
     {
         $this->room = $room;
 
@@ -120,7 +120,7 @@ class Reservation
         return $this->requester;
     }
 
-    public function setRequester(?User $requester): self
+    public function setRequester(User $requester): self
     {
         $this->requester = $requester;
 
@@ -132,7 +132,7 @@ class Reservation
         return $this->editor;
     }
 
-    public function setEditor(?User $editor): self
+    public function setEditor(User $editor): self
     {
         $this->editor = $editor;
 

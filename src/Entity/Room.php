@@ -32,7 +32,7 @@ class Room
      */
     private $tags;
 
-    public function __construct($title = null)
+    public function __construct(string $title = null)
     {
         $this->tags = new ArrayCollection();
         if (null !== $title) {

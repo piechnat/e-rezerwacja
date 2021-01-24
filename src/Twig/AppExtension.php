@@ -31,6 +31,7 @@ class AppExtension extends AbstractExtension
             $height = $height + ($top - self::MIN_TOP);
             $top = self::MIN_TOP;
         }
+        $height -= 0.1;
 
         return "top: {$top}em; height: {$height}em;";
     }

@@ -31,10 +31,10 @@
       placeholder: 'Ćwiczenie'
     }}) }}
     {% if send_request %}
-    <div class="form-group">
-      <input type="checkbox" id="reservation_send_request" name="reservation[send_request]" required="required" value="1" />
-      <label for="reservation_send_request" class="required">{{ 'Składam wniosek o rezerwację sali'|trans }}</label>
-    </div>
+      <div id="send-request-checkbox" class="form-group">
+        <input type="checkbox" id="reservation_send_request" name="reservation[send_request]" required="required" value="1" />
+        <label for="reservation_send_request" class="required">{{ 'Składam wniosek o rezerwację sali'|trans }}</label>
+      </div>
     {% endif %}
     <div class="form-group button-row">
       {% if not action_add %}
@@ -48,5 +48,16 @@
     </div>
   {{ form_end(form) }}
   {{ include('jqslct2-load.html.twig') }}
+  {% if send_request %}
+    <script>
+      var inputs = $(['#reservation_requester', '#reservation_room', '#reservation_begin_time_date', 
+        '#reservation_begin_time_time', '#reservation_end_time'].join(', '));
+      inputs.on('change', function() {
+        inputs.off('change');
+        $('#reservation_details').removeAttr('required');
+        $('#reservation_send_request').parent().remove();
+      });
+    </script>
+  {% endif %}
 
 {% endblock %}

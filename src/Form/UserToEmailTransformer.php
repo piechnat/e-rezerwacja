@@ -19,16 +19,16 @@ class UserToEmailTransformer implements DataTransformerInterface
         $this->security = $security;
     }
 
-    public function transform($user)
+    public function transform($user): string
     {
-        if (null === $user) {
+        if (!$user) {
             return '';
         }
 
         return $user->getEmail();
     }
 
-    public function reverseTransform($userEmail)
+    public function reverseTransform($userEmail): User
     {
         /** @var User */
         $loggedUser = $this->security->getUser();
@@ -38,7 +38,7 @@ class UserToEmailTransformer implements DataTransformerInterface
         }
         $user = $this->userRepo->findOneBy(['email' => $userEmail]);
 
-        if (null === $user) {
+        if (!$user) {
             throw new TransformationFailedException();
         }
 

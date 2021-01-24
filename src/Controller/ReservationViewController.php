@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Form\RsvnViewType;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
@@ -52,7 +53,7 @@ class ReservationViewController extends AbstractController
             $session->set('last_date', $date);
         }
         if (!$form->isSubmitted()) {
-            if (null === $room && null !== ($lastRoomId = $session->get('last_room_id'))) {
+            if (!$room && null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
                 MyUtils::updateForm($form, 'room', TextType::class, ['data' => $room]);
             }
@@ -60,7 +61,7 @@ class ReservationViewController extends AbstractController
             MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
-        if ((null !== $room) && (null !== $date)) {
+        if ($room && $date) {
             $d = $date->modify('next monday');
             $tableView = $rsvnRepo->getTableByRoom($room->getId(), $d->modify('last monday'), $d);
         }
@@ -114,7 +115,7 @@ class ReservationViewController extends AbstractController
             MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
-        if (count($tagIds) && (null !== $tagInt) && (null !== $date)) {
+        if (count($tagIds) && (null !== $tagInt) && $date) {
             $tableView = $rsvnRepo->getTableByDay($date, $tagIds, $tagInt);
         }
 
@@ -125,11 +126,11 @@ class ReservationViewController extends AbstractController
     }
 
     /**
-     * @Route("/user/{id?}/{date}", name="reservation_view_user", defaults={"date":"now"})
+     * @Route("/user/{id}/{date}", name="reservation_view_user", defaults={"id":null, "date":"now"})
      * @ParamConverter("user", options={"strip_null":true})
      */
     public function user(
-        Room $user = null,
+        User $user = null,
         DateTimeImmutable $date = null,
         Request $request,
         ReservationRepository $rsvnRepo,
@@ -154,7 +155,7 @@ class ReservationViewController extends AbstractController
             MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
-        if ((null !== $user) && (null !== $date)) {
+        if ($user && $date) {
             $d = $date->modify('next monday');
             $tableView = $rsvnRepo->getTableByUser($user->getId(), $d->modify('last monday'), $d);
         }

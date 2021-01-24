@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ConstraintRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -92,24 +93,24 @@ class TimeConstraint
         return $this;
     }
 
-    public function getBeginDate(): ?\DateTimeImmutable
+    public function getBeginDate(): ?DateTimeImmutable
     {
         return $this->begin_date;
     }
 
-    public function setBeginDate(\DateTimeImmutable $begin_date): self
+    public function setBeginDate(DateTimeImmutable $begin_date): self
     {
         $this->begin_date = $begin_date;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeImmutable
+    public function getEndDate(): ?DateTimeImmutable
     {
         return $this->end_date;
     }
 
-    public function setEndDate(\DateTimeImmutable $end_date): self
+    public function setEndDate(DateTimeImmutable $end_date): self
     {
         $this->end_date = $end_date;
 

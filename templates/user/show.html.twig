@@ -38,7 +38,7 @@
   <p>{{ 'Język'|trans }}: {{ lang|trans }}</p>
 
   <p class="form-group button-row">
-    <a class="button" href="{{ path('reservation_view_user') }}">
+    <a class="button" href="{{ path('reservation_view_user', {id: user.id}) }}">
       {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
     </a>
     {% if can_edit_user %}

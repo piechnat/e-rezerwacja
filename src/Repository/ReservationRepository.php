@@ -9,7 +9,6 @@ use App\Service\MyUtils;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * @method Reservation|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,16 +19,10 @@ use Symfony\Component\Security\Core\Security;
 class ReservationRepository extends ServiceEntityRepository
 {
     private $cstrRepo;
-    private $security;
 
-    public function __construct(
-        ManagerRegistry $registry,
-        ConstraintRepository $cstrRepo,
-        Security $security
-    ) {
+    public function __construct(ManagerRegistry $registry, ConstraintRepository $cstrRepo) {
         parent::__construct($registry, Reservation::class);
         $this->cstrRepo = $cstrRepo;
-        $this->security = $security;
     }
 
     public function getConflictIds(Reservation $rsvn, int $limit = 1): array
@@ -118,7 +111,7 @@ class ReservationRepository extends ServiceEntityRepository
                 }
             }
         }
-        MyUtils::addOpeningHours($headers, $this->cstrRepo, $this->security->getUser());
+        MyUtils::addOpeningHours($headers, $this->cstrRepo);
 
         return new TableView($headers, $columns);
     }
@@ -177,7 +170,7 @@ class ReservationRepository extends ServiceEntityRepository
                 $columns[$rsvn['room_id']][] = $rsvn;
             }
         }
-        MyUtils::addOpeningHours($headers, $this->cstrRepo, $this->security->getUser());
+        MyUtils::addOpeningHours($headers, $this->cstrRepo);
 
         return new TableView($headers, $columns);
     }
@@ -221,7 +214,7 @@ class ReservationRepository extends ServiceEntityRepository
                 }
             }
         }
-        MyUtils::addOpeningHours($headers, $this->cstrRepo, $this->security->getUser());
+        MyUtils::addOpeningHours($headers, $this->cstrRepo);
 
         return new TableView($headers, $columns);
     }

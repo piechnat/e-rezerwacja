@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Room;
 use App\Repository\RoomRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -15,23 +16,23 @@ class RoomToTitleTransformer implements DataTransformerInterface
         $this->roomRepo = $roomRepo;
     }
 
-    public function transform($room)
+    public function transform($room): string
     {
-        if (null === $room) {
+        if (!$room) {
             return '';
         }
 
         return $room->getTitle();
     }
 
-    public function reverseTransform($roomTitle)
+    public function reverseTransform($roomTitle): ?Room
     {
         if (!$roomTitle) {
-            return;
+            return null;
         }
         $room = $this->roomRepo->findOneBy(['title' => $roomTitle]);
 
-        if (null === $room) {
+        if (!$room) {
             throw new TransformationFailedException();
         }
 

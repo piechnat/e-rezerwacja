@@ -2,14 +2,11 @@
 
 namespace App\CustomTypes;
 
-use App\Repository\ConstraintRepository;
+use App\Repository\ConstraintRepository as CstrRepo;
 use DateTimeImmutable;
 
 class TableView
 {
-    private const MIN = 6;
-    private const MAX = 22;
-
     public $headers;
     public $columns;
     public $meta;
@@ -21,64 +18,63 @@ class TableView
         }
         $this->headers = &$headers;
         $this->columns = &$columns;
+        $this->setTableBoundaries();
+        $this->addEmptySpaces();
+        $this->setCssDimensions();
+    }
 
-        // set hours boundaries
-        $min = $this::MIN;
-        $max = $this::MAX;
-        foreach ($this->columns as $key => $items) {
-            if (0 === count($items)) {
-                continue;
+    private function setTableBoundaries()
+    {
+        $min = $max = '12:00';
+        foreach ($this->headers as $key => $header) {
+            if (CstrRepo::VALID_SCHEDULE === $header['hours']['state']) {
+                $min = min($min, $header['hours']['begin_time']->format('H:i'));
+                $max = max($max, $header['hours']['end_time']->format('H:i'));
             }
-            $day = $this->headers[$key]['date']->format('j');
-            $rsvn = reset($items);
-            if ($rsvn['begin_time']->format('j') !== $day) {
-                $min = 0;
-            } else {
-                $min = min($min, (int) $rsvn['begin_time']->format('G'));
+            if (count($this->columns[$key]) > 0) {
+                $dayNumber = $header['date']->format('j');
+                $rsvn = reset($this->columns[$key]);
+                if ($rsvn['begin_time']->format('j') !== $dayNumber) {
+                    $min = '00:00';
+                } else {
+                    $min = min($min, $rsvn['begin_time']->format('H:i'));
+                }
+                $rsvn = end($this->columns[$key]);
+                if ($rsvn['end_time']->format('j') !== $dayNumber) {
+                    $max = '24:00';
+                } else {
+                    $max = max($max, $rsvn['end_time']->format('H:i'));
+                }
             }
-            $rsvn = end($items);
-            if ($rsvn['end_time']->format('j') !== $day) {
-                $max = 24;
-            } else {
-                $max = max($max, ((int) $rsvn['end_time']->format('G')) + (
-                    '00' !== $rsvn['end_time']->format('i') ? 1 : 0
-                ));
-            }
-            if (0 === $min && 24 === $max) {
+            if ('00:00' === $min && '24:00' === $max) { //???
                 break;
             }
         }
-        $this->meta = ['min_hour' => $min, 'max_hour' => $max];
-
-        $this->addEmptySpaces();
-
-        // set css dimensions
-        foreach ($this->columns as $key => &$items) {
-            $base = $this->headers[$key]['date']->setTime($this->meta['min_hour'], 0);
-            foreach ($items as &$rsvn) {
-                $rsvn['css_top'] = $this->secDiff($base, $rsvn['begin_time']) / 960;
-                $rsvn['css_height'] = $this->secDiff($rsvn['begin_time'], $rsvn['end_time']) / 960;
-            }
+        $hoursList = [];
+        $end = (int) substr($max, 0, 2);
+        if ('00' === substr($max, 3, 2)) {
+            --$end;
         }
-    }
-
-    private function secDiff(\DateTimeInterface $d1, \DateTimeInterface $d2): int
-    {
-        return ($d2->getTimestamp() - $d1->getTimestamp()) +
-               ($d2->getOffset() - $d1->getOffset()); // ignore daylight savings time
+        for ($pos = ((int) substr($min, 0, 2)) + 1; $pos <= $end; ++$pos) {
+            $hoursList[] = sprintf('%02d:00', $pos);
+        }
+        $this->meta = ['min_hour' => $min, 'max_hour' => $max, 'hours_list' => $hoursList];
     }
 
     private function addEmptySpaces()
     {
         $now = new DateTimeImmutable();
-        foreach ($this->columns as $key => &$items) {
-            $date = $this->headers[$key]['date'];
-            if ($date < $now->modify('today')) {
+        $today = $now->modify('today');
+        foreach ($this->headers as $key => $header) {
+            if (
+                $header['date'] < $today
+                || CstrRepo::VALID_SCHEDULE !== $header['hours']['state']
+            ) {
                 continue;
             }
             $newItems = [];
-            $beginTime = max($now, $date->setTime($this->meta['min_hour'], 0));
-            foreach ($items as $rsvn) {
+            $beginTime = max($now, $header['hours']['begin_time']);
+            foreach ($this->columns[$key] as $rsvn) {
                 if ($rsvn['begin_time'] >= $beginTime->modify('+15 minutes')) {
                     $newItems[] = [
                         'id' => 0,
@@ -89,7 +85,7 @@ class TableView
                 $beginTime = max($now, $rsvn['end_time']);
                 $newItems[] = $rsvn;
             }
-            $endTime = $date->setTime($this->meta['max_hour'], 0);
+            $endTime = $header['hours']['end_time'];
             if ($beginTime <= $endTime->modify('-15 minutes')) {
                 $newItems[] = [
                     'id' => 0,
@@ -97,7 +93,25 @@ class TableView
                     'end_time' => $endTime,
                 ];
             }
-            $items = $newItems;
+            $this->columns[$key] = $newItems;
         }
+    }
+
+    private function setCssDimensions()
+    {
+        foreach ($this->columns as $key => &$items) {
+            $base = substr($this->meta['min_hour'], 0, 2);
+            $base = $this->headers[$key]['date']->modify("{$base}:00");
+            foreach ($items as &$rsvn) {
+                $rsvn['css_top'] = self::secDiff($base, $rsvn['begin_time']) / 960;
+                $rsvn['css_height'] = self::secDiff($rsvn['begin_time'], $rsvn['end_time']) / 960;
+            }
+        }
+    }
+
+    private static function secDiff(\DateTimeInterface $d1, \DateTimeInterface $d2): int
+    {
+        return ($d2->getTimestamp() - $d1->getTimestamp()) +
+               ($d2->getOffset() - $d1->getOffset()); // ignore daylight savings time
     }
 }

@@ -50,7 +50,7 @@ class RoomController extends AbstractController
             $room = $form->getData()['room'];
             $session->set('last_room_id', $room->getId());
         }
-        if (!$form->isSubmitted() && null === $room) {
+        if (!$form->isSubmitted() && !$room) {
             if (null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
                 MyUtils::updateForm($form, 'room', EntityType::class, ['data' => $room]);

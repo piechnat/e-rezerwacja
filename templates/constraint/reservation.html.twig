@@ -1,8 +1,20 @@
 {% extends 'base.html.twig' %}
-{% set main_title = 'Ograniczenia czasowe' %}
+{% set main_title = 'Limity rezerwacji' %}
 {% block main %}
 
-  <h2 class="main-title">{{ 'bx bx-time'|ico }}{{ main_title|trans }}</h2>
-  <p>{{ text }}</p>
+  <h2 class="main-title">{{ 'bx bx-cog'|ico }}{{ main_title|trans }}</h2>
+
+  {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_widget(form) }}
+    <div class="form-group button-row">
+      <a class="button" href="{{ path('constraint_index') }}">
+        {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
+      </a>
+      <button type="submit" name="save" value="save">
+        {{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}
+      </button>
+    </div>
+  {{ form_end(form) }}
 
 {% endblock %}

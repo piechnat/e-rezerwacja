@@ -2,14 +2,13 @@
 
 namespace App\Controller;
 
-use App\CustomTypes\ReservationConflictException;
+use App\CustomTypes\ReservationNotPossibleException;
 use App\CustomTypes\ReservationNotAllowedException;
 use App\CustomTypes\UserLevel;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
-use App\Repository\RoomRepository;
 use App\Service\MyUtils;
 use App\Service\ReservationHelper;
 use DateTimeImmutable;
@@ -17,8 +16,8 @@ use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +25,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ReservationController extends AbstractController
 {
+    /**
+     * @Route("/requests", name="requests")
+     */
+    public function requests()
+    {
+        return $this->render('main/redirect.html.twig', [
+            'main_title' => 'Żądania rezerwacji',
+            'main_content' => 'Under construction',
+        ]);
+    }
+
     /**
      * @Route("/reservation/index", name="reservation_index")
      */
@@ -43,7 +53,7 @@ class ReservationController extends AbstractController
     {
         return $this->render('reservation/show.html.twig', [
             'rsvn' => $rsvn,
-            'can_edit_rsvn' => $this->canEditRsvn($rsvn),
+            'can_edit_rsvn' => $this->canEditReservation($rsvn),
         ]);
     }
 
@@ -53,7 +63,7 @@ class ReservationController extends AbstractController
     public function delete(Reservation $rsvn, Request $request)
     {
         if (
-            $this->canEditRsvn($rsvn)
+            $this->canEditReservation($rsvn)
             && $this->isCsrfTokenValid('reservation_delete', $request->request->get('token'))
         ) {
             $em = $this->getDoctrine()->getManager();
@@ -70,40 +80,50 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/add/{room_id?}/{beginTime}/{endTime}", name="reservation_add",
-     *     defaults={"beginTime":"now", "endTime":"now +60 minutes"})
-     * @ParamConverter("room", class="App:Room", options={"id":"room_id"})
-     *     
-     * @Route("/reservation/edit/{rsvn_id}", name="reservation_edit")
-     * @ParamConverter("rsvn", class="App:Reservation", options={"id":"rsvn_id"})
+     * @Route("/reservation/add/{room_id}/{beginTime}/{endTime}", name="reservation_add",
+     *     defaults={"room_id": 0, "beginTime": "now"})
+     * @Entity("room", class="App:Room", expr="room_id > 0 ? repository.find(room_id) : null")
      */
-    public function addOrEdit(
+    public function add(
         Room $room = null,
-        DateTimeImmutable $beginTime = null,
+        DateTimeImmutable $beginTime,
         DateTimeImmutable $endTime = null,
-        Reservation $rsvn = null,
         Request $request,
-        ReservationHelper $rsvnHelper,
-        RoomRepository $roomRepo
+        ReservationHelper $rsvnHelper
     ) {
-        $actionAdd = 'reservation_add' === $request->attributes->get('_route');
-        if ($actionAdd) {
-            $rsvn = new Reservation();
-            $rsvn->setRequester($this->getUser());
+        $rsvn = new Reservation();
+        if ($room) {
             $rsvn->setRoom($room);
-            $rsvn->setBeginTime($beginTime);
-            $rsvn->setEndTime($endTime);
-        } elseif (null === $rsvn) {
-            throw $this->createNotFoundException();
-        } elseif (false === $this->canEditRsvn($rsvn)) {
-            throw $this->createAccessDeniedException();
-        } else {
-            $room = $rsvn->getRoom();
         }
+        $rsvn->setRequester($this->getUser());
+        $rsvn->setBeginTime($beginTime);
+        $rsvn->setEndTime($endTime ?? $beginTime->modify('+60 minutes'));
+
+        return $this->handleAddOrEdit($rsvn, true, $request, $rsvnHelper);
+    }
+
+    /**
+     * @Route("/reservation/edit/{rsvn_id}", name="reservation_edit")
+     * @ParamConverter("rsvn", class="App:Reservation", options={"id": "rsvn_id"})
+     */
+    public function edit(Reservation $rsvn, Request $request, ReservationHelper $rsvnHelper)
+    {
+        if ($this->canEditReservation($rsvn)) {
+            return $this->handleAddOrEdit($rsvn, false, $request, $rsvnHelper);
+        }
+
+        throw $this->createAccessDeniedException();
+    }
+
+    private function handleAddOrEdit(
+        Reservation $rsvn,
+        bool $actionAdd,
+        Request $request,
+        ReservationHelper $rsvnHelper
+    ) {
         $session = $request->getSession();
         $formSendRequest = false;
         $formOptions = ['modify_requester' => $this->isGranted(UserLevel::ADMIN)];
-
         $form = $this->createForm(ReservationType::class, $rsvn, $formOptions);
         $form->handleRequest($request);
 
@@ -140,7 +160,7 @@ class ReservationController extends AbstractController
 
                     throw $e;
                 }
-            } catch (ReservationConflictException $e) {
+            } catch (ReservationNotPossibleException $e) {
                 $form->get('room')->addError($rsvnHelper->createFormError($e));
             } catch (ReservationNotAllowedException $e) {
                 if (!isset($request->get('reservation', [])['send_request'])) {
@@ -155,10 +175,11 @@ class ReservationController extends AbstractController
                 }
             }
         }
-        if (!$form->isSubmitted() && null === $room) {
+        if (!$form->isSubmitted() && !$rsvn->getRoom()) {
             if (null !== ($lastRoomId = $session->get('last_room_id'))) {
-                $room = $roomRepo->find($lastRoomId);
-                MyUtils::updateForm($form, 'room', TextType::class, ['data' => $room]);
+                MyUtils::updateForm($form, 'room', TextType::class, [
+                    'data' => $this->getDoctrine()->getRepository(Room::class)->find($lastRoomId),
+                ]);
             }
         }
 
@@ -170,19 +191,11 @@ class ReservationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/requests", name="requests")
-     */
-    public function requests()
+    private function canEditReservation(Reservation $rsvn): bool
     {
-        return $this->render('main/redirect.html.twig', [
-            'main_title' => 'Żądania rezerwacji',
-            'main_content' => 'Under construction',
-        ]);
-    }
-
-    private function canEditRsvn(Reservation $rsvn): bool
-    {
+        if ($rsvn->getEndTime() < new DateTimeImmutable()) {
+            return false;
+        }
         if ($this->getUser()->getId() === $rsvn->getRequester()->getId()) {
             return true;
         }

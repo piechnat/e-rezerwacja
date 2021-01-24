@@ -1,10 +1,8 @@
 FUNKCJE:
-- ograniczenia
-  + dostosować TableView
-- żądania
-- add auto-submit in table view
+- table view: dodać auto-submit
 - dodać AJAX select w edycji tagów (sale, użytkownicy)
-- usunąć "Składam wniosek o rezerwację sali" po modyfikacji formularza?
+- zapis daty w sesji? data ważności?
+- żądania
 
 a) Rezerwacja sal
 - możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 
@@ -24,9 +22,10 @@ b) Ewidencja obecności pracowników oraz pobrań i zwrotów kluczy
 - zdalne uwierzytelnienie wejścia, wyjścia lub poboru klucza
 - sprawdzenie czasu pracy Pracownika w określonym przedziale
 
-POBOCZNE:
-- dodawanie rezerwacji przez kliknięcie na nagłówku kolumny
+----------------------------------------------------------------------------------------------------
+http://pc.piechnat.pl/login/check?state=f35b5b20b2564370d05e7a1c60643b43&code=4%2F0AY0e-g6u93qmc5Nh6hvZDOHWk4imGmMuSNjbdL6rn-L1rXEWLwFh1wqwRz3PBskbBtnQ3g&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=3&hd=amuz.lodz.pl&prompt=none#
 
+Invalid state parameter passed in callback URL.
 ----------------------------------------------------------------------------------------------------
 
 user_presence

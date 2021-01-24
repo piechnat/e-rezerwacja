@@ -37,7 +37,7 @@ class ReservationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $rsvn = $builder->getData();
-        if (null === $rsvn) {
+        if (!$rsvn) {
             $rsvn = new Reservation();
             $builder->setData($rsvn);
         }
@@ -45,11 +45,11 @@ class ReservationType extends AbstractType
         $now = new DateTimeImmutable();
         $beginTime = $rsvn->getBeginTime();
         $endTime = $rsvn->getEndTime();
-        if (null === $beginTime) {
+        if (!$beginTime) {
             $beginTime = $now;
             $rsvn->setBeginTime($beginTime);
         }
-        if ($endTime < $now && false === $options['past_time_edit']) {
+        if ($endTime < $now) {
             $endTime = $beginTime->modify('+60 minutes');
             $rsvn->setEndTime($endTime);
         }
@@ -74,7 +74,7 @@ class ReservationType extends AbstractType
                 ->get('requester')->addModelTransformer($this->userToEmail)
             ;
         } else {
-            if (null === $rsvn->getRequester()) {
+            if (!$rsvn->getRequester()) {
                 $rsvn->setRequester($this->security->getUser());
             }
         }
@@ -103,13 +103,11 @@ class ReservationType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
             $rsvn = $event->getData();
             $beginTime = $rsvn->getBeginTime();
-            if (false === $options['past_time_edit']) {
-                $now = new DateTimeImmutable();
-                if ($beginTime < $now) {
-                    $rsvn->setBeginTime($now);
-                    MyUtils::updateForm($event->getForm(), 'begin_time', DateTimeType::class);
-                    $beginTime = $now;
-                }
+            $now = new DateTimeImmutable();
+            if ($beginTime < $now) {
+                $rsvn->setBeginTime($now);
+                MyUtils::updateForm($event->getForm(), 'begin_time', DateTimeType::class);
+                $beginTime = $now;
             }
             // change end_time to a date on the same day as begin_time
             $endTime = $rsvn->getEndTime();
@@ -128,15 +126,14 @@ class ReservationType extends AbstractType
             'constraints' => [new Callback([$this, 'validateReservation'])],
             'allow_extra_fields' => true,
             'modify_requester' => false,
-            'past_time_edit' => false,
         ]);
     }
 
     public function validateReservation(Reservation $rsvn, ExecutionContextInterface $context)
     {
         if ($rsvn->getEndTime() < $rsvn->getBeginTime()->modify('+45 minutes')) {
-            $context->buildViolation('Rezerwacja nie może być krótsza niż 45 minut.')
-                ->atPath('end_time')->addViolation();
+            $context->buildViolation('Rezerwacja nie może być krótsza niż %param% minut.')
+                ->setParameter('%param%', 45)->atPath('end_time')->addViolation();
         }
     }
 }

@@ -33,7 +33,7 @@ class LocaleSubscriber implements EventSubscriberInterface
     {
         /** @var User */
         $user = $this->security->getUser();
-        if (null !== $user) {
+        if ($user) {
             if ($this->security->isGranted(UserLevel::DISABLED)) {
                 $event->setResponse(new Response($this->twig->render('main/forbidden.html.twig')));
             }

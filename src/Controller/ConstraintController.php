@@ -5,34 +5,18 @@ namespace App\Controller;
 use App\Entity\TimeConstraint;
 use App\Form\TimeConstraintType;
 use App\Repository\ConstraintRepository;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\PdoAdapter;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Positive;
 
 /**
  * @Route("/constraint")
  */
 class ConstraintController extends AbstractController
 {
-    /**
-     * @Route("/test", name="constraint_test", methods={"GET"})
-     */
-    public function test(ConstraintRepository $cstrRepo): Response
-    {
-        $arr = $cstrRepo->getOpeningHours(
-            $this->getUser(),
-            new DateTimeImmutable('01-01-2021'),
-            new DateTimeImmutable('30-01-2021')
-        );
-        return $this->render('main/redirect.html.twig', [
-            'main_title' => 'Test',
-            'main_content' => '<pre>'.print_r($arr,1).'</pre>',
-        ]);
-    }
-
     /**
      * @Route("/index", name="constraint_index", methods={"GET"})
      */
@@ -95,25 +79,28 @@ class ConstraintController extends AbstractController
     /**
      * @Route("/reservation", name="constraint_reservation")
      */
-    public function reservation(): Response
+    public function reservation(Request $request, ConstraintRepository $cstrRepo): Response
     {
-        $cache = new PdoAdapter($this->getDoctrine()->getConnection());
-        return $this->render('constraint/reservation.html.twig', [
-            'text' => '>'. $cache->get('DUPA', function () { 
-                return 'def'; 
-            })
-        ]);
-    }
+        $builder = $this->createFormBuilder();
+        $rsvnLimits = $cstrRepo->getReservationLimits();
+        foreach ($rsvnLimits as $key => $value) {
+            $builder->add($key, IntegerType::class, [
+                'label' => $key,
+                'data' => $value,
+                'constraints' => [
+                    new Positive(),
+                ],
+            ]);
+        }
+        $form = $builder->getForm();
+        $form->handleRequest($request);
 
-    /**
-     * @Route("/set/{text}", name="constraint_set")
-     */
-    public function set(string $text): Response
-    {
-        $cache = new PdoAdapter($this->getDoctrine()->getConnection());
-        $dupa = $cache->getItem('DUPA');
-        $dupa->set($text);
-        $cache->save($dupa);
-        return $this->redirectToRoute('constraint_test');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $cstrRepo->setReservationLimits($form->getData());
+        }
+
+        return $this->render('constraint/reservation.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }
