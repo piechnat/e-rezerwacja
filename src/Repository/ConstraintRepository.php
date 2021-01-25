@@ -21,6 +21,7 @@ use Symfony\Component\Security\Core\Security;
  */
 class ConstraintRepository extends ServiceEntityRepository
 {
+    public const MIN_RSVN_LEN = 15;
     public const CLOSE_SCHEDULE = -1;
     public const VALID_SCHEDULE = 0;
     public const OPEN_SCHEDULE = 1;
@@ -48,6 +49,7 @@ class ConstraintRepository extends ServiceEntityRepository
             return [
                 'MAX_ADVANCE_TIME_DAY' => 14,
                 'MAX_RSVN_LENGTH_MIN' => 120,
+                'MIN_RSVN_LENGTH_MIN' => 45,
                 'RSVN_WEEK_LIMIT_HR' => 14,
             ];
         });
@@ -68,7 +70,7 @@ class ConstraintRepository extends ServiceEntityRepository
     public function isReservationOnSchedule(Reservation $rsvn): bool
     {
         $beginTime = $rsvn->getBeginTime();
-        $openingHours = $this->getOpeningHours($rsvn->getEditor(), $beginTime);
+        $openingHours = $this->getOpeningHours($beginTime, null, $rsvn->getEditor());
         $day = reset($openingHours);
         if (self::CLOSE_SCHEDULE === $day['state']) {
             return false;
@@ -82,7 +84,8 @@ class ConstraintRepository extends ServiceEntityRepository
 
     public function getOpeningHours(
         DateTimeImmutable $beginDate,
-        DateTimeImmutable $endDate = null
+        DateTimeImmutable $endDate = null,
+        User $user = null
     ): array {
         $beginDate = $beginDate->modify('today');
         $endDate = $endDate ? $endDate->modify('today') : $beginDate;
@@ -99,7 +102,7 @@ class ConstraintRepository extends ServiceEntityRepository
             ])->getQuery()->getResult();
         
         /** @var User */
-        $user = $this->security->getUser();
+        $user = $user ?? $this->security->getUser();
         if ($user) {
             $tags = $user->getTags();
             foreach ($timeCstrs as $index => $cstr) {

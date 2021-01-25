@@ -63,6 +63,8 @@ class TableView
 
     private function addEmptySpaces()
     {
+        $modInc = '+'.CstrRepo::MIN_RSVN_LEN.' minutes';
+        $modDec = '-'.CstrRepo::MIN_RSVN_LEN.' minutes';
         $now = new DateTimeImmutable();
         $today = $now->modify('today');
         foreach ($this->headers as $key => $header) {
@@ -75,7 +77,7 @@ class TableView
             $newItems = [];
             $beginTime = max($now, $header['hours']['begin_time']);
             foreach ($this->columns[$key] as $rsvn) {
-                if ($rsvn['begin_time'] >= $beginTime->modify('+15 minutes')) {
+                if ($rsvn['begin_time'] >= $beginTime->modify($modInc)) {
                     $newItems[] = [
                         'id' => 0,
                         'begin_time' => $beginTime,
@@ -86,7 +88,7 @@ class TableView
                 $newItems[] = $rsvn;
             }
             $endTime = $header['hours']['end_time'];
-            if ($beginTime <= $endTime->modify('-15 minutes')) {
+            if ($beginTime <= $endTime->modify($modDec)) {
                 $newItems[] = [
                     'id' => 0,
                     'begin_time' => $beginTime,

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Reservation;
+use App\Repository\ConstraintRepository as CstrRepo;
 use App\Service\MyUtils;
 use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
@@ -23,7 +24,7 @@ class ReservationType extends AbstractType
     private $roomToTitle;
     private $userToEmail;
     private $security;
-
+    
     public function __construct(
         RoomToTitleTransformer $roomToTitle,
         UserToEmailTransformer $userToEmail,
@@ -131,9 +132,11 @@ class ReservationType extends AbstractType
 
     public function validateReservation(Reservation $rsvn, ExecutionContextInterface $context)
     {
-        if ($rsvn->getEndTime() < $rsvn->getBeginTime()->modify('+45 minutes')) {
+        $modInc = '+'.CstrRepo::MIN_RSVN_LEN.' minutes';
+        if ($rsvn->getEndTime() < $rsvn->getBeginTime()->modify($modInc)) {
             $context->buildViolation('Rezerwacja nie może być krótsza niż %param% minut.')
-                ->setParameter('%param%', 45)->atPath('end_time')->addViolation();
+                ->setParameter('%param%', CstrRepo::MIN_RSVN_LEN)
+                ->atPath('end_time')->addViolation();
         }
     }
 }

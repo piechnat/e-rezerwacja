@@ -1,4 +1,5 @@
 FUNKCJE:
+- zablokować pola przy wysyłaniu wniosku
 - table view: dodać auto-submit
 - dodać AJAX select w edycji tagów (sale, użytkownicy)
 - zapis daty w sesji? data ważności?

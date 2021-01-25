@@ -122,6 +122,14 @@ class ReservationHelper
             );
         }
 
+        // ------------------------------------------------------------------------- MIN_RSVN_LENGTH
+        if ($rsvnLength < $rsvnLimits['MIN_RSVN_LENGTH_MIN']) {
+            return new ReservationNotPossibleException(
+                RsvnErr::MIN_RSVN_LENGTH, 
+                $rsvnLimits['MIN_RSVN_LENGTH_MIN']
+            );
+        }
+
         // -------------------------------------------------------------- get reservations from week
         $requesterId = $rsvn->getRequester()->getId();
         $endTime = $rsvnBT->modify('next monday');
