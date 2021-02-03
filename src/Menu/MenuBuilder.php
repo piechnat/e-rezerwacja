@@ -62,9 +62,8 @@ class MenuBuilder
             $child = $this->ac($menu, 'Rezerwacja', ['uri' => '#'], '<i class="bx bxs-calendar"></i>');
             $this->ac($child, 'Dodaj', ['route' => 'reservation_add'], '<i class="bx bx-calendar-plus"></i>');
             $this->ac($child, 'Wykaz dzienny', ['route' => 'reservation_view_day'], '<i class="bx bx-calendar-week"></i>');
-            if ($security->isGranted(UserLevel::ADMIN)) {
-                $this->ac($child, 'Żądania', ['route' => 'requests'], '<i class="bx bx-bell"></i>');
-            }
+            $this->ac($child, 'Wnioski', ['route' => 'request_index'], '<i class="bx bx-file"></i>');
+            
             if ($isSuperAdmin) {
                 $this->ac($child, 'Ograniczenia', ['route' => 'constraint_index'], '<i class="bx bx-time"></i>');
             }

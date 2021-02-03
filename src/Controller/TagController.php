@@ -19,7 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class TagController extends AbstractController
 {
     /**
-     * @Route("/index", name="tag_index")
+     * @Route("/", name="tag_index")
      */
     public function index(TagRepository $tagRepository): Response
     {

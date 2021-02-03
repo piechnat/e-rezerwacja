@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% set main_title = 'Wnioski o rezerwację' %}
+{% block main %}
+
+	<h2 class="main-title">{{ 'bx bx-file'|ico }}{{ main_title|trans }}</h2>
+
+	<div class="list-table">
+		<table>
+			<thead>
+				<tr>
+          <th>Użytkownik</th>
+					<th>Sala</th>
+					<th>Termin</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for rqst in requests %}
+					<tr>
+						<td>{{ rqst.requester.fullname }}</td>
+            <td>{{ rqst.room.title }}</td>
+						<td>{{ rqst.beginTime|date('d.m.Y H:i') }}-{{ rqst.endTime|date('H:i') }}</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<b>Cel:</b>
+							{{ rqst.details }}</td>
+						<td>
+              <div class="form-group button-row">
+                <a class="button" href="">
+                  {{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj'|trans }}
+                </a>
+                <form action="{{ path('request_delete', {id: rqst.id}) }}" method="post">
+                  <input type="hidden" name="token" value="{{ csrf_token('request_delete') }}"/>
+                  <button type="submit" class="button" 
+                    onclick="return confirm('{{ 'Czy na pewno chcesz odrzuć wniosek?'|trans }}')">
+                    {{ 'bx bx-trash'|ico }}{{ 'Odrzuć'|trans }}
+                  </button>
+                </form>
+              </div>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="3">Nie znaleziono wniosków.</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+{% endblock %}

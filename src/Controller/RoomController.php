@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RoomController extends AbstractController
 {
     /**
-     * @Route("/index", name="room_index")
+     * @Route("/", name="room_index")
      */
     public function index(RoomRepository $roomRepository)
     {

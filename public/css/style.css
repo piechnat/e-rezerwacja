@@ -19,7 +19,7 @@ html, body {
   margin: 0 auto;
   padding: 0 2%;
   background-color: #fcfcfc;
-  box-shadow: 0 0 4rem 0.05rem rgba(45,45,45,0.3);
+  box-shadow: 0 0 4rem 0.05rem rgba(45, 45, 45, 0.3); /* OK */
 }
 body, select, input, button, textarea, .button   {
   -webkit-font-smoothing: antialiased;
@@ -112,14 +112,14 @@ i.bx {
 #navigation-bar .container {
   position: fixed;
   background-color: #cc2e22;
-  box-shadow: 0 0 0.5em 0.1em rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0.3rem 0.05rem rgba(0, 0, 0, 0.5);
 }
 #navigation-bar .placeholder {
   display: block;
 }
 @media (min-width: 1025px) { 
   #navigation-bar .menu-panel ul {
-    background-color:#cc2e22;
+    background-color:#dd2e22;
   }
   #navigation-bar .menu-panel > ul > li > a::after {
     content: '';
@@ -134,7 +134,7 @@ i.bx {
 }
 @media (max-width: 1024px) {
   #navigation-bar .menu-panel {
-    background-color:#cc2e22;
+    background-color:#dd2e22;
   }
 }
 

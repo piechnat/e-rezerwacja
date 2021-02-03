@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/index", name="user_index")
+     * @Route("/", name="user_index")
      */
     public function index(UserRepository $userRepository)
     {

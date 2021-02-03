@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\CustomTypes\ReservationNotPossibleException;
 use App\CustomTypes\ReservationNotAllowedException;
+use App\CustomTypes\ReservationNotPossibleException;
 use App\CustomTypes\UserLevel;
 use App\Entity\Reservation;
 use App\Entity\Room;
@@ -14,7 +14,6 @@ use App\Service\ReservationHelper;
 use DateTimeImmutable;
 use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -23,21 +22,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/reservation")
+ */
 class ReservationController extends AbstractController
 {
     /**
-     * @Route("/requests", name="requests")
-     */
-    public function requests()
-    {
-        return $this->render('main/redirect.html.twig', [
-            'main_title' => 'Żądania rezerwacji',
-            'main_content' => 'Under construction',
-        ]);
-    }
-
-    /**
-     * @Route("/reservation/index", name="reservation_index")
+     * @Route("/", name="reservation_index")
      */
     public function index(ReservationRepository $rsvnRepo)
     {
@@ -47,7 +38,7 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/show/{id}", name="reservation_show")
+     * @Route("/show/{id}", name="reservation_show")
      */
     public function show(Reservation $rsvn)
     {
@@ -58,7 +49,7 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/delete/{id}", name="reservation_delete")
+     * @Route("/delete/{id}", name="reservation_delete")
      */
     public function delete(Reservation $rsvn, Request $request)
     {
@@ -80,7 +71,7 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/add/{room_id}/{beginTime}/{endTime}", name="reservation_add",
+     * @Route("/add/{room_id}/{beginTime}/{endTime}", name="reservation_add",
      *     defaults={"room_id": 0, "beginTime": "now"})
      * @Entity("room", class="App:Room", expr="room_id > 0 ? repository.find(room_id) : null")
      */
@@ -103,7 +94,7 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/reservation/edit/{rsvn_id}", name="reservation_edit")
+     * @Route("/edit/{rsvn_id}", name="reservation_edit")
      * @ParamConverter("rsvn", class="App:Reservation", options={"id": "rsvn_id"})
      */
     public function edit(Reservation $rsvn, Request $request, ReservationHelper $rsvnHelper)
@@ -141,17 +132,13 @@ class ReservationController extends AbstractController
                 $conn->beginTransaction();
 
                 try {
-                    /** @var EntityManagerInterface */
-                    $mngr = $this->getDoctrine()->getManager();
-                    $mngr->find(
-                        Room::class,
-                        $rsvn->getRoom()->getId(),
-                        LockMode::PESSIMISTIC_WRITE // SELECT ... FOR UPDATE
-                    );
+                    $em = $this->getDoctrine()->getManager();
+                    // SELECT ... FOR UPDATE
+                    $em->find(Room::class, $rsvn->getRoom()->getId(), LockMode::PESSIMISTIC_WRITE);
                     $rsvnHelper->checkConflicts($rsvn);
 
-                    $mngr->persist($rsvn);
-                    $mngr->flush();
+                    $em->persist($rsvn);
+                    $em->flush();
                     $conn->commit();
 
                     return $this->redirectToRoute('reservation_show', ['id' => $rsvn->getId()]);
@@ -167,10 +154,8 @@ class ReservationController extends AbstractController
                     $formSendRequest = true;
                     $form->addError($rsvnHelper->createFormError($e));
                 } else {
-                    return $this->render('main/redirect.html.twig', [
-                        'path' => 'reservation_add',
-                        'main_title' => 'Under construction',
-                        'main_content' => 'Send request confirmation screen',
+                    return $this->forward('App\Controller\RequestController::add', [
+                        'rsvn' => $rsvn,
                     ]);
                 }
             }

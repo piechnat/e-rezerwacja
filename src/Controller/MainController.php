@@ -15,8 +15,9 @@ class MainController extends AbstractController
      */
     public function main()
     {
-        return $this->forward('App\\Controller\\'.
-            ($this->isGranted(UserLevel::USER) ? 'UserController::show' : 'MainController::about'));
+        return $this->forward('App\\Controller\\'.(
+            $this->isGranted(UserLevel::USER) ? 'UserController::show' : 'MainController::about'
+        ));
     }
 
     /**

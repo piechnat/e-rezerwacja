@@ -2,4 +2,7 @@
     "files.associations": {
         "*.css.twig": "css",
     },
+    "[twig]": {
+        "editor.tabSize": 2
+    }
 }

@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\Positive;
 class ConstraintController extends AbstractController
 {
     /**
-     * @Route("/index", name="constraint_index", methods={"GET"})
+     * @Route("/", name="constraint_index")
      */
     public function index(ConstraintRepository $cstrRepo): Response
     {
@@ -30,7 +30,7 @@ class ConstraintController extends AbstractController
     }
 
     /**
-     * @Route("/add", name="constraint_add", methods={"GET","POST"})
+     * @Route("/add", name="constraint_add")
      */
     public function add(Request $request): Response
     {
@@ -53,7 +53,7 @@ class ConstraintController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="constraint_edit", methods={"GET","POST"})
+     * @Route("/edit/{id}", name="constraint_edit")
      */
     public function edit(Request $request, TimeConstraint $timeCstr): Response
     {

@@ -1,20 +1,16 @@
 FUNKCJE:
+- zmniejszyć cienie
 - zablokować pola przy wysyłaniu wniosku
 - table view: dodać auto-submit
 - dodać AJAX select w edycji tagów (sale, użytkownicy)
 - zapis daty w sesji? data ważności?
-- żądania
 
 a) Rezerwacja sal
 - możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 
   (zaakceptowanie lub odrzucenie żądania rezerwacji)
-- obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu
+- obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu (RecurringReservation)
 - Student nie może zgłosić żądania rezerwacji sali, której ograniczenie obejmuje poziom konta 
   Zarządcy
-- Nie można dodać rezerwacji w przeszłości, ani edytować przeszłej rezerwacji.
-- Rezerwację można dodać jedynie w czasie przypadającym na godziny pracy uczelni (zgodnie 
-  z wprowadzonym harmonogramem)
-- użytkownik nie posiada innej rezerwacji w proponowanym terminie (dla Zarządcy)
 
 b) Ewidencja obecności pracowników oraz pobrań i zwrotów kluczy
 - stworzenie tabel user_presnce i key_events oraz przyporządkowania RFID users i rooms
