@@ -2,6 +2,8 @@
 
 namespace App\Twig;
 
+use App\CustomTypes\ReservationError;
+use App\Service\AppHelper;
 use DateTime;
 use DateTimeInterface;
 use Twig\Extension\AbstractExtension;
@@ -11,15 +13,13 @@ class AppExtension extends AbstractExtension
 {
     private const MIN_TOP = -0.3;
 
-    private const DAYS_OF_WEEK = [
-        'Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', ];
-
     public function getFilters()
     {
         return [
             new TwigFilter('col_css', [$this, 'getColumnCss']),
             new TwigFilter('week_day', [$this, 'getWeekDay']),
             new TwigFilter('ico', [$this, 'getIconTag'], ['is_safe' => ['html']]),
+            new TwigFilter('rsvn_err_val', [$this, 'getReservationError']),
         ];
     }
 
@@ -39,16 +39,21 @@ class AppExtension extends AbstractExtension
     public function getWeekDay($param): string
     {
         if (is_numeric($param) && $param >= 0 && $param <= 6) {
-            return self::DAYS_OF_WEEK[$param]; 
+            return AppHelper::DAYS_OF_WEEK[$param]; 
         }
         if (!($param instanceof DateTimeInterface)) {
             $param = new DateTime($param);
         }
 
-        return self::DAYS_OF_WEEK[$param->format('w')];
+        return AppHelper::DAYS_OF_WEEK[$param->format('w')];
     }
 
     public function getIconTag($class) {
         return '<i class="'. $class .'"></i>';
+    }
+
+    public function getReservationError(string $error): string
+    {
+        return ReservationError::getValue($error);
     }
 }

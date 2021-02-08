@@ -4,6 +4,7 @@ namespace App\CustomTypes;
 
 use App\Repository\ConstraintRepository as CstrRepo;
 use DateTimeImmutable;
+use InvalidArgumentException;
 
 class TableView
 {
@@ -14,7 +15,7 @@ class TableView
     public function __construct(array &$headers, array &$columns)
     {
         if (count($headers) !== count($columns)) {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException();
         }
         $this->headers = &$headers;
         $this->columns = &$columns;

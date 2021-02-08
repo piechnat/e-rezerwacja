@@ -5,7 +5,7 @@
   <h2 class="main-title">{{ 'bx bx-info-circle'|ico }}{{ main_title|trans }}</h2>
 
     <p>
-      E-rezerwacja to system informatyczny w formie aplikacji internetowej stworzony dla pracowników
+      {{ app_name }} to system informatyczny w formie aplikacji internetowej stworzony dla pracowników
       i&nbsp;studentów Akademii Muzycznej w Łodzi w celu umożliwienia zdalnej rezerwacji sal oraz 
       usprawnienia ewidencji pobrań i zwrotów kluczy.
     </p>
@@ -27,7 +27,7 @@
     <p>
       Pytania i uwagi odnośnie aplikacji oraz zgłoszenia ewentualnych błędów można kierować na adres:
       <a href="#" class="cryptedmail" data-name="mateusz.piechnat" data-domain="amuz.lodz" data-tld="pl"
-        onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld + '?subject=e-rezerwacja'; return false;"></a>
+        onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld + '?subject={{ app_name }}'; return false;"></a>
     </p>
 
     <p>

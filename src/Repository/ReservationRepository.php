@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\CustomTypes\TableView;
 use App\Entity\Reservation;
 use App\Entity\Room;
-use App\Service\MyUtils;
+use App\Service\AppHelper;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -111,7 +111,7 @@ class ReservationRepository extends ServiceEntityRepository
                 }
             }
         }
-        MyUtils::addOpeningHours($headers, $this->cstrRepo);
+        AppHelper::addOpeningHours($headers, $this->cstrRepo);
 
         return new TableView($headers, $columns);
     }
@@ -170,7 +170,7 @@ class ReservationRepository extends ServiceEntityRepository
                 $columns[$rsvn['room_id']][] = $rsvn;
             }
         }
-        MyUtils::addOpeningHours($headers, $this->cstrRepo);
+        AppHelper::addOpeningHours($headers, $this->cstrRepo);
 
         return new TableView($headers, $columns);
     }
@@ -214,7 +214,7 @@ class ReservationRepository extends ServiceEntityRepository
                 }
             }
         }
-        MyUtils::addOpeningHours($headers, $this->cstrRepo);
+        AppHelper::addOpeningHours($headers, $this->cstrRepo);
 
         return new TableView($headers, $columns);
     }

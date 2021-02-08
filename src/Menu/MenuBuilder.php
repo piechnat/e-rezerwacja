@@ -53,7 +53,7 @@ class MenuBuilder
             if ($isSuperAdmin) {
                 $this->ac($child, 'Dodaj', ['route' => 'room_add'], '<i class="bx bx-add-to-queue"></i>');
             }
-            $this->ac($child, 'Katalog', ['route' => 'room_form_show'], '<i class="bx bx-folder-open"></i>');
+            $this->ac($child, 'Katalog sal', ['route' => 'room_form_show'], '<i class="bx bx-folder-open"></i>');
             $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_week'], '<i class="bx bx-calendar-week"></i>');
             if ($isSuperAdmin) {
                 $this->ac($child, 'Etykiety', ['route' => 'tag_index'], '<i class="bx bx-purchase-tag"></i>');

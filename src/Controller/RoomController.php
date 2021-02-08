@@ -6,7 +6,7 @@ use App\CustomTypes\UserLevel;
 use App\Entity\Room;
 use App\Form\RoomType;
 use App\Repository\RoomRepository;
-use App\Service\MyUtils;
+use App\Service\AppHelper;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -53,7 +53,7 @@ class RoomController extends AbstractController
         if (!$form->isSubmitted() && !$room) {
             if (null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
-                MyUtils::updateForm($form, 'room', EntityType::class, ['data' => $room]);
+                AppHelper::updateForm($form, 'room', EntityType::class, ['data' => $room]);
             }
         }
 

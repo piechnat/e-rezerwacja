@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-use App\CustomTypes\ReservationNotPossibleException;
 use App\CustomTypes\ReservationError as RsvnErr;
 use App\CustomTypes\ReservationNotAllowedException;
+use App\CustomTypes\ReservationNotPossibleException;
 use App\CustomTypes\UserLevel;
 use App\Entity\Reservation;
 use App\Repository\ConstraintRepository;
@@ -49,12 +49,15 @@ class ReservationHelper
                 $url = $this->generator->generate('reservation_show', ['id' => $code]);
                 $text = $this->trans->trans('Zobacz konflikt');
                 $content .= " <a href=\"{$url}\">{$text}</a>.";
+
                 break;
+
             case RsvnErr::MAX_ADVANCE_TIME:
             case RsvnErr::MAX_RSVN_LENGTH:
             case RsvnErr::WEEK_LIMIT_EXCEEDED:
             case RsvnErr::ROOM_BREAK_VIOLATED:
                 $content .= " ({$code})";
+
                 break;
         }
 
@@ -62,11 +65,13 @@ class ReservationHelper
     }
 
     /**
-     * @throws ReservationNotPossibleException|ReservationNotAllowedException
+     * Checks conflicts only if there is another exception in order to avoid double SQL query.
+     *
+     * @throws ReservationNotAllowedException|ReservationNotPossibleException
      */
     public function checkConstraints(Reservation $rsvn)
     {
-        $exception = $this->getNotAllowedException($rsvn);
+        $exception = $this->getReservationException($rsvn);
         if (null !== $exception) {
             $this->checkConflicts($rsvn);
 
@@ -85,18 +90,13 @@ class ReservationHelper
         }
     }
 
-    public function getNotAllowedException(Reservation $rsvn): ?Exception
+    private function getReservationException(Reservation $rsvn): ?Exception
     {
         // --------------------------------------------------------------------------- NO_PRIVILEGES
-        foreach ($rsvn->getRoom()->getTags() as $tag) {
-            if (
-                $tag->getLevel() >= $rsvn->getEditor()->getAccessLevel()
-                && !$rsvn->getEditor()->getTags()->contains($tag)
-            ) {
-                return new ReservationNotAllowedException(RsvnErr::NO_PRIVILEGES);
-            }
+        if (!AppHelper::isAuthorized($rsvn->getEditor(), $rsvn->getRoom())) {
+            return new ReservationNotAllowedException(RsvnErr::NO_PRIVILEGES);
         }
-
+        
         // --------------------------------------------------------------------- that's all if admin
         if ($this->security->isGranted(UserLevel::ADMIN, $rsvn->getEditor())) {
             return null;
@@ -114,10 +114,10 @@ class ReservationHelper
 
         // ------------------------------------------------------------------------- MAX_RSVN_LENGTH
         $rsvnET = $rsvn->getEndTime();
-        $rsvnLength = (int)(($rsvnET->getTimestamp() - $rsvnBT->getTimestamp()) / 60);
+        $rsvnLength = (int) (($rsvnET->getTimestamp() - $rsvnBT->getTimestamp()) / 60);
         if ($rsvnLength > $rsvnLimits['MAX_RSVN_LENGTH_MIN']) {
             return new ReservationNotAllowedException(
-                RsvnErr::MAX_RSVN_LENGTH, 
+                RsvnErr::MAX_RSVN_LENGTH,
                 $rsvnLimits['MAX_RSVN_LENGTH_MIN']
             );
         }
@@ -125,7 +125,7 @@ class ReservationHelper
         // ------------------------------------------------------------------------- MIN_RSVN_LENGTH
         if ($rsvnLength < $rsvnLimits['MIN_RSVN_LENGTH_MIN']) {
             return new ReservationNotPossibleException(
-                RsvnErr::MIN_RSVN_LENGTH, 
+                RsvnErr::MIN_RSVN_LENGTH,
                 $rsvnLimits['MIN_RSVN_LENGTH_MIN']
             );
         }
@@ -141,7 +141,7 @@ class ReservationHelper
                 unset($weekRsvns[$key]); // remove reservation if is edited
             } else {
                 $secs = $rec['end_time']->getTimestamp() - $rec['begin_time']->getTimestamp();
-                $weekLength += (int)($secs / 60);
+                $weekLength += (int) ($secs / 60);
             }
         }
 

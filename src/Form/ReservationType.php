@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Reservation;
 use App\Repository\ConstraintRepository as CstrRepo;
-use App\Service\MyUtils;
+use App\Service\AppHelper;
 use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -67,7 +67,7 @@ class ReservationType extends AbstractType
                     // modify data-text attribute if the requester has changed
                     $newUser = $event->getData()->getRequester();
                     if ($user !== $newUser) {
-                        MyUtils::updateForm($event->getForm(), 'requester', TextType::class, [
+                        AppHelper::updateForm($event->getForm(), 'requester', TextType::class, [
                             'attr' => ['data-text' => $newUser ? $newUser->getFullname() : null],
                         ]);
                     }
@@ -107,7 +107,7 @@ class ReservationType extends AbstractType
             $now = new DateTimeImmutable();
             if ($beginTime < $now) {
                 $rsvn->setBeginTime($now);
-                MyUtils::updateForm($event->getForm(), 'begin_time', DateTimeType::class);
+                AppHelper::updateForm($event->getForm(), 'begin_time', DateTimeType::class);
                 $beginTime = $now;
             }
             // change end_time to a date on the same day as begin_time

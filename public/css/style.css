@@ -54,6 +54,9 @@ hr {
   border: solid #bbb;
   border-width: 1px 0 0 0;
 }
+b {
+  font-weight: 400;
+}
 .cryptedmail:after {
   content: attr(data-name) "@" attr(data-domain) "." attr(data-tld); 
 }
@@ -79,7 +82,7 @@ i.bx {
 }
 .tag-list {
   margin: 0.83em 0;
-  line-height: 2;
+  line-height: 2.4;
 }
 .tag-list ul {
   display: inline;
@@ -87,10 +90,9 @@ i.bx {
 }
 .tag-list li {
   display: inline;
-  background-color: #f4f4f4;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 0.2em 0.4em;
+  border: 1px dotted #ccc;
+  border-radius: 0.5rem;
+  padding: 0.3em 0.5em;
   white-space: nowrap;
 }
 
@@ -103,8 +105,11 @@ i.bx {
   border-collapse: separate;
   border-spacing: 0;
 }
-.list-table table td, .list-table table th { 
-  padding: 0 1em 1em 0; 
+.list-table table th { 
+  padding: 0 0.5em 0.5em 0.5em; 
+}
+.list-table table td { 
+  padding: 0.5em; 
 }
 
 /* MENU RECONFIGURATION - BEGIN */
@@ -284,7 +289,7 @@ ul.form-errors {
 /* SELECT2 RECONFIGURATION - BEGIN */
 
 .select2-container--open {
-  z-index: 9999999;
+  z-index: 99998;
 }
 .select2-container {
   max-width: 99%;

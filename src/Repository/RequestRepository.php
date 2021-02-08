@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Request;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,12 +20,12 @@ class RequestRepository extends ServiceEntityRepository
         parent::__construct($registry, Request::class);
     }
 
-    public function getUserRequestsCount(int $userId): int
+    public function getUserRequestsCount(User $user): int
     {
         return $this->createQueryBuilder('r')
             ->select('COUNT(r)')
             ->andWhere('r.requester = :userId')
-            ->setParameter('userId', $userId)
+            ->setParameter('userId', $user->getId())
             ->getQuery()->getSingleScalarResult()
         ;
     }

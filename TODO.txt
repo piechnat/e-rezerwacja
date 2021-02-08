@@ -1,13 +1,13 @@
 FUNKCJE:
-- zmniejszyć cienie
+- nie możma nadać ani usunąć tagu, do którego nie ma się uprawnień
+- lista tagów dla zarządców?
+- dodać AJAX select w edycji tagów (sale, użytkownicy)
 - zablokować pola przy wysyłaniu wniosku
 - table view: dodać auto-submit
-- dodać AJAX select w edycji tagów (sale, użytkownicy)
 - zapis daty w sesji? data ważności?
+- sprawdzanie poprawności formów przy usuwaniu?
 
-a) Rezerwacja sal
-- możliwość złożenia wniosku o rezerwację sali w przypadku niepomyślnej autoryzacji 
-  (zaakceptowanie lub odrzucenie żądania rezerwacji)
+a)
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu (RecurringReservation)
 - Student nie może zgłosić żądania rezerwacji sali, której ograniczenie obejmuje poziom konta 
   Zarządcy

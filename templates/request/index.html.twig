@@ -4,6 +4,15 @@
 
 	<h2 class="main-title">{{ 'bx bx-file'|ico }}{{ main_title|trans }}</h2>
 
+  <style>
+	  .list-table > table, .slide-button + tr > td { width: 100%; }
+    .right-float-panel { float: right; margin: 0 0 0.5em 0; }
+		.right-float-panel .button { margin: 0 0 0 0.5em; }
+		.slide-button { cursor: pointer; }
+		.slide-button:hover, .slide-button.open { color: #2d2dc5; }
+		.list-table .slide-cell { padding: 0 0.5em; }
+		.slide-content > p { margin: 0 0 0.5em 0; }
+	</style>
 	<div class="list-table">
 		<table>
 			<thead>
@@ -15,28 +24,31 @@
 			</thead>
 			<tbody>
 				{% for rqst in requests %}
-					<tr>
+					<tr class="slide-button">
 						<td>{{ rqst.requester.fullname }}</td>
-            <td>{{ rqst.room.title }}</td>
+						<td>{{ rqst.room.title }}</td>
 						<td>{{ rqst.beginTime|date('d.m.Y H:i') }}-{{ rqst.endTime|date('H:i') }}</td>
 					</tr>
 					<tr>
-						<td colspan="2">
-							<b>Cel:</b>
-							{{ rqst.details }}</td>
-						<td>
-              <div class="form-group button-row">
-                <a class="button" href="">
-                  {{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj'|trans }}
-                </a>
-                <form action="{{ path('request_delete', {id: rqst.id}) }}" method="post">
-                  <input type="hidden" name="token" value="{{ csrf_token('request_delete') }}"/>
-                  <button type="submit" class="button" 
-                    onclick="return confirm('{{ 'Czy na pewno chcesz odrzuć wniosek?'|trans }}')">
-                    {{ 'bx bx-trash'|ico }}{{ 'Odrzuć'|trans }}
-                  </button>
-                </form>
-              </div>
+						<td colspan="3" class="slide-cell">
+							<div class="slide-content">
+								<div class="form-group button-row right-float-panel">
+									{% if is_granted(constant('App\\CustomTypes\\UserLevel::ADMIN')) %}
+										<a class="button" href="{{ path('reservation_add_request', {id: rqst.id}) }}">
+											{{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj'|trans }}
+										</a>
+									{% endif %}
+									<form action="{{ path('request_delete', {id: rqst.id}) }}" method="post">
+										<input type="hidden" name="token" value="{{ csrf_token('request_delete') }}"/>
+										<button type="submit" class="button" 
+											onclick="return confirm('{{ 'Czy na pewno chcesz odrzuć wniosek?'|trans }}')">
+											{{ 'bx bx-trash'|ico }}{{ 'Odrzuć'|trans }}
+										</button>
+									</form>
+								</div>
+								<p><b>{{ 'Powód'|trans }}:</b> {{ rqst.error|rsvn_err_val }}</p>
+								<p><b>{{ 'Uzasadnienie'|trans }}:</b> {{ rqst.details }}</p>
+							</div>
 						</td>
 					</tr>
 				{% else %}
@@ -47,5 +59,12 @@
 			</tbody>
 		</table>
 	</div>
+	<script>
+	  $('.slide-content').hide();
+		$('.slide-button').click(function() {
+			$(this).toggleClass('open');
+			$(this).next().find('.slide-content').slideToggle('fast');
+		});
+	</script>
 
 {% endblock %}

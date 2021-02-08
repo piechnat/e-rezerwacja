@@ -39,7 +39,7 @@ class User implements UserInterface
     private $lang = Lang::PL;
 
     /**
-     * @ORM\Column(type="string", length=24)
+     * @ORM\Column(type="string", length=32)
      */
     private $access;
 

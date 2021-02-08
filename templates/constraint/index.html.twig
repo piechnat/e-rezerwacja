@@ -11,7 +11,7 @@
           <th>Nazwa</th>
           <th>Początek</th>
           <th>Koniec</th>
-          <th>Rozkład</th>
+          <th>Harm.</th>
         </tr>
       </thead>
       <tbody>
@@ -20,7 +20,7 @@
           <td><a href="{{ path('constraint_edit', {id: cstr.id}) }}">{{ cstr.name }}</a></td>
           <td>{{ cstr.beginDate ? cstr.beginDate|date('d.m.Y') : '' }}</td>
           <td>{{ cstr.endDate ? cstr.endDate|date('d.m.Y') : '' }}</td>
-          <td>{{ cstr.schedule ? 'Tak' : 'Nie' }}</td>
+          <td>{{ cstr.schedule ? '✔' : '' }}</td>
         </tr>
       {% else %}
         <tr>

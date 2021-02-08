@@ -9,7 +9,7 @@
       <thead>
         <tr>
           <th>Nazwa</th>
-          <th>Sz.</th>
+          <th>Wysz.</th>
           <th>Ogranicz.</th>
         </tr>
       </thead>
@@ -17,7 +17,7 @@
       {% for tag in tags %}
         <tr>
           <td><a href="{{ path('tag_edit', {'id': tag.id}) }}">{{ tag.name }}</a></td>
-          <td>{{ tag.search ? 'Tak' : 'Nie' }}</td>
+          <td>{{ tag.search ? '✔' : '' }}</td>
           <td>{{ access_levels[tag.level] }}</td>
           <td><a href="{{ path('tag_edit', {'id': tag.id, 'mode': 'rooms'}) }}">Sale</a></td>
           <td><a href="{{ path('tag_edit', {'id': tag.id, 'mode': 'users'}) }}">Użytkow.</a></td>

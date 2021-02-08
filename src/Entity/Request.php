@@ -50,6 +50,11 @@ class Request
      */
     private $details;
 
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $error;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -123,6 +128,18 @@ class Request
     public function setDetails(?string $details): self
     {
         $this->details = $details;
+
+        return $this;
+    }
+
+    public function getError(): ?string
+    {
+        return $this->error;
+    }
+
+    public function setError(string $error): self
+    {
+        $this->error = $error;
 
         return $this;
     }

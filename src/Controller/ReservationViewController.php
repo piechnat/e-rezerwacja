@@ -11,7 +11,7 @@ use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
-use App\Service\MyUtils;
+use App\Service\AppHelper;
 use DateTimeImmutable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -55,10 +55,10 @@ class ReservationViewController extends AbstractController
         if (!$form->isSubmitted()) {
             if (!$room && null !== ($lastRoomId = $session->get('last_room_id'))) {
                 $room = $roomRepo->find($lastRoomId);
-                MyUtils::updateForm($form, 'room', TextType::class, ['data' => $room]);
+                AppHelper::updateForm($form, 'room', TextType::class, ['data' => $room]);
             }
             $date = $session->get('last_date', $date);
-            MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
         if ($room && $date) {
@@ -103,16 +103,16 @@ class ReservationViewController extends AbstractController
         if (!$form->isSubmitted()) {
             $tagIds = $session->get('last_tag_ids', $tagIds);
             if (count($tagIds)) {
-                MyUtils::updateForm($form, 'tags', EntityType::class, [
+                AppHelper::updateForm($form, 'tags', EntityType::class, [
                     'data' => array_filter($searchTags, function (Tag $tag) use ($tagIds) {
                         return in_array($tag->getId(), $tagIds);
                     }),
                 ]);
             }
             $tagInt = $session->get('last_tag_int', true);
-            MyUtils::updateForm($form, 'tag_intersect', ChoiceType::class, ['data' => $tagInt]);
+            AppHelper::updateForm($form, 'tag_intersect', ChoiceType::class, ['data' => $tagInt]);
             $date = $session->get('last_date', new DateTimeImmutable());
-            MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
         if (count($tagIds) && (null !== $tagInt) && $date) {
@@ -133,8 +133,7 @@ class ReservationViewController extends AbstractController
         User $user = null,
         DateTimeImmutable $date = null,
         Request $request,
-        ReservationRepository $rsvnRepo,
-        UserRepository $userRepo
+        ReservationRepository $rsvnRepo
     ) {
         $user = $user ?? $this->getUser();
         $session = $request->getSession();
@@ -152,7 +151,7 @@ class ReservationViewController extends AbstractController
         }
         if (!$form->isSubmitted()) {
             $date = $session->get('last_date', $date);
-            MyUtils::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
         if ($user && $date) {

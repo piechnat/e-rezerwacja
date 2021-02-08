@@ -25,6 +25,7 @@ class ConstraintRepository extends ServiceEntityRepository
     public const CLOSE_SCHEDULE = -1;
     public const VALID_SCHEDULE = 0;
     public const OPEN_SCHEDULE = 1;
+
     private $security;
 
     public function __construct(ManagerRegistry $registry, Security $security)

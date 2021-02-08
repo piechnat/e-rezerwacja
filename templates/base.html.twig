@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#bc1e12">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <title>E-rezerwacja{% if main_title is defined %} » {{ main_title|trans }}{% endif %}</title>
+    <title>{{ app_name }}{% if main_title is defined %} » {{ main_title|trans }}{% endif %}</title>
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
     <script src="{{ asset('js/piechnat-menu.js') }}"></script>
     <link href="{{ asset('css/piechnat-menu.css') }}" rel="stylesheet">
@@ -58,8 +58,8 @@
           {% block footer %}
             <hr>
             <p>
-              © 2020 {% trans %}Akademia Muzyczna w Łodzi. Wszelkie prawa zastrzeżone.{% endtrans %}
-              <a href="{{ path('about') }}">E-rezerwacja » Informacje i pomoc.</a>
+              © {{ 'now'|date('Y') }} {{ app_signature|trans }}. {{ 'Wszelkie prawa zastrzeżone'|trans }}.
+              <a href="{{ path('about') }}">{{ app_name }} » {{ 'Informacje i pomoc'|trans }}.</a>
             </p>
           {% endblock %}
         </footer>

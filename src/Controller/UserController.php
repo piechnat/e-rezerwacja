@@ -5,11 +5,9 @@ namespace App\Controller;
 use App\CustomTypes\Lang;
 use App\CustomTypes\UserLevel;
 use App\Entity\User;
-use App\Form\UserShowType;
 use App\Form\UserToEmailTransformer;
 use App\Form\UserType;
 use App\Repository\UserRepository;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +39,8 @@ class UserController extends AbstractController
                 'data' => $user,
                 'data_class' => null,
                 'label' => 'Pełna nazwa',
-            ]);
+            ])
+        ;
         $builder->get('email')->addModelTransformer($userToEmail);
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -84,13 +83,13 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'user' => $user,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
     private function canEditUser(User $user): bool
     {
-        if ($this->getUser()->getId() === $user->getId()) {
+        if ($this->getUser() === $user) {
             return true;
         }
         if ($this->isGranted(UserLevel::ADMIN)) {
