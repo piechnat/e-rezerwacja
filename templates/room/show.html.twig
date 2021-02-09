@@ -48,7 +48,7 @@
       <a class="button" href="{{ path('reservation_add', {'room_id': room.id}) }}">
         {{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj rezerwację'|trans }}
       </a>
-      {% if is_granted(constant('App\\CustomTypes\\UserLevel::ADMIN')) %}
+      {% if can_edit_room %}
         <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
           {{ 'bx bx-edit'|ico }}{{ 'Edytuj salę'|trans }}
         </a>

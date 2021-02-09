@@ -8,6 +8,8 @@ use App\Entity\User;
 use App\Form\UserToEmailTransformer;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\AppHelper;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,20 +69,22 @@ class UserController extends AbstractController
         $user = $user ?? $this->getUser();
         if (!$this->canEditUser($user)) {
             throw $this->createAccessDeniedException();
-        }
+        }  
+        $unauthorizedTags = AppHelper::getUnauthorizedTags($this->getUser(), $user->getTags());
         $formOptions = [];
         $formOptions['admin_edit'] = $this->isGranted(UserLevel::ADMIN);
         $formOptions['access_names'] = array_flip(UserLevel::getValues());
         array_splice($formOptions['access_names'], $this->getUser()->getAccessLevel() + 1);
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager()->flush();
+            array_walk($unauthorizedTags, [$user, 'addTag']);
+            $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
         }
-
+        
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
@@ -93,7 +97,7 @@ class UserController extends AbstractController
             return true;
         }
         if ($this->isGranted(UserLevel::ADMIN)) {
-            return $this->getUser()->getAccessLevel() >= $user->getAccessLevel();
+            return $this->getUser()->getAccessLevel() > $user->getAccessLevel();
         }
 
         return false;

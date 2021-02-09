@@ -21,10 +21,10 @@ class TagController extends AbstractController
     /**
      * @Route("/", name="tag_index")
      */
-    public function index(TagRepository $tagRepository): Response
+    public function index(TagRepository $tagRepo): Response
     {
         return $this->render('tag/index.html.twig', [
-            'tags' => $tagRepository->findAll(),
+            'tags' => $tagRepo->findAll(),
             'access_levels' => array_values(UserLevel::getValues()),
         ]);
     }
@@ -39,9 +39,9 @@ class TagController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($tag);
-            $entityManager->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($tag);
+            $em->flush();
 
             return $this->redirectToRoute('tag_index');
         }

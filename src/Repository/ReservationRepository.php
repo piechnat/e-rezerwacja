@@ -19,10 +19,16 @@ use Doctrine\Persistence\ManagerRegistry;
 class ReservationRepository extends ServiceEntityRepository
 {
     private $cstrRepo;
+    private $roomRepo;
 
-    public function __construct(ManagerRegistry $registry, ConstraintRepository $cstrRepo) {
+    public function __construct(
+        ManagerRegistry $registry, 
+        ConstraintRepository $cstrRepo,
+        RoomRepository $roomRepo
+    ) {
         parent::__construct($registry, Reservation::class);
         $this->cstrRepo = $cstrRepo;
+        $this->roomRepo = $roomRepo;
     }
 
     public function getConflictIds(Reservation $rsvn, int $limit = 1): array
@@ -117,15 +123,13 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     public function getTableByDay(
-        DateTimeImmutable $date,
-        array $tagIds,
+        DateTimeImmutable $date, 
+        array $tagIds, 
         bool $intersection = false
     ): TableView {
         $headers = $columns = $rooms = [];
         if (count($tagIds) > 0) {
-            /** @var RoomRepository */
-            $roomRepo = $this->getEntityManager()->getRepository(Room::class);
-            $rooms = $roomRepo->createQueryBuilder('room')
+            $rooms = $this->roomRepo->createQueryBuilder('room')
                 ->select(['room.id', 'room.title'])
                 ->innerJoin('room.tags', 'tag')
                 ->where('tag.id IN (:tagIds)')

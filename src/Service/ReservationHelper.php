@@ -93,7 +93,10 @@ class ReservationHelper
     private function getReservationException(Reservation $rsvn): ?Exception
     {
         // --------------------------------------------------------------------------- NO_PRIVILEGES
-        if (!AppHelper::isAuthorized($rsvn->getEditor(), $rsvn->getRoom())) {
+        $missingLevel = AppHelper::getMissingAccessLevel($rsvn->getEditor(), $rsvn->getRoom());
+        if ($missingLevel > 2) {
+            return new ReservationNotPossibleException(RsvnErr::NO_PRIVILEGES);
+        } elseif ($missingLevel > 0) {
             return new ReservationNotAllowedException(RsvnErr::NO_PRIVILEGES);
         }
         

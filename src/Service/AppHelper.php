@@ -9,6 +9,7 @@ use App\Entity\Room;
 use App\Entity\User;
 use App\Repository\ConstraintRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use IntlDateFormatter;
 use InvalidArgumentException;
 use Symfony\Component\Form\FormInterface;
@@ -87,14 +88,34 @@ class AppHelper
 
     // ---------------------------------------------------------------------------------------------
 
-    public static function isAuthorized(User $user, Room $room): bool
+    public static function getMissingAccessLevel(User $user, Room $room): int
     {
+        $result = 0;
         foreach ($room->getTags() as $tag) {
             if (!($user->getAccessLevel() > $tag->getLevel() || $user->getTags()->contains($tag))) {
-                return false;
+                $result = max($result, ($tag->getLevel() - $user->getAccessLevel()) + 1);
             }
         }
 
-        return true;
+        return $result;
+    }
+
+    public static function getUnauthorizedTags(User $user, Collection $tags): array
+    {
+        $result = [];
+        foreach ($tags as $tag) {
+            if ($tag->getLevel() >= $user->getAccessLevel()) {
+                $result[] = $tag;
+            }
+        }
+
+        return $result;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    public static function USR($object): ?User
+    {
+        return $object->getUser();
     }
 }

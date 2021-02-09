@@ -224,7 +224,7 @@ class ReservationController extends AbstractController
                     throw $e;
                 }
             } catch (ReservationNotPossibleException $e) {
-                $form->get('room')->addError($rsvnHelper->createFormError($e));
+                $form->addError($rsvnHelper->createFormError($e));
             } catch (ReservationNotAllowedException $e) {
                 $formSendRequest = $action !== static::ACTION_ADD_RQST;
                 if ($formSendRequest && isset($request->get('reservation', [])['send_request'])) {
@@ -261,7 +261,7 @@ class ReservationController extends AbstractController
             return true;
         }
         if ($this->isGranted(UserLevel::ADMIN)) {
-            return AppHelper::isAuthorized($this->getUser(), $rsvn->getRoom());
+            return 0 === AppHelper::getMissingAccessLevel($this->getUser(), $rsvn->getRoom());
         }
 
         return false;

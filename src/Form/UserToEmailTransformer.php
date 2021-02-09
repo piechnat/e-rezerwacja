@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\AppHelper;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Security\Core\Security;
@@ -30,11 +31,10 @@ class UserToEmailTransformer implements DataTransformerInterface
 
     public function reverseTransform($userEmail): User
     {
-        /** @var User */
-        $loggedUser = $this->security->getUser();
+        $selfUser = AppHelper::USR($this->security);
 
-        if (!$userEmail || $userEmail === $loggedUser->getEmail()) {
-            return $loggedUser;
+        if (!$userEmail || $userEmail === $selfUser->getEmail()) {
+            return $selfUser;
         }
         $user = $this->userRepo->findOneBy(['email' => $userEmail]);
 

@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class RsvnViewType extends AbstractType
 {
     private $roomToTitle;
+    private $userToEmail;
     private $generator;
 
     public function __construct(

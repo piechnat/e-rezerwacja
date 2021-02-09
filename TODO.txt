@@ -1,11 +1,12 @@
 FUNKCJE:
-- nie możma nadać ani usunąć tagu, do którego nie ma się uprawnień
 - lista tagów dla zarządców?
 - dodać AJAX select w edycji tagów (sale, użytkownicy)
 - zablokować pola przy wysyłaniu wniosku
 - table view: dodać auto-submit
 - zapis daty w sesji? data ważności?
 - sprawdzanie poprawności formów przy usuwaniu?
+- sprawdzić AppHelper::term en_US itp...
+- Rezerwacje W SALI?
 
 a)
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu (RecurringReservation)

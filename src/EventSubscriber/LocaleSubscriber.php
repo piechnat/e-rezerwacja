@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\CustomTypes\Lang;
 use App\CustomTypes\UserLevel;
+use App\Service\AppHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -31,8 +32,7 @@ class LocaleSubscriber implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event)
     {
-        /** @var User */
-        $user = $this->security->getUser();
+        $user = AppHelper::USR($this->security);
         if ($user) {
             if ($this->security->isGranted(UserLevel::DISABLED)) {
                 $event->setResponse(new Response($this->twig->render('main/forbidden.html.twig')));

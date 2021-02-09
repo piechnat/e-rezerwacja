@@ -23,9 +23,9 @@ class RoomController extends AbstractController
     /**
      * @Route("/", name="room_index")
      */
-    public function index(RoomRepository $roomRepository)
+    public function index(RoomRepository $roomRepo)
     {
-        return $this->render('room/index.html.twig', ['rooms' => $roomRepository->findAll()]);
+        return $this->render('room/index.html.twig', ['rooms' => $roomRepo->findAll()]);
     }
 
     /**
@@ -59,6 +59,7 @@ class RoomController extends AbstractController
 
         return $this->render('room/show.html.twig', [
             'room' => $room,
+            'can_edit_room' => $this->canEditRoom($room),
             'form' => $form->createView(),
         ]);
     }
@@ -100,27 +101,6 @@ class RoomController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="room_edit")
-     * @IsGranted(UserLevel::ADMIN)
-     */
-    public function edit(Room $room, Request $request)
-    {
-        $form = $this->createForm(RoomType::class, $room, ['route_name' => 'room_edit']);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('room_show', ['id' => $room->getId()]);
-        }
-
-        return $this->render('room/edit.html.twig', [
-            'form' => $form->createView(),
-            'room' => $room,
-        ]);
-    }
-
-    /**
      * @Route("/delete/{id}", name="room_delete")
      * @IsGranted(UserLevel::SUPER_ADMIN)
      */
@@ -144,5 +124,36 @@ class RoomController extends AbstractController
         }
 
         throw $this->createAccessDeniedException();
+    }
+
+    /**
+     * @Route("/edit/{id}", name="room_edit")
+     */
+    public function edit(Room $room, Request $request)
+    {
+        if (!$this->canEditRoom($room)) {
+            throw $this->createAccessDeniedException();
+        }
+        $unauthorizedTags = AppHelper::getUnauthorizedTags($this->getUser(), $room->getTags());
+        $form = $this->createForm(RoomType::class, $room, ['route_name' => 'room_edit']);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            array_walk($unauthorizedTags, [$room, 'addTag']);
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('room_show', ['id' => $room->getId()]);
+        }
+
+        return $this->render('room/edit.html.twig', [
+            'form' => $form->createView(),
+            'room' => $room,
+        ]);
+    }
+
+    private function canEditRoom(Room $room): bool
+    {
+        return $this->isGranted(UserLevel::ADMIN) 
+            && 0 === AppHelper::getMissingAccessLevel($this->getUser(), $room);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\CustomTypes\UserLevel;
 use App\Entity\User;
+use App\Service\AppHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,8 +22,7 @@ class UserType extends AbstractType
 
     public function __construct(Security $security)
     {
-        /** @var User */
-        $user = $security->getUser();
+        $user = AppHelper::USR($security);
         $this->user['self'] = ['id' => $user->getId(), 'level' => $user->getAccessLevel()];
     }
 
@@ -37,6 +37,7 @@ class UserType extends AbstractType
             'constraints' => new Length(['min' => 3]),
         ]);
         if ($options['admin_edit']) {
+            $selfLevel = $this->user['self']['level'];
             $builder->add('access', ChoiceType::class, [
                 'choices' => $options['access_names'],
                 'label' => 'Typ konta',
@@ -45,6 +46,9 @@ class UserType extends AbstractType
             ])->add('tags', null, [
                 'by_reference' => false,
                 'label' => 'Etykiety',
+                'choice_filter' => function ($tag) use ($selfLevel) {
+                    return $tag->getLevel() < $selfLevel;
+                },
             ]);
         }
     }

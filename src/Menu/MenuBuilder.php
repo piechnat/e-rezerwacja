@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use App\CustomTypes\UserLevel;
+use App\Service\AppHelper;
 
 class MenuBuilder
 {
@@ -28,8 +29,7 @@ class MenuBuilder
         Security $security,
         Environment $twig
     ) {
-        /** @var User */
-        $user = $security->getUser();
+        $user = AppHelper::USR($security);
         $lang = $user ? $user->getLang() : Lang::fromCookie($rStack->getCurrentRequest()->cookies);
         $lang = $lang === Lang::PL ? Lang::EN : Lang::PL;
         $langButton = $twig->render('main/lang-'. $lang .'.html.twig');

@@ -18,7 +18,6 @@ class AppMailer
     private $mailer;
     private $translator;
     private $generator;
-    /** @var User */
     private $user;
     private $senderAddr;
     private $devRecipientAddr;
@@ -35,7 +34,7 @@ class AppMailer
         $this->mailer = $mailer;
         $this->translator = $translator;
         $this->generator = $generator;
-        $this->user = $security->getUser();
+        $this->user = AppHelper::USR($security);
         $this->senderAddr = $_ENV['MAILER_SENDER'];
         $this->devRecipientAddr = null;
         $this->appName = $params->get('app.name');
@@ -44,9 +43,9 @@ class AppMailer
         if ('dev' === $_ENV['APP_ENV']) {
             $token = $security->getToken();
             if ($token instanceof SwitchUserToken) {
-                $this->devRecipientAddr = $token->getOriginalToken()->getUser()->getUsername();
+                $this->devRecipientAddr = AppHelper::USR($token->getOriginalToken())->getEmail();
             } else {
-                $this->devRecipientAddr = $this->user->getUsername();
+                $this->devRecipientAddr = $this->user->getEmail();
             }
         }
     }

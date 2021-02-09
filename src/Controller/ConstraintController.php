@@ -39,9 +39,9 @@ class ConstraintController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($timeCstr);
-            $entityManager->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($timeCstr);
+            $em->flush();
 
             return $this->redirectToRoute('constraint_index');
         }

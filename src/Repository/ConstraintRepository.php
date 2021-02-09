@@ -7,6 +7,7 @@ use App\Entity\Reservation;
 use App\Entity\Tag;
 use App\Entity\TimeConstraint;
 use App\Entity\User;
+use App\Service\AppHelper;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -102,8 +103,7 @@ class ConstraintRepository extends ServiceEntityRepository
                 'endDate' => $endDate,
             ])->getQuery()->getResult();
         
-        /** @var User */
-        $user = $user ?? $this->security->getUser();
+        $user = $user ?? AppHelper::USR($this->security);
         if ($user) {
             $tags = $user->getTags();
             foreach ($timeCstrs as $index => $cstr) {
