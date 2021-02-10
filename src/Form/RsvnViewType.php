@@ -35,6 +35,12 @@ class RsvnViewType extends AbstractType
     {
         $builder->setAction($this->generator->generate($options['route_name']))->setMethod('GET');
 
+        $dateOptions = [
+            'label' => 'Tydzień',
+            'input' => 'datetime_immutable',
+            'widget' => 'single_text',
+            'data' => $options['date'],
+        ];
         if ($options['route_name'] === 'reservation_view_week') {
             $builder->add('room', TextType::class, [
                 'data' => $options['room'],
@@ -42,6 +48,7 @@ class RsvnViewType extends AbstractType
                 'label' => 'Sala',
             ])
             ->get('room')->addModelTransformer($this->roomToTitle);
+            $builder->add('date', DateType::class, $dateOptions);
         }
         if ($options['route_name'] === 'reservation_view_user') {
             $builder->add('user', TextType::class, [
@@ -50,6 +57,7 @@ class RsvnViewType extends AbstractType
                 'label' => 'Użytkownik',
             ])
             ->get('user')->addModelTransformer($this->userToEmail);
+            $builder->add('date', DateType::class, $dateOptions);
         }
         if ($options['route_name'] === 'reservation_view_day') {
             $builder->add('tags', EntityType::class, [
@@ -66,13 +74,9 @@ class RsvnViewType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
             ]);
+            $dateOptions['label'] = 'Dzień';
+            $builder->add('date', DateType::class, $dateOptions);
         }
-        $builder->add('date', DateType::class, [
-            'label' => 'Dzień',
-            'input' => 'datetime_immutable',
-            'widget' => 'single_text',
-            'data' => $options['date'],
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

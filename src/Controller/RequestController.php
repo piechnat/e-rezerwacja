@@ -37,7 +37,7 @@ class RequestController extends AbstractController
     /**
      * @Route("/delete/{id}", name="request_delete")
      */
-    public function delete(EntityRequest $rqst, Request $request, AppMailer $mailer)
+    public function delete(EntityRequest $rqst, Request $request, AppMailer $mailer): Response
     {
         if (
             $this->canEditRequest($rqst)
@@ -62,7 +62,7 @@ class RequestController extends AbstractController
         string $rsvnError,
         RequestRepository $repo,
         AppMailer $mailer
-    ) {
+    ): Response {
         if ($repo->getUserRequestsCount($rsvn->getEditor()) >= static::MAX_RQST_COUNT) {
             return $this->render('main/redirect.html.twig', [
                 'path' => 'request_index',

@@ -42,12 +42,6 @@
       </ul>
     </div>
     <div class="form-group button-row">
-      <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
-        {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
-      </a>
-      <a class="button" href="{{ path('reservation_add', {'room_id': room.id}) }}">
-        {{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj rezerwację'|trans }}
-      </a>
       {% if can_edit_room %}
         <a class="button" href="{{ path('room_edit', {id: room.id}) }}">
           {{ 'bx bx-edit'|ico }}{{ 'Edytuj salę'|trans }}
@@ -62,6 +56,12 @@
           </button>
         </form>
       {% endif %}
+      <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
+        {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
+      </a>
+      <a class="button" href="{{ path('reservation_add', {'room_id': room.id}) }}">
+        {{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj rezerwację'|trans }}
+      </a>
     </div>
   {% endif %}
 

@@ -55,7 +55,7 @@ class MenuBuilder
             }
             $this->ac($child, 'Katalog sal', ['route' => 'room_form_show'], '<i class="bx bx-folder-open"></i>');
             $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_week'], '<i class="bx bx-calendar-week"></i>');
-            if ($isSuperAdmin) {
+            if ($security->isGranted(UserLevel::ADMIN)) {
                 $this->ac($child, 'Etykiety', ['route' => 'tag_index'], '<i class="bx bx-purchase-tag"></i>');
             }
 

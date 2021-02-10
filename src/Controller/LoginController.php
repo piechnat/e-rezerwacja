@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LoginController extends AbstractController
@@ -11,7 +12,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/login", name="login")
      */
-    public function login(ClientRegistry $clientRegistry)
+    public function login(ClientRegistry $clientRegistry): Response
     {
         return $clientRegistry->getClient('google')->redirect([
             'profile', 'email', // the scopes you want to access
@@ -23,7 +24,7 @@ class LoginController extends AbstractController
      *
      * @Route("/login/check", name="login_check")
      */
-    public function check()
+    public function check(): Response
     {
         return $this->redirectToRoute('main');
     }
@@ -31,7 +32,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/logout", name="logout")
      */
-    public function logout()
+    public function logout(): Response
     {
         return $this->redirectToRoute('main');
     }

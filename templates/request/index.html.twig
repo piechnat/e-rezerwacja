@@ -17,9 +17,9 @@
 		<table>
 			<thead>
 				<tr>
-          <th>Użytkownik</th>
-					<th>Sala</th>
-					<th>Termin</th>
+          <th>{{ 'Użytkownik'|trans }}</th>
+					<th>{{ 'Sala'|trans }}</th>
+					<th>{{ 'Termin'|trans }}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -53,7 +53,7 @@
 					</tr>
 				{% else %}
 					<tr>
-						<td colspan="3">Nie znaleziono wniosków.</td>
+						<td colspan="3">{% trans %}Nie znaleziono wniosków{% endtrans %}.</td>
 					</tr>
 				{% endfor %}
 			</tbody>

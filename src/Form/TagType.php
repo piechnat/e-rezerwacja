@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\CustomTypes\UserLevel;
 use App\Entity\Tag;
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +14,8 @@ class TagType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Tag */
+        $tag = $builder->getData();
         if ('entity' === $options['edit_mode']) {
             $choices = array_flip(array_values(array_slice(UserLevel::getValues(), 0, -1)));
             $builder
@@ -32,8 +35,21 @@ class TagType extends AbstractType
             ]);
         }
         if ('users' === $options['edit_mode']) {
-            $builder->add('users', null, [
-                'choice_label' => 'title',
+            $builder->add('ajax_users', ChoiceType::class, [
+                'mapped' => false,
+                'multiple' => true,
+                'expanded' => false,
+                'choices' => $options['ajax_users'],
+                'choice_value' => 'id',
+                'choice_label' => function (User $user) {
+                    $username = strstr($user->getEmail(), '@', true);
+
+                    return "{$user->getFullname()} ({$username})";
+                },
+                'choice_attr' => function () {
+                    return ['selected' => true];
+                },
+                'required' => false,
                 'label' => 'Przyporządkowani użytkownicy',
             ]);
         }
@@ -45,6 +61,7 @@ class TagType extends AbstractType
             'data_class' => Tag::class,
             'validation_groups' => 'tag',
             'edit_mode' => null,
+            'ajax_users' => [],
         ]);
     }
 }

@@ -9,10 +9,10 @@ use App\Form\UserToEmailTransformer;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Service\AppHelper;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -23,7 +23,7 @@ class UserController extends AbstractController
     /**
      * @Route("/", name="user_index")
      */
-    public function index(UserRepository $userRepository)
+    public function index(UserRepository $userRepository): Response
     {
         return $this->render('user/index.html.twig', ['users' => $userRepository->findAll()]);
     }
@@ -32,8 +32,11 @@ class UserController extends AbstractController
      * @Route("/show", name="user_self_show")
      * @Route("/show/{id}", name="user_show")
      */
-    public function show(User $user = null, Request $request, UserToEmailTransformer $userToEmail)
-    {
+    public function show(
+        User $user = null,
+        Request $request,
+        UserToEmailTransformer $userToEmail
+    ): Response {
         $user = $user ?? $this->getUser();
         $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
         $builder->setAction($this->generateUrl('user_self_show'))->setMethod('GET')
@@ -64,12 +67,12 @@ class UserController extends AbstractController
      * @Route("/edit", name="user_self_edit")
      * @Route("/edit/{id}", name="user_edit")
      */
-    public function edit(User $user = null, Request $request)
+    public function edit(User $user = null, Request $request): Response
     {
         $user = $user ?? $this->getUser();
         if (!$this->canEditUser($user)) {
             throw $this->createAccessDeniedException();
-        }  
+        }
         $unauthorizedTags = AppHelper::getUnauthorizedTags($this->getUser(), $user->getTags());
         $formOptions = [];
         $formOptions['admin_edit'] = $this->isGranted(UserLevel::ADMIN);
@@ -77,14 +80,14 @@ class UserController extends AbstractController
         array_splice($formOptions['access_names'], $this->getUser()->getAccessLevel() + 1);
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             array_walk($unauthorizedTags, [$user, 'addTag']);
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
         }
-        
+
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),

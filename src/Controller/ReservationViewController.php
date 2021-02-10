@@ -10,7 +10,6 @@ use App\Form\RsvnViewType;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
 use App\Repository\TagRepository;
-use App\Repository\UserRepository;
 use App\Service\AppHelper;
 use DateTimeImmutable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -20,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -37,7 +37,7 @@ class ReservationViewController extends AbstractController
         Request $request,
         ReservationRepository $rsvnRepo,
         RoomRepository $roomRepo
-    ) {
+    ): Response {
         $session = $request->getSession();
         $form = $this->createForm(RsvnViewType::class, null, [
             'route_name' => $request->attributes->get('_route'),
@@ -77,8 +77,11 @@ class ReservationViewController extends AbstractController
     /**
      * @Route("/day", name="reservation_view_day")
      */
-    public function day(Request $request, ReservationRepository $rsvnRepo, TagRepository $tagRepo)
-    {
+    public function day(
+        Request $request,
+        ReservationRepository $rsvnRepo,
+        TagRepository $tagRepo
+    ): Response {
         $session = $request->getSession();
         $searchTags = $tagRepo->findBy(['search' => 1]);
         $form = $this->createForm(RsvnViewType::class, null, [
@@ -134,7 +137,7 @@ class ReservationViewController extends AbstractController
         DateTimeImmutable $date = null,
         Request $request,
         ReservationRepository $rsvnRepo
-    ) {
+    ): Response {
         $user = $user ?? $this->getUser();
         $session = $request->getSession();
         $form = $this->createForm(RsvnViewType::class, null, [

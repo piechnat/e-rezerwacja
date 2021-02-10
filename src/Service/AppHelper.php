@@ -20,6 +20,9 @@ class AppHelper
         'Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota',
     ];
 
+    /**
+     * @param Reservation|Request $object Instance of reservation or request entity
+     */
     public static function term($object, User $user = null): string
     {
         if (!($object instanceof Reservation || $object instanceof Request)) {
@@ -100,8 +103,14 @@ class AppHelper
         return $result;
     }
 
-    public static function getUnauthorizedTags(User $user, Collection $tags): array
+    /**
+     * @param array|Collection $tags
+     */
+    public static function getUnauthorizedTags(User $user, $tags): array
     {
+        if (!($tags instanceof Collection || is_array($tags))) {
+            throw new InvalidArgumentException();
+        }
         $result = [];
         foreach ($tags as $tag) {
             if ($tag->getLevel() >= $user->getAccessLevel()) {

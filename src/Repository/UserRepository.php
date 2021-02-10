@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository
     public function match(string $query, int $limit = 10): array
     {
         return  $this->createQueryBuilder('user')
-            ->select(['user.fullname', 'user.email'])
+            ->select(['user.id', 'user.fullname', 'user.email'])
             ->where('user.fullname LIKE :nameQuery')
             ->orWhere('user.email LIKE :emailQuery')
             ->setMaxResults($limit)

@@ -109,7 +109,11 @@ i.bx {
   padding: 0 0.5em 0.5em 0.5em; 
 }
 .list-table table td { 
-  padding: 0.5em; 
+  padding: 0.5em;
+  vertical-align: top;
+}
+.list-table table td:first-child {
+  word-break: break-word;
 }
 
 /* MENU RECONFIGURATION - BEGIN */

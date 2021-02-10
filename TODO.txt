@@ -1,17 +1,14 @@
 FUNKCJE:
-- lista tagów dla zarządców?
 - dodać AJAX select w edycji tagów (sale, użytkownicy)
-- zablokować pola przy wysyłaniu wniosku
 - table view: dodać auto-submit
+- dodać w przód, w tył, dzisiaj, w widoku tabeli
 - zapis daty w sesji? data ważności?
+- zapis użytkownika w sesji?
 - sprawdzanie poprawności formów przy usuwaniu?
 - sprawdzić AppHelper::term en_US itp...
-- Rezerwacje W SALI?
 
 a)
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu (RecurringReservation)
-- Student nie może zgłosić żądania rezerwacji sali, której ograniczenie obejmuje poziom konta 
-  Zarządcy
 
 b) Ewidencja obecności pracowników oraz pobrań i zwrotów kluczy
 - stworzenie tabel user_presnce i key_events oraz przyporządkowania RFID users i rooms

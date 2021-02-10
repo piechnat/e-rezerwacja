@@ -8,19 +8,17 @@ use App\CustomTypes\UserLevel;
 use App\Entity\Request as EntityRequest;
 use App\Entity\Reservation;
 use App\Entity\Room;
-use App\Entity\Tag;
-use App\Entity\User;
 use App\Form\ReservationType;
-use App\Service\AppMailer;
 use App\Service\AppHelper;
+use App\Service\AppMailer;
 use App\Service\ReservationHelper;
 use DateTimeImmutable;
 use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,7 +38,7 @@ class ReservationController extends AbstractController
     /**
      * @Route("/", name="reservation_index")
      */
-    public function index()
+    public function index(): Response
     {
         return $this->redirectToRoute('reservation_add');
     }
@@ -48,7 +46,7 @@ class ReservationController extends AbstractController
     /**
      * @Route("/show/{id}", name="reservation_show")
      */
-    public function show(Reservation $rsvn)
+    public function show(Reservation $rsvn): Response
     {
         return $this->render('reservation/show.html.twig', [
             'rsvn' => $rsvn,
@@ -59,7 +57,7 @@ class ReservationController extends AbstractController
     /**
      * @Route("/delete/{id}", name="reservation_delete")
      */
-    public function delete(Reservation $rsvn, Request $request, AppMailer $mailer)
+    public function delete(Reservation $rsvn, Request $request, AppMailer $mailer): Response
     {
         if (
             $this->canEditReservation($rsvn)
@@ -91,7 +89,7 @@ class ReservationController extends AbstractController
         Request $request,
         ReservationHelper $rsvnHelper,
         AppMailer $mailer
-    ) {
+    ): Response {
         $rsvn = new Reservation();
         $rsvn->setRequester($rqst->getRequester());
         $rsvn->setRoom($rqst->getRoom());
@@ -126,7 +124,7 @@ class ReservationController extends AbstractController
         Request $request,
         ReservationHelper $rsvnHelper,
         AppMailer $mailer
-    ) {
+    ): Response {
         $rsvn = new Reservation();
         if ($room) {
             $rsvn->setRoom($room);
@@ -137,7 +135,7 @@ class ReservationController extends AbstractController
 
         $resp = $this->handleReservation($rsvn, static::ACTION_ADD, $request, $rsvnHelper);
         if (
-            $this->isSuccessfulResponse($resp) 
+            $this->isSuccessfulResponse($resp)
             && $this->getUser() !== $rsvn->getRequester()
         ) {
             $mailer->notify('Dodanie rezerwacji', '%user% zarezerwował(a) dla Ciebie salę '.
@@ -156,7 +154,7 @@ class ReservationController extends AbstractController
         Request $request,
         ReservationHelper $rsvnHelper,
         AppMailer $mailer
-    ) {
+    ): Response {
         if ($this->canEditReservation($rsvn)) {
             $originalRqstr = $rsvn->getRequester();
             $resp = $this->handleReservation($rsvn, static::ACTION_EDIT, $request, $rsvnHelper);
@@ -183,7 +181,7 @@ class ReservationController extends AbstractController
         int $action,
         Request $request,
         ReservationHelper $rsvnHelper
-    ) {
+    ): Response {
         $session = $request->getSession();
         $formSendRequest = false;
         $formOptions = [
@@ -227,7 +225,8 @@ class ReservationController extends AbstractController
                 $form->addError($rsvnHelper->createFormError($e));
             } catch (ReservationNotAllowedException $e) {
                 $formSendRequest = $action !== static::ACTION_ADD_RQST;
-                if ($formSendRequest && isset($request->get('reservation', [])['send_request'])) {
+                $formFields = $request->request->get('reservation', []);
+                if ($formSendRequest && isset($formFields['send_request'])) {
                     return $this->forward('App\Controller\RequestController::add', [
                         'rsvn' => $rsvn,
                         'rsvnError' => $e->getMessage(),

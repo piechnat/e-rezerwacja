@@ -2,6 +2,8 @@
 
 namespace App\CustomTypes;
 
+use InvalidArgumentException;
+
 abstract class CustomType
 {
     protected const VALUES = [];
@@ -22,7 +24,7 @@ abstract class CustomType
             return $type;
         }
 
-        throw new \InvalidArgumentException('There is no such type in '.static::class);
+        throw new InvalidArgumentException('There is no such type in '.static::class);
     }
 
     public static function getValue(string $type): string

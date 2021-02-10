@@ -58,7 +58,7 @@ class GoogleAuthenticator extends SocialAuthenticator
 
         if (!$user) {
             $fullname = $googleUser->getName();
-            $email_fullname = explode('@', $email)[0];
+            $email_fullname = strstr($email, '@', true);
             if (0 === strlen($fullname)) {
                 $fullname = ucwords(str_replace('.', ' ', $email_fullname));
             }

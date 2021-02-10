@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -23,7 +24,7 @@ class RoomController extends AbstractController
     /**
      * @Route("/", name="room_index")
      */
-    public function index(RoomRepository $roomRepo)
+    public function index(RoomRepository $roomRepo): Response
     {
         return $this->render('room/index.html.twig', ['rooms' => $roomRepo->findAll()]);
     }
@@ -32,7 +33,7 @@ class RoomController extends AbstractController
      * @Route("/show", name="room_form_show")
      * @Route("/show/{id}", name="room_show")
      */
-    public function show(Room $room = null, Request $request, RoomRepository $roomRepo)
+    public function show(Room $room = null, Request $request, RoomRepository $roomRepo): Response
     {
         $session = $request->getSession();
         $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
@@ -59,7 +60,7 @@ class RoomController extends AbstractController
 
         return $this->render('room/show.html.twig', [
             'room' => $room,
-            'can_edit_room' => $this->canEditRoom($room),
+            'can_edit_room' => $room ? $this->canEditRoom($room) : false,
             'form' => $form->createView(),
         ]);
     }
@@ -68,7 +69,7 @@ class RoomController extends AbstractController
      * @Route("/add", name="room_add")
      * @IsGranted(UserLevel::SUPER_ADMIN)
      */
-    public function add(Request $request)
+    public function add(Request $request): Response
     {
         $form = $this->createForm(RoomType::class, null, [
             'route_name' => 'room_add',
@@ -104,7 +105,7 @@ class RoomController extends AbstractController
      * @Route("/delete/{id}", name="room_delete")
      * @IsGranted(UserLevel::SUPER_ADMIN)
      */
-    public function delete(Room $room, Request $request)
+    public function delete(Room $room, Request $request): Response
     {
         if ($this->isCsrfTokenValid('room_delete', $request->request->get('token'))) {
             try {
@@ -129,7 +130,7 @@ class RoomController extends AbstractController
     /**
      * @Route("/edit/{id}", name="room_edit")
      */
-    public function edit(Room $room, Request $request)
+    public function edit(Room $room, Request $request): Response
     {
         if (!$this->canEditRoom($room)) {
             throw $this->createAccessDeniedException();

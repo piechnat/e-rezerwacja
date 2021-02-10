@@ -1,3 +1,4 @@
+{% set dev_rand = (app.environment == 'dev') ? random() : '' %}
 <!DOCTYPE html>
 <html lang="pl-PL">
   <head>
@@ -9,7 +10,7 @@
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
     <script src="{{ asset('js/piechnat-menu.js') }}"></script>
     <link href="{{ asset('css/piechnat-menu.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/style.css') }}?{{ random() }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}{{ dev_rand }}" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" 
       integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" 
       crossorigin="anonymous"></script>

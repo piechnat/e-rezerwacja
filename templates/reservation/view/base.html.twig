@@ -3,136 +3,9 @@
 {% set current_time = 'now'|date('H:i') %}
 {% block main %}
 
-<style type="text/css">
-.table-view {
-  overflow: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #f0f0f0;
-}
-.table-view .table-view-header {
-  position: sticky;
-  left: 0;
-  background-color: #fff;
-  box-shadow: inset 0 -0.2rem 0.3rem -0.2rem rgba(45,45,45,0.3);
-}
-.table-view .table-view-header > div {
-  box-shadow: 
-    0 0 4rem 0.05rem rgba(45,45,45,0.3),
-    inset 0 -0.2rem 0.4rem -0.2rem rgba(45,45,45,0.3);
-  ;
-}
-.table-view .table-view-header > div > div {
-  padding: 0.5em 0.4em;
-}
-.table-view .table-view-body {
-  position: relative;
-  z-index: 1;
-  background-color: #f0f0f0;
-}
-.table-view table {
-  border-collapse: separate;
-  border-spacing: 0;
-  margin: 0 auto;
-  border: solid #ccc;
-  border-width: 1px 0 0 1px;
-}
-.table-view th, .table-view td {
-  position: relative;
-  padding: 0.3em;
-  border-right: 1px solid #bbb;
-  color: #000;
-  background-color: #fff;
-  min-width: 6em;
-}
-.table-view td {
-  background-image: url("{{ asset('images/table_view_bg.png') }}");
-  background-size: 1px 1.875em;
-  overflow: hidden;
-}
-.table-view th {
-  position: -webkit-sticky;
-  position: sticky;
-  z-index: 10;
-  background-color: #ddd;
-  font-weight: 400;
-  color: #333;
-  white-space: nowrap;
-}
-.table-view th.marked {
-  font-weight: bold;
-}
-.table-view thead th {
-  top: 0;
-  border-bottom: 1px solid #bbb;
-}
-.table-view tbody th, .table-view thead th:first-child {
-  left: 0;
-  min-width: 3.5em;
-}
-.table-view thead th:first-child {
-  z-index: 11;
-}
-.table-view td .rsvn-item {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0.29em;
-  right: 0.31em;
-  background-color: #9bd28d;
-  border-radius: 0.3rem;
-  overflow: hidden;
-  opacity: 0.9;
-  box-shadow: 0.05em 0.05em 0.1em 0.1em #888;
-  z-index: 0;
-  transition: box-shadow 0.5s, opacity 0.5s;
-}
-.table-view table a:active .rsvn-item {
-  opacity: 1;
-  z-index: 1;
-  box-shadow: 0px 0px 0.1em 0.2em #2d2dc577;
-  transition: none;
-}
-.table-view table a:hover .rsvn-item {
-  opacity: 1;
-  z-index: 1;
-}
-.table-view td .rsvn-fullname {
-  padding: 0.1em 0.4em;
-  font-size: 0.9em;
-}
-.table-view table a {
-  color: #000;
-}
-.table-view table th a {
-  color: #333;
-  text-decoration: none;
-}
-
-.table-view th.hours-header {
-  line-height: 3.75em;
-  vertical-align: top;
-  padding: 1.875em 0;
-}
-.table-view td .add-item {
-  box-sizing: border-box;
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 0.3rem;
-  overflow: hidden;
-  transition: background-color 0.5s;
-  border: 1px dashed #bbb;
-}
-.table-view table a:active .add-item {
-  background-color: rgba(0, 0, 0, 0.1);
-  transition: none;
-  z-index: 1;
-}
-</style>
+{% block before_head %}
+  <link href="{{ asset('css/table-view.css') }}{{ dev_rand }}" rel="stylesheet">
+{% endblock %}
 
 {% if table_view is null %}
 
@@ -143,7 +16,7 @@
 
   <h2 class="main-title">{{ main_icon|ico }}{{ main_title|trans }}</h2>
   {{ block('table_view_form') }}
-  <p>Nie znaleziono sal spełniających zadane kryteria.</p>
+  <p>{% trans %}Nie znaleziono sal spełniających zadane kryteria{% endtrans %}.</p>
 
 {% elseif table_view.columns|length > 0 %}
 
