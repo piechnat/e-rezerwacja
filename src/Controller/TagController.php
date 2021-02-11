@@ -6,7 +6,6 @@ use App\CustomTypes\UserLevel;
 use App\Entity\Tag;
 use App\Form\TagType;
 use App\Repository\TagRepository;
-use App\Repository\UserRepository;
 use App\Service\AppHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -62,49 +61,21 @@ class TagController extends AbstractController
     /**
      * @Route("/edit/{id}/{mode}", name="tag_edit", requirements={"mode"="rooms|users"})
      */
-    public function edit(
-        Tag $tag,
-        string $mode = 'entity',
-        Request $request,
-        UserRepository $userRepo
-    ): Response {
+    public function edit(Tag $tag, string $mode = 'entity', Request $request): Response
+    {
         if (
             ('entity' === $mode && !$this->isGranted(UserLevel::SUPER_ADMIN))
             || $tag->getLevel() >= $this->getUser()->getAccessLevel()
         ) {
             throw $this->createAccessDeniedException();
         }
-        $options = ['edit_mode' => $mode];
-        if ('users' === $mode) {
-            $options['validation_groups'] = false;
-            $options['allow_extra_fields'] = true;
-            $options['ajax_users'] = $tag->getUsers();
-        }
-        $form = $this->createForm(TagType::class, $tag, $options);
+        $form = $this->createForm(TagType::class, $tag, ['edit_mode' => $mode]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            if ('entity' === $mode && 'delete' === $request->get('delete')) {
+            if ('delete' === $request->get('delete')) {
                 $em->remove($tag);
-            }
-            if ('users' === $mode) {
-                $originalUsers = $tag->getUsers();
-                $selectedUserIds = $request->request->get('tag', [])['ajax_users'] ?? [];
-                $selectedUsers = $userRepo->createQueryBuilder('user')
-                    ->where('user.id IN (:userIds)')
-                    ->setParameter('userIds', $selectedUserIds)
-                    ->getQuery()->getResult();
-                foreach ($originalUsers as $user) {
-                    if (!in_array($user, $selectedUsers)) {
-                        $originalUsers->removeElement($user);
-                    }
-                }
-                foreach ($selectedUsers as $user) {
-                    if (!$originalUsers->contains($user)) {
-                        $originalUsers->add($user);
-                    }
-                }
             }
             $em->flush();
 

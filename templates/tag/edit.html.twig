@@ -19,7 +19,7 @@
     {% elseif edit_mode == 'rooms' %}
       {{ form_row(form.rooms, {attr: {class: 'jqslct2-multiple-select-no-close'}}) }}
     {% elseif edit_mode == 'users' %}
-      {{ form_row(form.ajax_users, {attr: {class: 'jqslct2-multiple-select-no-close'}}) }}
+      {{ form_row(form.users, {attr: {class: 'jqslct2-multiple-select-no-close'}}) }}
     {% endif %}
     <p class="form-group button-row">
       <a class="button" href="{{ path('tag_index') }}">
