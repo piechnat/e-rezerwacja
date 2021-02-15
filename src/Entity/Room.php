@@ -11,7 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=RoomRepository::class)
  * @ORM\Table(name="rooms")
- * @UniqueEntity(fields={"title"}, groups={"room"})
+ * @UniqueEntity("title")
  */
 class Room
 {
@@ -42,7 +42,7 @@ class Room
 
     public function __toString(): string
     {
-        return $this->title; 
+        return $this->title;
     }
 
     public function getId(): ?int

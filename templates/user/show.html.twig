@@ -6,27 +6,30 @@
 
   {{ form_start(form) }}
     <div class="form-group">
-      {{ form_label(form.email) }}
-      {{ form_errors(form.email) }}
-      {{ form_widget(form.email, {'attr': {
-        class: 'jqslct2-single-user', 'data-text': userFullname,
+      {{ form_label(form.user) }}
+      {{ form_errors(form.user) }}
+      {{ form_widget(form.user, {'attr': {
+        class: 'jqslct2-single-user submit-on-change', 'data-text': user.fullname,
       }}) }}
-      <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
+      <button type="submit" class="hide-on-load">{{ 'bx bx-refresh'|ico }}OK</button>
     </div>
+    {{ include('jqslct2-single-user.html.twig') }}
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
-  <script>
-    $('#jqslct2-submit').hide();
-    $('select.jqslct2-single-user').change(function() {
-      $(this.form).submit();
-      $(this).prop('disabled', true);
-    });
-  </script>
 
-  <p>{{ 'Typ konta'|trans }}: {{ user.accessname|trans }}</p>
-  <p>{{ 'Adres e-mail'|trans }}: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+  <p>
+    {{ 'Typ konta'|trans }}: 
+    <span class="p-sub">
+      {{ user.accessname|trans }}
+    </span>
+  </p>
+  <p>
+    {{ 'Adres e-mail'|trans }}: 
+    <span class="p-sub">
+      <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+    </span>
+  </p>
   <div class="tag-list">
-    {{ 'Etykiety'|trans }}:
+    {{ 'Nadane etykiety'|trans }}:
     <ul>
     {% for tag in user.tags %}
       <li>{{ tag|trans }}</li>
@@ -35,7 +38,18 @@
     {% endfor %}
     </ul>
   </div>
-  <p>{{ 'Język'|trans }}: {{ lang|trans }}</p>
+  <p>
+    {{ 'Ostatnie logowanie'|trans }}: 
+    <span class="p-sub">
+      {{ app.request.locale|icu_date(user.lastLogin) }}
+    </span>
+  </p>
+  <p>
+    {{ 'Wybrany język'|trans }}: 
+    <span class="p-sub">
+      {{ lang|trans }}
+    </span>
+  </p>
 
   <p class="form-group button-row">
     {% if can_edit_user %}
@@ -43,7 +57,7 @@
         {{ 'bx bx-edit'|ico }}{{ 'Edytuj profil'|trans }}
       </a>
     {% endif %}
-    <a class="button" href="{{ path('reservation_view_user', {id: user.id}) }}">
+    <a class="button" href="{{ path('rsvn_view_user', {id: user.id}) }}">
       {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
     </a>
     {% if is_granted('IS_IMPERSONATOR') %}

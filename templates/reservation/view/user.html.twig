@@ -8,28 +8,31 @@
         {{ form_label(form.user) }}
         {{ form_errors(form.user) }}
         {{ form_widget(form.user, {attr: {
-          size: 12, class: 'jqslct2-single-user', 'data-text': user.fullname,
+          size: 12, 
+          class: 'jqslct2-single-user submit-on-change', 
+          'data-text': user.fullname,
         }}) }}
       </div>
+      {{ include('jqslct2-single-user.html.twig') }}
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
         {{ form_widget(form.date) }}
-        <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
+        <button class="hide-on-load" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
       {% endapply %}
       </div>
     </div>
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
+  {{ include('date-buttons.html.twig') }}
 {% endblock %}
 
 {% block table_view_headers %}
   {% for header in table_view.headers %}
-    <th class="{{ chosen_day == header.date|date('z') ? 'marked' : '' }}">
+    <th class="column-id-{{ header.date|date('Y-m-d') }}">
       <a href="{{ path('reservation_add', {
           room_id: 0,
-          beginTime: header.date|date('Y-m-d '~current_time)
+          beginTime: header.date|date('Y-m-d '~now_s_hi)
         }) }}" title="{{ 'Dodaj'|trans }}">
         {{ header.date|week_day|trans }}
       </a>
@@ -37,7 +40,15 @@
   {% endfor %}
 {% endblock %}
 
-{% block reservation_add_link %}
+{% block reservation_show_item %}
+  <a href="{{ path('reservation_show', {id: item.id}) }}" title="{{ 'Zobacz'|trans }}">
+    <div class="rsvn-item {{ item.end_time < now_date ? 'past' }}" style="{{ item|col_css }}">
+      <div class="rsvn-show">{{ item.room_title }}</div>
+    </div>
+  </a>
+{% endblock %}
+
+{% block reservation_add_item %}
   <a href="{{ path('reservation_add', {
       room_id: 0,
       beginTime: item.begin_time|date('Y-m-d H:i'),

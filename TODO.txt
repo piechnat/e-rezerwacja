@@ -1,12 +1,5 @@
 FUNKCJE:
-- dodać AJAX select w edycji tagów (sale, użytkownicy)
-- table view: dodać auto-submit
-- dodać w przód, w tył, dzisiaj, w widoku tabeli
-- zapis daty w sesji? data ważności?
-- zapis użytkownika w sesji?
-- sprawdzanie poprawności formów przy usuwaniu?
-- sprawdzić AppHelper::term en_US itp...
-
+- reservation add: rooms ajax request bez konfliktów
 a)
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu (RecurringReservation)
 

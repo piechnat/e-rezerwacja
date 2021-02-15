@@ -8,11 +8,13 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="users")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
@@ -53,6 +55,11 @@ class User implements UserInterface
      */
     private $tags;
 
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $last_login;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
@@ -60,7 +67,7 @@ class User implements UserInterface
 
     public function __toString(): string
     {
-        return $this->email; 
+        return $this->email;
     }
 
     public function getId(): ?int
@@ -75,7 +82,7 @@ class User implements UserInterface
 
     public function getTitle()
     {
-        return "{$this->fullname} <{$this->email}>"; 
+        return "{$this->fullname} <{$this->email}>";
     }
 
     public function setFullname(string $fullname): self
@@ -193,5 +200,17 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         return null;
+    }
+
+    public function getLastLogin(): ?\DateTimeImmutable
+    {
+        return $this->last_login;
+    }
+
+    public function setLastLogin(\DateTimeImmutable $last_login): self
+    {
+        $this->last_login = $last_login;
+
+        return $this;
     }
 }

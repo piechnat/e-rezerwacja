@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 {% set main_icon = 'bx bx-calendar-week' %}
-{% set current_time = 'now'|date('H:i') %}
+{% set now_s_hi = 'now'|date('H:i') %}
+{% set now_date = date() %}
 {% block main %}
 
 {% block before_head %}
@@ -39,24 +40,20 @@
         <tbody>
           <tr>
             <th class="hours-header">
-            {% for hour in table_view.meta.hours_list %}
-              {{ hour }}<br>
-            {% endfor %}
+              {% for hour in table_view.meta.hours_list %}
+                {{ hour }}<br>
+              {% endfor %}
             </th>
             {% for key, column in table_view.columns %}
-            <td>
-              {% for item in column %}
-                {% if item.id > 0 %}
-                <a href="{{ path('reservation_show', {id: item.id}) }}" title="{{ 'Zobacz'|trans }}">
-                  <div class="rsvn-item" style="{{ item|col_css }}">
-                    <div class="rsvn-fullname">{{ item.user_fullname }}</div>
-                  </div>
-                </a>
-                {% else %}
-                  {% block reservation_add_link %}{% endblock %}
-                {% endif %}
-              {% endfor %}
-            </td>
+              <td>
+                {% for item in column %}
+                  {% if item.id > 0 %}
+                    {% block reservation_show_item %}{% endblock %}
+                  {% else %}
+                    {% block reservation_add_item %}{% endblock %}
+                  {% endif %}
+                {% endfor %}
+              </td>
             {% endfor %}
           </tr>
         </tbody>

@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
-{% if action_add %}
+{% set is_edit = (action == constant('App\\Controller\\ReservationController::ACTION_EDIT')) %}
+{% if (action % 2) == constant('App\\Controller\\ReservationController::ACTION_ADD') %}
   {% set main_title = 'Dodawanie rezerwacji' %}
   {% set main_icon = 'bx bx-calendar-plus' %}
 {% else %}
-  {% set main_title = 'Edycja rezerwacji' %}
+  {% set main_title = 'Zmiana rezerwacji' %}
   {% set main_icon = 'bx bx-calendar-edit' %}
 {% endif %}
 {% block main %}
@@ -19,6 +20,7 @@
           class: 'jqslct2-single-user', 
         }}) }}
       </div>
+      {{ include('jqslct2-single-user.html.twig') }}
     {% endif %}
     <div class="form-group jqslct2-min-width">
       {{ form_label(form.room) }}
@@ -28,6 +30,7 @@
         class: 'jqslct2-single-room', 
       }}) }}
     </div>
+    {{ include('jqslct2-single-room.html.twig') }}
     {{ form_row(form.begin_time, {attr: {class: 'form-group'}}) }}
     {{ form_row(form.end_time) }}
     {{ form_row(form.details, {attr: {
@@ -45,23 +48,27 @@
       </div>
     {% endif %}
     <div class="form-group button-row">
-      {% if not action_add %}
+      {% if is_edit %}
         <a class="button" href="{{ path('reservation_show', {id: rsvn.id}) }}">
           {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
         </a>
       {% endif %}
-      <button type="submit" name="send" value="send">
+      {% if action >= constant('App\\Controller\\ReservationController::ACTION_RQST_ADD') %}
+        <a class="button" href="#" onclick="history.back()">
+          {{ 'bx bx-arrow-back'|ico }}{{ 'Wstecz'|trans }}
+        </a>
+      {% endif %}
+      <button type="submit" name="send" value="send"
+        class="{{ is_edit ? 'enable-on-change' }}">
         {{ 'bx bx-upload'|ico }}{{ 'Wyślij'|trans }}
       </button>
     </div>
   {{ form_end(form) }}
-  {{ include('jqslct2-load.html.twig') }}
   {% if send_request %}
     <script>
-      var inputs = $(['#reservation_requester', '#reservation_room', '#reservation_begin_time_date', 
-        '#reservation_begin_time_time', '#reservation_end_time'].join(', '));
-      inputs.on('change', function() {
-        inputs.off('change');
+      $(['#reservation_requester', '#reservation_room', '#reservation_begin_time_date', 
+        '#reservation_begin_time_time', '#reservation_end_time'].join(', '))
+      .one('change', function() {
         $('#reservation_details').removeAttr('required');
         $('#reservation_send_request').parent().remove();
       });

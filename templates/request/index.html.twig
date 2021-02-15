@@ -34,14 +34,14 @@
 							<div class="slide-content">
 								<div class="form-group button-row right-float-panel">
 									{% if is_granted(constant('App\\CustomTypes\\UserLevel::ADMIN')) %}
-										<a class="button" href="{{ path('reservation_add_request', {id: rqst.id}) }}">
-											{{ 'bx bx-calendar-plus'|ico }}{{ 'Dodaj'|trans }}
+										<a class="button" href="{{ path('reservation_request', {id: rqst.id}) }}">
+											{{ 'bx bx-calendar-check'|ico }}{{ 'Akceptuj'|trans }}
 										</a>
 									{% endif %}
 									<form action="{{ path('request_delete', {id: rqst.id}) }}" method="post">
 										<input type="hidden" name="token" value="{{ csrf_token('request_delete') }}"/>
 										<button type="submit" class="button" 
-											onclick="return confirm('{{ 'Czy na pewno chcesz odrzuć wniosek?'|trans }}')">
+											onclick="return confirm('{{ 'Czy na pewno chcesz odrzucić wniosek?'|trans }}')">
 											{{ 'bx bx-trash'|ico }}{{ 'Odrzuć'|trans }}
 										</button>
 									</form>

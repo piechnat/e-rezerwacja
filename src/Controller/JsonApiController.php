@@ -17,7 +17,7 @@ class JsonApiController extends AbstractController
     /**
      * @Route("/find/user", name="jsonapi_find_user")
      */
-    public function find_user(Request $request, UserRepository $userRepo): Response
+    public function findUser(Request $request, UserRepository $userRepo): Response
     {
         $matches = $userRepo->match($request->get('term', ''));
         $result = [];
@@ -31,7 +31,7 @@ class JsonApiController extends AbstractController
     /**
      * @Route("/find/users", name="jsonapi_find_users")
      */
-    public function find_users(Request $request, UserRepository $userRepo): Response
+    public function findUsers(Request $request, UserRepository $userRepo): Response
     {
         $matches = $userRepo->match($request->get('term', ''));
         $result = [];
@@ -46,7 +46,7 @@ class JsonApiController extends AbstractController
     /**
      * @Route("/find/room", name="jsonapi_find_room")
      */
-    public function find_room(Request $request, RoomRepository $roomRepo): Response
+    public function findRoom(Request $request, RoomRepository $roomRepo): Response
     {
         $matches = $roomRepo->match($request->get('term', ''));
         $result = [];

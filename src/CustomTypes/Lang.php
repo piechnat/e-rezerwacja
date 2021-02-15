@@ -17,11 +17,11 @@ abstract class Lang extends CustomType
 
     public static function fromCookie(InputBag $cookies): string
     {
-        return static::valid($cookies->get('lang', static::PL));
+        return static::valid($cookies->get('LANG', static::PL));
     }
     
     public static function createCookie(string $lang): Cookie
     {
-        return new Cookie('lang', static::valid($lang), 'now +1 year');
+        return new Cookie('LANG', static::valid($lang), 'now +1 year');
     }
 }

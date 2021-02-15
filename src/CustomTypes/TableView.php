@@ -85,7 +85,7 @@ class TableView
                         'end_time' => $rsvn['begin_time'],
                     ];
                 }
-                $beginTime = max($now, $rsvn['end_time']);
+                $beginTime = max($now, $beginTime, $rsvn['end_time']);
                 $newItems[] = $rsvn;
             }
             $endTime = $header['hours']['end_time'];

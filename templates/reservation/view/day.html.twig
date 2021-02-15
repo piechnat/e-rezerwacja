@@ -2,25 +2,34 @@
 {% set main_title = 'Rezerwacje w dniu' %}
 
 {% block table_view_form %}
-  {{ form_start(form) }}
+  {{ form_start(form, {attr: {id: 'form_rsvn_view_day'}}) }}
     <div class="form-flex-wrapper">
       <div class="form-group" style="flex-basis: 100%">
         {{ form_label(form.tags) }}
         {{ form_errors(form.tags) }}
-        {{ form_widget(form.tags, {attr: {class: 'jqslct2-multiple-select'}}) }}
+        {{ form_widget(form.tags, {attr: {
+          class: 'jqslct2-multiple-select show-btn-on-change'
+        }}) }}
       </div>
-      {{ form_row(form.tag_intersect, {attr: {class: 'jqslct2-single-select'}}) }}
+      {{ form_row(form.tag_intersect, {attr: {
+        class: 'jqslct2-single-select show-btn-on-change'
+      }}) }}
       <div class="form-group">
       {% apply spaceless %}
         {{ form_label(form.date) }}
         {{ form_errors(form.date) }}
-        {{ form_widget(form.date) }}
-        <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
+        {{ form_widget(form.date, {attr: {class: 'submit-on-change'}}) }}
+        <button type="submit" class="hide-on-load">
+          {{ 'bx bx-refresh'|ico }}OK
+        </button>
       {% endapply %}
       </div>
     </div>
   {{ form_end(form) }}
   <script>
+    $('.show-btn-on-change', '#form_rsvn_view_day').change(function() {
+      $('button.hide-on-load').toggle(this.checkValidity());
+    });
     $('select.jqslct2-multiple-select').select2({
       width: '99%',
     });
@@ -28,15 +37,21 @@
       minimumResultsForSearch: Infinity, 
       width: 'style',
     });
+    $(function() {
+      var $col = $('th.column-id-{{ room_id }}');
+      if ($col.length) {
+        $col.addClass('marked').get(0).scrollIntoView({block: "nearest", inline: "end"});
+      } 
+    });
   </script>
 {% endblock %}
 
 {% block table_view_headers %}
   {% for header in table_view.headers %}
-    <th>
+    <th class="column-id-{{ header.id }}">
       <a href="{{ path('reservation_add', {
           room_id: header.id,
-          beginTime: header.date|date('Y-m-d '~current_time)
+          beginTime: header.date|date('Y-m-d '~now_s_hi)
         }) }}" title="{{ 'Dodaj'|trans }}">
         {{ header.title }}
       </a>
@@ -44,7 +59,15 @@
   {% endfor %}
 {% endblock %}
 
-{% block reservation_add_link %}
+{% block reservation_show_item %}
+  <a href="{{ path('reservation_show', {id: item.id}) }}" title="{{ 'Zobacz'|trans }}">
+    <div class="rsvn-item {{ item.end_time < now_date ? 'past' }}" style="{{ item|col_css }}">
+      <div class="rsvn-show">{{ item.user_fullname }}</div>
+    </div>
+  </a>
+{% endblock %}
+
+{% block reservation_add_item %}
   <a href="{{ path('reservation_add', {
       room_id: table_view.headers[key]['id'],
       beginTime: item.begin_time|date('Y-m-d H:i'),

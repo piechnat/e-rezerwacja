@@ -5,9 +5,9 @@
   <h2 class="main-title">{{ 'bx bx-info-circle'|ico }}{{ main_title|trans }}</h2>
 
     <p>
-      {{ app_name }} to system informatyczny w formie aplikacji internetowej stworzony dla pracowników
-      i&nbsp;studentów Akademii Muzycznej w Łodzi w celu umożliwienia zdalnej rezerwacji sal oraz 
-      usprawnienia ewidencji pobrań i zwrotów kluczy.
+      {{ app_name }} to system informatyczny stworzony dla pracowników i&nbsp;studentów 
+      Akademii Muzycznej w&nbsp;Łodzi w celu umożliwienia zdalnej rezerwacji sal oraz 
+      usprawnienia ewidencji pobrań i&nbsp;zwrotów kluczy.
     </p>
 
   {% if app.request.locale == 'pl' %}
@@ -25,13 +25,14 @@
   {% endif %}
   
     <p>
-      Pytania i uwagi odnośnie aplikacji oraz zgłoszenia ewentualnych błędów można kierować na adres:
+      Autorem niniejszej aplikacji internetowej jest <b>dr&nbsp;Mateusz Piechnat</b>, st.&nbsp;wykł. 
+      AM w&nbsp;Łodzi. Pytania i&nbsp;uwagi odnośnie jej działania można kierować na adres:
       <a href="#" class="cryptedmail" data-name="mateusz.piechnat" data-domain="amuz.lodz" data-tld="pl"
         onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld + '?subject={{ app_name }}'; return false;"></a>
     </p>
 
     <p>
-      Wykorzystane technologie: PHP, MariaDB, Symfony, Doctrine, jQuery, Select2
+      Wersja {{ app_version|number_format(1, '.') }} ➜ Wykorzystane technologie: PHP,&nbsp;MariaDB, Symfony,&nbsp;Doctrine, jQuery,&nbsp;Select2
     </p>
 
 {% endblock %}

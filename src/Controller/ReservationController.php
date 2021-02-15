@@ -9,6 +9,7 @@ use App\Entity\Request as EntityRequest;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Form\ReservationType;
+use App\Repository\ReservationRepository;
 use App\Service\AppHelper;
 use App\Service\AppMailer;
 use App\Service\ReservationHelper;
@@ -31,9 +32,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ReservationController extends AbstractController
 {
-    private const ACTION_EDIT = 0;
-    private const ACTION_ADD = 1;
-    private const ACTION_ADD_RQST = 2;
+    public const ACTION_ADD = 0;
+    public const ACTION_EDIT = 1;
+    public const ACTION_RQST_ADD = 2;
+    public const ACTION_RQST_EDIT = 3;
 
     /**
      * @Route("/", name="reservation_index")
@@ -71,7 +73,7 @@ class ReservationController extends AbstractController
                     '%rsvn_date% została usunięta przez %user%.', $rsvn);
             }
 
-            return $this->redirectToRoute('reservation_view_week', [
+            return $this->redirectToRoute('rsvn_view_week', [
                 'id' => $rsvn->getRoom()->getId(),
                 'date' => $rsvn->getBeginTime()->format('Y-m-d'),
             ]);
@@ -81,23 +83,29 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/add/request/{id}", name="reservation_add_request")
+     * @Route("/request/{id}", name="reservation_request")
      * @IsGranted(UserLevel::ADMIN)
      */
     public function addRequest(
         EntityRequest $rqst,
         Request $request,
         ReservationHelper $rsvnHelper,
-        AppMailer $mailer
+        AppMailer $mailer,
+        ReservationRepository $rsvnRepo
     ): Response {
-        $rsvn = new Reservation();
+        $action = static::ACTION_RQST_EDIT;
+        $rsvn = $rqst->getReservationId() > 0 ? $rsvnRepo->find($rqst->getReservationId()) : null;
+        if (!$rsvn) {
+            $action = static::ACTION_RQST_ADD;
+            $rsvn = new Reservation();
+        }
         $rsvn->setRequester($rqst->getRequester());
         $rsvn->setRoom($rqst->getRoom());
         $rsvn->setBeginTime($rqst->getBeginTime());
         $rsvn->setEndTime($rqst->getEndTime());
         $rsvn->setDetails($rqst->getDetails());
 
-        $resp = $this->handleReservation($rsvn, static::ACTION_ADD_RQST, $request, $rsvnHelper);
+        $resp = $this->handleReservation($rsvn, $action, $request, $rsvnHelper);
         if ($this->isSuccessfulResponse($resp)) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($rqst);
@@ -163,9 +171,9 @@ class ReservationController extends AbstractController
                 $rqstrIsChanged = $originalRqstr !== $rsvn->getRequester();
                 if ($this->getUser() !== $rsvn->getRequester() || $rqstrIsChanged) {
                     $text = 'rezerwacja sali została zmodyfikowana przez %user%. %rsvn_url%';
-                    $mailer->notify('Edycja rezerwacji', $text, $rsvn);
+                    $mailer->notify('Zmiana rezerwacji', $text, $rsvn);
                     if ($rqstrIsChanged) {
-                        $mailer->notify('Edycja rezerwacji', $text, $rsvn, null, $originalRqstr);
+                        $mailer->notify('Zmiana rezerwacji', $text, $rsvn, null, $originalRqstr);
                     }
                 }
             }
@@ -182,11 +190,11 @@ class ReservationController extends AbstractController
         Request $request,
         ReservationHelper $rsvnHelper
     ): Response {
-        $session = $request->getSession();
+        $session = AppHelper::initSession($request);
         $formSendRequest = false;
         $formOptions = [
             'modify_requester' => $this->isGranted(UserLevel::ADMIN)
-                && $action !== static::ACTION_ADD_RQST,
+                && $action < static::ACTION_RQST_ADD,
         ];
         $form = $this->createForm(ReservationType::class, $rsvn, $formOptions);
         $form->handleRequest($request);
@@ -224,7 +232,7 @@ class ReservationController extends AbstractController
             } catch (ReservationNotPossibleException $e) {
                 $form->addError($rsvnHelper->createFormError($e));
             } catch (ReservationNotAllowedException $e) {
-                $formSendRequest = $action !== static::ACTION_ADD_RQST;
+                $formSendRequest = $action < static::ACTION_RQST_ADD;
                 $formFields = $request->request->get('reservation', []);
                 if ($formSendRequest && isset($formFields['send_request'])) {
                     return $this->forward('App\Controller\RequestController::add', [
@@ -245,9 +253,9 @@ class ReservationController extends AbstractController
 
         return $this->render('reservation/add-edit.html.twig', [
             'rsvn' => $rsvn,
-            'action_add' => $action !== static::ACTION_EDIT,
-            'form' => $form->createView(),
+            'action' => $action,
             'send_request' => $formSendRequest,
+            'form' => $form->createView(),
         ]);
     }
 

@@ -8,11 +8,14 @@ use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Entity\User;
 use App\Repository\ConstraintRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use IntlDateFormatter;
 use InvalidArgumentException;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AppHelper
 {
@@ -21,7 +24,7 @@ class AppHelper
     ];
 
     /**
-     * @param Reservation|Request $object Instance of reservation or request entity
+     * @param Request|Reservation $object Instance of reservation or request entity
      */
     public static function term($object, User $user = null): string
     {
@@ -126,5 +129,20 @@ class AppHelper
     public static function USR($object): ?User
     {
         return $object->getUser();
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    public static function initSession(HttpFoundationRequest $request): SessionInterface
+    {
+        $session = $request->getSession();
+        $now = new DateTimeImmutable();
+        $lastAccessTime = $session->get('last_access_time', $now);
+        if ($lastAccessTime < $now->modify('-60 minutes')) {
+            $session->remove('last_date');
+        }
+        $session->set('last_access_time', $now);
+
+        return $session;
     }
 }

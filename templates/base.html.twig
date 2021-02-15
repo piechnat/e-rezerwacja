@@ -60,12 +60,35 @@
             <hr>
             <p>
               © {{ 'now'|date('Y') }} {{ app_signature|trans }}. {{ 'Wszelkie prawa zastrzeżone'|trans }}.
-              <a href="{{ path('about') }}">{{ app_name }} » {{ 'Informacje i pomoc'|trans }}.</a>
+              <a href="{{ path('about') }}">
+                <span class="nowrap">{{ app_name }}</span> » {{ 'Informacje i pomoc'|trans }}.
+              </a>
             </p>
           {% endblock %}
         </footer>
       </div>
     </div>
+    <script>
+      (function($form) {
+        $('.hide-on-load', $form).hide();
+        $('.enable-on-change', $form).prop('disabled', true);
+        $form.on('submit', function() {
+          this.submit();
+          $(':input', this).prop('disabled', true);
+          return false;
+        });
+        $('.submit-on-change', $form).on('change', function() {
+          if (this.form.checkValidity()) {
+            $(this.form).submit();
+          } else {
+            try { this.form.reportValidity() } catch (e) {}
+          }
+        });
+        $form.one('change, input', function() {
+          $('.enable-on-change', this).prop('disabled', false);
+        });
+      })($('form'));
+    </script>
     {% block before_body %}{% endblock %}  
   </body>
 </html>

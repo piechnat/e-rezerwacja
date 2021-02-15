@@ -1,0 +1,54 @@
+<style>
+  .stuck-together button { margin: 0; padding: 0 0 0 0.2em; }
+  .stuck-together input { margin: 0 0.1em; }
+</style>
+<script>
+  (function() {
+    var strToDate = function(str) {
+      var date = new Date(str);
+      if (isNaN(date)) date = new Date();
+      date.setHours(0, 0, 0, 0);
+      return date;
+    };
+    var dateToStr = function(date) {
+      var mm = date.getMonth() + 1, dd = date.getDate();
+      return [date.getFullYear(), (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join('-');
+    };
+    var $viewDate = $('#rsvn_view_date'), $dateParent = $viewDate.parent();
+    $dateParent.addClass('stuck-together');
+    $viewDate.before('<button class="date-button" data-func="dec" type="submit">{{ "bx bxs-chevron-left"|ico }}</button>');
+    $viewDate.after('<button class="date-button" data-func="inc" type="submit">{{ "bx bxs-chevron-right"|ico }}</button>');
+    $dateParent.find('button.date-button').on('click', function() {
+      var date = strToDate($viewDate.val());
+      date.setDate(date.getDate() + ($(this).data('func') == 'dec' ? -7 : 7));
+      $viewDate.val(dateToStr(date));
+    });
+    var getMondayMs = function(date) {
+      var result = new Date(date.getTime());
+      result.setDate(result.getDate() - ((result.getDay() + 6) % 7));
+      return result.getTime();
+    };
+    var markCol = function(strDate) {
+      var $col = $('th.column-id-' + strDate);
+      if ($col.length) $col.addClass('marked').get(0).scrollIntoView({block: "nearest", inline: "end"});
+    }
+    $viewDate.data('prev-val', $viewDate.val());
+    $viewDate.change(function() {
+      var dateStr = $viewDate.val(), lastDateStr = $viewDate.data('prev-val');
+      var date = strToDate(dateStr), lastDate = strToDate(lastDateStr);
+      if (getMondayMs(date) !== getMondayMs(lastDate)) {
+        if (this.form.checkValidity()) {
+          $(this.form).submit();
+        }
+      } else {
+        $('th.column-id-' + lastDateStr).removeClass('marked');
+        markCol(dateStr);
+      }
+      $viewDate.data('prev-val', dateStr);
+      return false;
+    });
+    $(function() {
+      markCol($viewDate.val());
+    });
+  })();
+</script>

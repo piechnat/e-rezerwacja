@@ -9,6 +9,7 @@ framework:
     session:
         enabled: true
         handler_id: null
+        cookie_lifetime: 2419200 # 4 weeks in seconds
         cookie_secure: auto
         cookie_samesite: lax
 

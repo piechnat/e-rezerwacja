@@ -55,6 +55,11 @@ class Request
      */
     private $error;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $reservation_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -140,6 +145,18 @@ class Request
     public function setError(string $error): self
     {
         $this->error = $error;
+
+        return $this;
+    }
+
+    public function getReservationId(): ?int
+    {
+        return $this->reservation_id;
+    }
+
+    public function setReservationId(?int $reservation_id): self
+    {
+        $this->reservation_id = $reservation_id;
 
         return $this;
     }

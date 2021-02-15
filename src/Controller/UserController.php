@@ -29,36 +29,54 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/show", name="user_self_show")
+     * @Route("/self", name="user_self")
+     */
+    public function selfShow(): Response
+    {
+        return $this->forward('App\\Controller\\UserController::show', ['self' => true]);
+    }
+
+    /**
+     * @Route("/show", name="user_form_show")
      * @Route("/show/{id}", name="user_show")
      */
     public function show(
         User $user = null,
+        bool $self = false,
         Request $request,
-        UserToEmailTransformer $userToEmail
+        UserToEmailTransformer $userToEmail,
+        UserRepository $userRepo
     ): Response {
-        $user = $user ?? $this->getUser();
+        $session = AppHelper::initSession($request);
         $builder = $this->createFormBuilder(null, ['csrf_protection' => false]);
-        $builder->setAction($this->generateUrl('user_self_show'))->setMethod('GET')
-            ->add('email', TextType::class, [
-                'data' => $user,
+        $builder->setAction($this->generateUrl('user_form_show'))->setMethod('GET')
+            ->add('user', TextType::class, [
                 'data_class' => null,
+                'data' => $user,
                 'label' => 'Pełna nazwa',
             ])
         ;
-        $builder->get('email')->addModelTransformer($userToEmail);
+        $builder->get('user')->addModelTransformer($userToEmail);
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData()['email'];
+            $user = $form->getData()['user'];
+            $session->set('last_user_id', $user->getId());
+        }
+        if (!$form->isSubmitted() && !$user) {
+            if (!$self && null !== ($lastUserId = $session->get('last_user_id'))) {
+                $user = $userRepo->find($lastUserId);
+            } else {
+                $user = $this->getUser();
+            }
+            AppHelper::updateForm($form, 'user', TextType::class, ['data' => $user]);
         }
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
             'lang' => Lang::getValue($user->getLang()),
             'can_edit_user' => $this->canEditUser($user),
-            'userFullname' => $user->getFullname(),
             'form' => $form->createView(),
         ]);
     }

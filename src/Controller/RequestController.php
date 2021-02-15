@@ -77,8 +77,12 @@ class RequestController extends AbstractController
         $rqst->setEndTime($rsvn->getEndTime());
         $rqst->setDetails($rsvn->getDetails());
         $rqst->setError($rsvnError);
-
+        
         $em = $this->getDoctrine()->getManager();
+        if ($rsvn->getId()) {
+            $rqst->setReservationId($rsvn->getId());
+            $em->refresh($rsvn);
+        }
         $em->persist($rqst);
         $em->flush();
         if ($this->getUser() !== $rqst->getRequester()) {

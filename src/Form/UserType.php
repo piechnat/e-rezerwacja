@@ -6,7 +6,6 @@ use App\CustomTypes\UserLevel;
 use App\Entity\User;
 use App\Service\AppHelper;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,7 +33,7 @@ class UserType extends AbstractType
 
         $builder->add('fullname', TextType::class, [
             'label' => 'Nazwa wyświetlana',
-            'constraints' => new Length(['min' => 3]),
+            'constraints' => [new Length(['min' => 3])],
         ]);
         if ($options['admin_edit']) {
             $selfLevel = $this->user['self']['level'];
@@ -67,11 +66,12 @@ class UserType extends AbstractType
     {
         if ($this->user['self']['id'] !== $this->user['origin']['id']) {
             if (
-                $this->user['self']['level'] < UserLevel::getIndex(UserLevel::ADMIN) ||
-                $this->user['self']['level'] < $this->user['origin']['level']
+                $this->user['self']['level'] < UserLevel::getIndex(UserLevel::ADMIN)
+                || $this->user['self']['level'] < $this->user['origin']['level']
             ) {
                 return $context->buildViolation('Nie masz uprawnień do edycji tego użytkownika.')
-                    ->addViolation();
+                    ->addViolation()
+                ;
             }
         }
         if ($this->user['self']['level'] < $modifiedUser->getAccessLevel()) {

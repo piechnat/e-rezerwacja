@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Room;
-use App\Entity\User;
 use App\Service\AppHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -11,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RoomType extends AbstractType
 {
@@ -26,6 +26,7 @@ class RoomType extends AbstractType
         if ('room_add' === $options['route_name']) {
             $builder->add('titles', TextareaType::class, [
                 'label' => 'Nazwy w kolejnych wierszach',
+                'constraints' => new NotBlank(),
             ]);
         }
         if ('room_edit' === $options['route_name']) {
@@ -47,7 +48,6 @@ class RoomType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Room::class,
-            'validation_groups' => 'room',
             'route_name' => '',
         ]);
     }

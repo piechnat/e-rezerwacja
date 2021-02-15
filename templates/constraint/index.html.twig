@@ -35,6 +35,9 @@
     <a class="button" href="{{ path('constraint_add') }}">
       {{ 'bx bx-plus'|ico }}{{ 'Dodaj'|trans }}
     </a>
+    <a class="button" href="{{ path('constraint_index', {param: 'clear'}) }}">
+      {{ 'bx bx-trash'|ico }}{{ 'Usuń nieaktualne'|trans }}
+    </a>
     <a class="button" href="{{ path('constraint_reservation') }}">
       {{ 'bx bx-cog'|ico }}{{ 'Limity rezerwacji'|trans }}
     </a>

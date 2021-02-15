@@ -1,0 +1,31 @@
+<script>
+
+$('input.jqslct2-single-room').each(function(i, elm) {
+
+    var select = $('<select>');
+    var input = $(elm).replaceWith(select);
+    $.each(input.prop('attributes'), function() {
+        if ($.inArray(this.name, ['name', 'required', 'id', 'style', 'class']) > -1) {
+            select.attr(this.name, this.value);
+        }
+    });
+    var title = input.prop('value');             
+    if (jQuery.type(title) === 'string') {
+        select.append(`<option value="${title}">${title}</option>`);
+    }
+    select.select2({
+        language: 'pl',
+        width: 'style',
+        placeholder: '\u{200B}',
+        minimumInputLength: 1,
+        ajax: {
+            url: '/jsonapi/find/room',
+            dataType: 'json',
+            delay: 400,
+            cache: true,
+        },
+    });
+
+});
+
+</script>

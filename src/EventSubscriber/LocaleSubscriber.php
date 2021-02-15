@@ -37,7 +37,7 @@ class LocaleSubscriber implements EventSubscriberInterface
             if ($this->security->isGranted(UserLevel::DISABLED)) {
                 $event->setResponse(new Response($this->twig->render('main/forbidden.html.twig')));
             }
-            if ($user->getLang() !== $event->getRequest()->cookies->get('lang')) {
+            if ($user->getLang() !== $event->getRequest()->cookies->get('LANG')) {
                 $event->getResponse()->headers->setCookie(Lang::createCookie($user->getLang()));
             }
         }

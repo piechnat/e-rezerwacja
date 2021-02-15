@@ -11,7 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=TagRepository::class)
  * @ORM\Table(name="tags")
- * @UniqueEntity(fields={"name"}, groups={"tag"})
+ * @UniqueEntity("name")
  */
 class Tag
 {
@@ -55,7 +55,7 @@ class Tag
 
     public function __toString(): string
     {
-        return $this->name; 
+        return $this->name;
     }
 
     public function getId(): ?int

@@ -44,8 +44,8 @@ class MenuBuilder
         } else {
 
             $child = $this->ac($menu, 'Użytkownik', ['uri' => '#'], '<i class="bx bxs-user"></i>');
-            $this->ac($child, 'Profil', ['route' => 'user_self_show'], '<i class="bx bx-id-card"></i>');
-            $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_user'], '<i class="bx bx-calendar-week"></i>');
+            $this->ac($child, 'Profil', ['route' => 'user_form_show'], '<i class="bx bx-id-card"></i>');
+            $this->ac($child, 'Rezerwacje', ['route' => 'rsvn_view_user'], '<i class="bx bx-calendar-week"></i>');
             $this->ac($child, 'lang-selector', ['route' => 'change_lang', 'routeParameters' => ['lang' => $lang], 'hide_label' => true], $langButton);
             $this->ac($child, 'Wyloguj', ['route' => 'logout'], '<i class="bx bx-log-out"></i>');
 
@@ -54,14 +54,14 @@ class MenuBuilder
                 $this->ac($child, 'Dodaj', ['route' => 'room_add'], '<i class="bx bx-add-to-queue"></i>');
             }
             $this->ac($child, 'Katalog sal', ['route' => 'room_form_show'], '<i class="bx bx-folder-open"></i>');
-            $this->ac($child, 'Rezerwacje', ['route' => 'reservation_view_week'], '<i class="bx bx-calendar-week"></i>');
+            $this->ac($child, 'Rezerwacje', ['route' => 'rsvn_view_week'], '<i class="bx bx-calendar-week"></i>');
             if ($security->isGranted(UserLevel::ADMIN)) {
                 $this->ac($child, 'Etykiety', ['route' => 'tag_index'], '<i class="bx bx-purchase-tag"></i>');
             }
 
             $child = $this->ac($menu, 'Rezerwacja', ['uri' => '#'], '<i class="bx bxs-calendar"></i>');
             $this->ac($child, 'Dodaj', ['route' => 'reservation_add'], '<i class="bx bx-calendar-plus"></i>');
-            $this->ac($child, 'Wykaz dzienny', ['route' => 'reservation_view_day'], '<i class="bx bx-calendar-week"></i>');
+            $this->ac($child, 'Wykaz dzienny', ['route' => 'rsvn_view_day'], '<i class="bx bx-calendar-week"></i>');
             $this->ac($child, 'Wnioski', ['route' => 'request_index'], '<i class="bx bx-file"></i>');
             
             if ($isSuperAdmin) {

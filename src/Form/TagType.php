@@ -42,7 +42,7 @@ class TagType extends AbstractType
             ]);
         }
         if ('users' === $options['edit_mode']) {
-            $modifyForm = function ($form, $users) {
+            $modifyUsers = function ($form, $users) {
                 $form->add('users', EntityType::class, [
                     'class' => User::class,
                     'multiple' => true,
@@ -58,19 +58,19 @@ class TagType extends AbstractType
             };
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) use ($modifyForm) {
-                    $modifyForm($event->getForm(), $event->getData()->getUsers());
+                function (FormEvent $event) use ($modifyUsers) {
+                    $modifyUsers($event->getForm(), $event->getData()->getUsers());
                 }
             );
             $userRepo = $this->userRepo;
             $builder->addEventListener(
                 FormEvents::PRE_SUBMIT,
-                function (FormEvent $event) use ($modifyForm, $userRepo) {
+                function (FormEvent $event) use ($modifyUsers, $userRepo) {
                     $userIds = $event->getData()['users'] ?? null;
                     $users = $userIds ? $userRepo->createQueryBuilder('user')
                         ->where('user.id IN (:userIds)')->setParameter('userIds', $userIds)
                         ->getQuery()->getResult() : [];
-                    $modifyForm($event->getForm(), $users);
+                    $modifyUsers($event->getForm(), $users);
                 }
             );
         }
@@ -80,7 +80,6 @@ class TagType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Tag::class,
-            'validation_groups' => 'tag',
             'edit_mode' => null,
         ]);
     }

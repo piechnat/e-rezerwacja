@@ -10,6 +10,7 @@ use App\Form\RsvnViewType;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserRepository;
 use App\Service\AppHelper;
 use DateTimeImmutable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -25,10 +26,10 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/reservation/view")
  */
-class ReservationViewController extends AbstractController
+class RsvnViewController extends AbstractController
 {
     /**
-     * @Route("/week/{id?}/{date}", name="reservation_view_week", defaults={"date":"now"})
+     * @Route("/week/{id?}/{date}", name="rsvn_view_week")
      * @ParamConverter("room", options={"strip_null":true})
      */
     public function week(
@@ -38,7 +39,7 @@ class ReservationViewController extends AbstractController
         ReservationRepository $rsvnRepo,
         RoomRepository $roomRepo
     ): Response {
-        $session = $request->getSession();
+        $session = AppHelper::initSession($request);
         $form = $this->createForm(RsvnViewType::class, null, [
             'route_name' => $request->attributes->get('_route'),
             'room' => $room,
@@ -57,8 +58,10 @@ class ReservationViewController extends AbstractController
                 $room = $roomRepo->find($lastRoomId);
                 AppHelper::updateForm($form, 'room', TextType::class, ['data' => $room]);
             }
-            $date = $session->get('last_date', $date);
-            AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            if (!$date) {
+                $date = $session->get('last_date', new DateTimeImmutable());
+                AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            }
         }
         $tableView = null;
         if ($room && $date) {
@@ -69,29 +72,30 @@ class ReservationViewController extends AbstractController
         return $this->render('reservation/view/week.html.twig', [
             'form' => $form->createView(),
             'room' => $room,
-            'chosen_day' => $date ? $date->format('z') : null,
             'table_view' => $tableView,
         ]);
     }
 
     /**
-     * @Route("/day", name="reservation_view_day")
+     * @Route("/day/{date}/{roomId}", name="rsvn_view_day")
      */
     public function day(
+        DateTimeImmutable $date = null,
+        int $roomId = null,
         Request $request,
         ReservationRepository $rsvnRepo,
         TagRepository $tagRepo
     ): Response {
-        $session = $request->getSession();
-        $searchTags = $tagRepo->findBy(['search' => 1]);
+        $session = AppHelper::initSession($request);
+        $searchTags = $tagRepo->findBy(['search' => true]);
         $form = $this->createForm(RsvnViewType::class, null, [
             'route_name' => $request->attributes->get('_route'),
             'tags' => $searchTags,
-            'date' => new DateTimeImmutable(),
+            'date' => $date,
         ]);
         $form->handleRequest($request);
         $tagIds = [];
-        $tagInt = $date = null;
+        $tagInt = null;
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
             foreach ($formData['tags'] as $tag) {
@@ -104,18 +108,23 @@ class ReservationViewController extends AbstractController
             $session->set('last_date', $date);
         }
         if (!$form->isSubmitted()) {
-            $tagIds = $session->get('last_tag_ids', $tagIds);
-            if (count($tagIds)) {
-                AppHelper::updateForm($form, 'tags', EntityType::class, [
-                    'data' => array_filter($searchTags, function (Tag $tag) use ($tagIds) {
-                        return in_array($tag->getId(), $tagIds);
-                    }),
-                ]);
+            if (!count($tagIds)) {
+                $tagIds = $roomId ? $tagRepo->getTagIdsByRoomId($roomId, true)
+                    : $session->get('last_tag_ids', $tagIds);
+                if (count($tagIds)) {
+                    AppHelper::updateForm($form, 'tags', EntityType::class, [
+                        'data' => array_filter($searchTags, function (Tag $tag) use ($tagIds) {
+                            return in_array($tag->getId(), $tagIds);
+                        }),
+                    ]);
+                }
+            }
+            if (!$date) {
+                $date = $session->get('last_date', new DateTimeImmutable());
+                AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
             }
             $tagInt = $session->get('last_tag_int', true);
             AppHelper::updateForm($form, 'tag_intersect', ChoiceType::class, ['data' => $tagInt]);
-            $date = $session->get('last_date', new DateTimeImmutable());
-            AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
         }
         $tableView = null;
         if (count($tagIds) && (null !== $tagInt) && $date) {
@@ -123,23 +132,24 @@ class ReservationViewController extends AbstractController
         }
 
         return $this->render('reservation/view/day.html.twig', [
+            'room_id' => $roomId,
             'form' => $form->createView(),
             'table_view' => $tableView,
         ]);
     }
 
     /**
-     * @Route("/user/{id}/{date}", name="reservation_view_user", defaults={"id":null, "date":"now"})
+     * @Route("/user/{id?}/{date}", name="rsvn_view_user")
      * @ParamConverter("user", options={"strip_null":true})
      */
     public function user(
         User $user = null,
         DateTimeImmutable $date = null,
         Request $request,
-        ReservationRepository $rsvnRepo
+        ReservationRepository $rsvnRepo,
+        UserRepository $userRepo
     ): Response {
-        $user = $user ?? $this->getUser();
-        $session = $request->getSession();
+        $session = AppHelper::initSession($request);
         $form = $this->createForm(RsvnViewType::class, null, [
             'route_name' => $request->attributes->get('_route'),
             'user' => $user,
@@ -150,11 +160,21 @@ class ReservationViewController extends AbstractController
             $formData = $form->getData();
             $user = $formData['user'];
             $date = $formData['date'];
+            $session->set('last_user_id', $user->getId());
             $session->set('last_date', $date);
         }
         if (!$form->isSubmitted()) {
-            $date = $session->get('last_date', $date);
-            AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            if (!$user) {
+                $user = $this->getUser();
+                if (null !== ($lastUserId = $session->get('last_user_id'))) {
+                    $user = $userRepo->find($lastUserId);
+                }
+                AppHelper::updateForm($form, 'user', TextType::class, ['data' => $user]);
+            }
+            if (!$date) {
+                $date = $session->get('last_date', new DateTimeImmutable());
+                AppHelper::updateForm($form, 'date', DateType::class, ['data' => $date]);
+            }
         }
         $tableView = null;
         if ($user && $date) {
@@ -165,7 +185,6 @@ class ReservationViewController extends AbstractController
         return $this->render('reservation/view/user.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
-            'chosen_day' => $date ? $date->format('z') : null,
             'table_view' => $tableView,
         ]);
     }

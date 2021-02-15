@@ -18,11 +18,15 @@ use Symfony\Component\Validator\Constraints\Positive;
 class ConstraintController extends AbstractController
 {
     /**
-     * @Route("/", name="constraint_index")
+     * @Route("/{param}", name="constraint_index", requirements={"param"="clear"})
      */
-    public function index(ConstraintRepository $cstrRepo): Response
+    public function index(string $param = null, ConstraintRepository $cstrRepo): Response
     {
-        //$cstrRepo->removeExpired();
+        if ('clear' === $param) {
+            $cstrRepo->removeExpired();
+
+            return $this->redirectToRoute('constraint_index');
+        }
 
         return $this->render('constraint/index.html.twig', [
             'time_constraints' => $cstrRepo->findAll(),
@@ -59,10 +63,11 @@ class ConstraintController extends AbstractController
     {
         $form = $this->createForm(TimeConstraintType::class, $timeCstr);
         $form->handleRequest($request);
+        $willBeDeleted = 'delete' === $request->get('delete');
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && ($form->isValid() || $willBeDeleted)) {
             $em = $this->getDoctrine()->getManager();
-            if ('delete' === $request->get('delete')) {
+            if ($willBeDeleted) {
                 $em->remove($timeCstr);
             }
             $em->flush();

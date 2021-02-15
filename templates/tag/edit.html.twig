@@ -25,7 +25,7 @@
       <a class="button" href="{{ path('tag_index') }}">
         {{ 'bx bx-arrow-back'|ico }}{{ 'Anuluj'|trans }}
       </a>
-      <button type="submit" name="save" value="save">
+      <button type="submit" name="save" value="save" class="enable-on-change">
         {{ 'bx bx-save'|ico }}{{ 'Zapisz'|trans }}
       </button>
       {% if edit_mode == 'entity' %}

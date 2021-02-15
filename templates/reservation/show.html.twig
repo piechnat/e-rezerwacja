@@ -4,33 +4,52 @@
 
   <h2 class="main-title">{{ 'bx bx-calendar-alt'|ico }}{{ main_title|trans }}</h2>
   <p>
-    {% trans %}Nazwa użytkownika{% endtrans %}: 
-    <a href="{{ path('user_show', {id: rsvn.requester.id}) }}">{{ rsvn.requester.fullname }}</a>
+    {% trans %}Nazwa użytkownika{% endtrans %}:
+    <span class="p-sub">
+      <a href="{{ path('user_show', {id: rsvn.requester.id}) }}">{{ rsvn.requester.fullname }}</a>
+      ➜ <a href="{{ path('rsvn_view_user', 
+        {'id': rsvn.requester.id, 'date': rsvn.beginTime|date('Y-m-d')}) }}">rezerwacje</a>
+    </span>
   </p>
   <p>
-    {% trans %}Adres e-mail{% endtrans %}: 
-    <a href="mailto:{{ rsvn.requester.email }}">{{ rsvn.requester.email }}</a>
+    {% trans %}Adres e-mail{% endtrans %}:
+    <span class="p-sub">
+      <a href="mailto:{{ rsvn.requester.email }}">{{ rsvn.requester.email }}</a>
+    </span>
   </p>
   <p>
-    {% trans %}Sala{% endtrans %}: 
-    <a href="{{ path('room_show', {id: rsvn.room.id}) }}">{{ rsvn.room.title }}</a>
+    {% trans %}Nazwa sali{% endtrans %}:
+    <span class="p-sub">
+      <a class="rounded-border" 
+        href="{{ path('room_show', {id: rsvn.room.id}) }}">{{ rsvn.room.title }}</a> 
+      ➜ <a href="{{ path('rsvn_view_week', 
+        {'id': rsvn.room.id, 'date': rsvn.beginTime|date('Y-m-d')}) }}">rezerwacje</a>
+    </span>
   </p>
   <p>
-    {% trans %}Termin rozpoczęcia{% endtrans %}: 
-    {{ rsvn.beginTime|date('d.m.Y H:i') }}
+    {% trans %}Dzień rozpoczęcia{% endtrans %}:
+    <span class="p-sub">
+      {{ app.request.locale|icu_date(rsvn.beginTime, false) }}
+      ➜ <a href="{{ path('rsvn_view_day', 
+        {'date': rsvn.beginTime|date('Y-m-d'), 'roomId': rsvn.room.id}) }}">rezerwacje</a>
+    </span>
   </p>
   <p>
-    {% trans %}Godzina zakończenia{% endtrans %}: 
-    {{ rsvn.endTime|date('H:i') }}
+    {% trans %}Czas trwania{% endtrans %}:
+    <span class="p-sub">
+      {{ rsvn.beginTime|date('H:i') }} ⇔ {{ rsvn.endTime|date('H:i') }}
+    </span>
   </p>
   <p>
-    {% trans %}Cel rezerwacji{% endtrans %}: 
-    {{ rsvn.details|default('Ćwiczenie')|trans }}
+    {% trans %}Cel rezerwacji{% endtrans %}:
+    <span class="p-sub">
+      {{ rsvn.details|default('Ćwiczenie')|trans }}
+    </span>
   </p>
   <div class="form-group button-row">
     {% if can_edit_rsvn %}
       <a class="button" href="{{ path('reservation_edit', {rsvn_id: rsvn.id}) }}">
-        {{ 'bx bx-edit'|ico }}{{ 'Edytuj'|trans }}
+        {{ 'bx bx-edit'|ico }}{{ 'Zmień'|trans }}
       </a>
       <form action="{{ path('reservation_delete', { id: rsvn.id }) }}" method="post">
         <input type="hidden" name="token" value="{{ csrf_token('reservation_delete') }}"/>
@@ -40,10 +59,6 @@
         </button>
       </form>
     {% endif %}
-    <a class="button" href="{{ 
-      path('reservation_view_week', {'id': rsvn.room.id, 'date': rsvn.beginTime|date('Y-m-d')}) }}">
-      {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje w sali'|trans }}
-    </a>
   </div>
 
 {% endblock %}

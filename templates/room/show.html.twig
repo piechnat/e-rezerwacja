@@ -8,31 +8,26 @@
     <div class="form-group jqslct2-min-width">
       {{ form_label(form.room) }}
       {{ form_errors(form.room) }}
-      {{ form_widget(form.room, {attr: {class: 'jqslct2-single-select'}}) }}
-      <button id="jqslct2-submit" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
+      {{ form_widget(form.room, {attr: {class: 'jqslct2-single-select submit-on-change'}}) }}
+      <button class="hide-on-load" type="submit">{{ 'bx bx-refresh'|ico }}OK</button>
     </div>
   {{ form_end(form) }}
   <script>
-    var roomList = $('select.jqslct2-single-select');
-    roomList.select2({
+    var $roomList = $('select.jqslct2-single-select');
+    $roomList.select2({
       width: 'style',
       placeholder: { id: '', text: '\u200B' },
     });
-    $('#jqslct2-submit').hide();
-    roomList.change(function() {
-      $(this.form).submit();
-      $(this).prop('disabled', true);
-    });
-    $(window).on('load', function() {
-      if (!roomList.select2('data')[0].id) {
-        roomList.select2('open');
+    $(function() {
+      if (!$roomList.select2('data')[0].id) {
+        $roomList.select2('open');
       }
     });
   </script>
 
   {% if not room is null %}
     <div class="tag-list">
-      {{ 'Etykiety'|trans }}:
+      {{ 'Nadane etykiety'|trans }}:
       <ul>
       {% for tag in room.tags %}
         <li>{{ tag|trans }}</li>
@@ -56,7 +51,7 @@
           </button>
         </form>
       {% endif %}
-      <a class="button" href="{{ path('reservation_view_week', {'id': room.id}) }}">
+      <a class="button" href="{{ path('rsvn_view_week', {'id': room.id}) }}">
         {{ 'bx bx-calendar-week'|ico }}{{ 'Rezerwacje'|trans }}
       </a>
       <a class="button" href="{{ path('reservation_add', {'room_id': room.id}) }}">

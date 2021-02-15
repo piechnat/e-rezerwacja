@@ -5,6 +5,7 @@ namespace App\Security;
 use App\CustomTypes\Lang;
 use App\CustomTypes\UserLevel;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\Provider\GoogleClient;
@@ -54,6 +55,7 @@ class GoogleAuthenticator extends SocialAuthenticator
         /** @var GoogleUser $googleUser */
         $googleUser = $this->getGoogleClient()->fetchUserFromToken($credentials);
         $email = $googleUser->getEmail();
+        /** @var User */
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if (!$user) {
@@ -68,9 +70,11 @@ class GoogleAuthenticator extends SocialAuthenticator
             $user->setFullname($fullname);
             $user->setLang(Lang::fromCookie($this->request->cookies));
             $user->setAccess($isStudent ? UserLevel::USER : UserLevel::SUPER_USER);
-            $this->em->persist($user);
-            $this->em->flush();
         }
+
+        $user->setLastLogin(new DateTimeImmutable());
+        $this->em->persist($user);
+        $this->em->flush();
 
         return $user;
     }
