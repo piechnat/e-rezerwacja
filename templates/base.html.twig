@@ -65,17 +65,21 @@
       (function($form) {
         $('.hide-on-load', $form).hide();
         $('.enable-on-change', $form).prop('disabled', true);
-        $form.on('submit', function() {
-          this.submit();
-          $(':input', this).prop('disabled', true);
+        $form.on('submit', function(e) {
+          e.preventDefault();
+          if (this.checkValidity()) {
+            this.submit();
+          } else {
+            try { this.reportValidity() } catch (e) {}
+          }
+          var thisForm = this;
+          setTimeout(function() {
+            $(':input', thisForm).prop('disabled', true);
+          }, 1);
           return false;
         });
         $('.submit-on-change', $form).on('change', function() {
-          if (this.form.checkValidity()) {
-            $(this.form).submit();
-          } else {
-            try { this.form.reportValidity() } catch (e) {}
-          }
+          $(this.form).submit();
         });
         $form.one('change, input', function() {
           $('.enable-on-change', this).prop('disabled', false);
