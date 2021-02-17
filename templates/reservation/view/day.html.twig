@@ -49,10 +49,7 @@
 {% block table_view_headers %}
   {% for header in table_view.headers %}
     <th class="column-id-{{ header.id }}">
-      <a href="{{ path('reservation_add', {
-          room_id: header.id,
-          beginTime: header.date|date('Y-m-d '~now_s_hi)
-        }) }}" title="{{ 'Dodaj'|trans }}">
+      <a href="{{ path('room_show', {id: header.id}) }}" title="{{ 'Dodaj'|trans }}">
         {{ header.title }}
       </a>
     </th>

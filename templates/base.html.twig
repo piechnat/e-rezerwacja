@@ -8,22 +8,15 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <title>{{ app_name }}{% if main_title is defined %} » {{ main_title|trans }}{% endif %}</title>
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/boxicons.min.css') }}" rel="stylesheet">
     <script src="{{ asset('js/piechnat-menu.js') }}"></script>
     <link href="{{ asset('css/piechnat-menu.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
+    {% set select2_ver = '4.1.0-rc.0' %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/{{ select2_ver }}/css/select2.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/{{ select2_ver }}/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/{{ select2_ver }}/js/i18n/pl.min.js"></script>
     <link href="{{ asset('css/style.css') }}{{ dev_rand }}" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" 
-      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" 
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" 
-      integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" 
-      crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" 
-      integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" 
-      crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/pl.min.js" 
-      integrity="sha512-zXISX8YFu4dxrDDHJ27XNfF4Zs4oV+l3gWjuGqsZoINDEYW++MPGHdr/hVT2ahUi7vMP6lRkeh+m74oKUTcBKw==" 
-      crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
     {% block before_head %}{% endblock %}
   </head>
   <body>

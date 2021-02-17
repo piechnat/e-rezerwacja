@@ -47,6 +47,9 @@
     </span>
   </p>
   <div class="form-group button-row">
+    <a class="button" href="#" onclick="history.back()">
+      {{ 'bx bx-arrow-back'|ico }}{{ 'Wstecz'|trans }}
+    </a>
     {% if can_edit_rsvn %}
       <a class="button" href="{{ path('reservation_edit', {rsvn_id: rsvn.id}) }}">
         {{ 'bx bx-edit'|ico }}{{ 'Zmień'|trans }}

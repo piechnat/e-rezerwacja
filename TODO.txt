@@ -1,5 +1,9 @@
 FUNKCJE:
-- reservation add: rooms ajax request bez konfliktów
+- iOS Safari -> layout select2 multiple rozwalony
+- reservation_add: wyszukiwanie sal bez konfliktów
+- zapis last_date w cookie po stronie clienta i servera
+- Pokaż sale posiadające [Wszystkie/Dowolne] etykiety
+
 a)
 - obsługa cyklicznej rezerwacji (np. co tydzień) w podanym przedziale czasu (RecurringReservation)
 

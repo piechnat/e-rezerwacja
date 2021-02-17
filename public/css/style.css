@@ -4,16 +4,12 @@ html, body {
   -ms-text-size-adjust: 100%;
   margin: 0; border: 0; padding: 0;
   background-color: #fcfcfc;
-}
-html, body {
-  height: 100%; 
+  height: 100%;
 }
 #main-wrapper {
   position: relative;
   height: calc(100% - var(--navigation-bar-height));
-  overflow: auto;
   background-color: #fff;
-  overscroll-behavior-y: none;
 }
 .main-container {
   max-width: 800px;
@@ -22,7 +18,7 @@ html, body {
   margin: 0 auto;
   padding: 0 2%;
   background-color: #fcfcfc;
-  box-shadow: 0 0 4rem 0.05rem rgba(45, 45, 45, 0.3); /* OK */
+  box-shadow: 0 0 4rem 0.05rem rgba(45, 45, 45, 0.3);
 }
 body, select, input, button, textarea, .button   {
   -webkit-font-smoothing: antialiased;
@@ -238,7 +234,7 @@ box-shadow: 0 0 0.3rem 0.05rem rgba(0, 0, 0, 0.5);
   width: auto;
 }
 .button {
-  line-height: 1.6; /* vertically centre text */
+  line-height: 1.6; /* vertically center text */
 }
 .form-group > input[type=time] {
   width: auto;
@@ -322,20 +318,25 @@ ul.form-errors {
 
 /* SELECT2 RECONFIGURATION - BEGIN */
 
-.select2-container--open {
-  z-index: 99998;
-}
 .select2-container {
   max-width: 99%;
 }
-.jqslct2-min-width .select2-dropdown, .jqslct2-min-width .select2-container {
-  min-width: 10em;
+.select2-container--open {
+  z-index: 99998;
 }
-.form-group > .select2 {
-  margin: 0 0.83em 0 0;
+.select2-container .select2-search--inline .select2-search__field {
+  min-height: 1.2em;
+  margin-top: 0;
+  font-family: inherit;
+  vertical-align: text-bottom;
 }
-.select2-results__options {
-  overflow-x: hidden;
+.select2-container .select2-search--inline {
+  display: inline-block;
+  margin-top: 5px;
+  border: 1px solid transparent;
+}
+.select2-container--default .select2-selection--multiple {
+  min-height: 2.4em;
 }
 .select2-selection {
   border-color: #ccc !important;
@@ -345,15 +346,21 @@ ul.form-errors {
   border-color: #888 !important;
   box-shadow: 0.05rem 0.05rem 0.3rem 0.05rem rgba(45,45,45,0.3);
 }
+.select2-selection--single {
+  height: auto !important;
+}
+.form-group > .select2 {
+  margin: 0 0.83em 0 0;
+}
 .select2-selection--single, .select2-selection__arrow {
   padding-top: 0.2em;
   padding-bottom: 0.2em;
 }
-.select2-selection--single {
-  height: auto !important;
+.jqslct2-min-width .select2-dropdown, .jqslct2-min-width .select2-container {
+  min-width: 10em;
 }
-.select2-container .select2-search--inline input.select2-search__field {
-  border: 1px solid transparent;
+.select2-results__options {
+  overflow-x: hidden;
 }
 .select2-container--default .select2-selection--single span.select2-selection__rendered {
   color: #000;

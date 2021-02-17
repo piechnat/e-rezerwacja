@@ -10,8 +10,8 @@ addEventListener('DOMContentLoaded', () => {
   const menuBtn = $('.menu-wrapper > input', navbar), bluredBg = $('.blurred-bg', navbar);
   if (menuBtn && bluredBg) bluredBg.onclick = () => menuBtn.click();
 
-  const openMenus = (localStorage.getItem(APP_ID) || '').split(','); 
-  addEventListener('beforeunload', () => localStorage.setItem(APP_ID, openMenus.join(',')));
+  const openMenus = (sessionStorage.getItem(APP_ID) || '').split(','); 
+  addEventListener('beforeunload', () => sessionStorage.setItem(APP_ID, openMenus.join(',')));
 
   let sideMode = false, resizeTmt;
   $$('a[href="#"]', navbar).forEach(o => o.onclick = e => e.preventDefault());

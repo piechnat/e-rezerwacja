@@ -7,6 +7,7 @@
     right: 0;
     bottom: 0;
     background-color: #f0f0f0;
+    overscroll-behavior-y: none;
   }
   .table-view .table-view-header {
     position: sticky;
@@ -58,7 +59,7 @@
     white-space: nowrap;
   }
   .table-view th.marked {
-    font-weight: bold;
+    background-color: #ccc;
   }
   .table-view thead th {
     top: 0;
