@@ -3,13 +3,13 @@ html, body {
   -moz-text-size-adjust: none;
   -ms-text-size-adjust: 100%;
   margin: 0; border: 0; padding: 0;
-  background-color: #fcfcfc;
+  background-color: #f6f6fc;
   height: 100%;
 }
 #main-wrapper {
   position: relative;
   height: calc(100% - var(--navigation-bar-height));
-  background-color: #fff;
+  background-color: #f6f6fc;
 }
 .main-container {
   max-width: 800px;
@@ -54,9 +54,11 @@ hr {
   border-width: 1px 0 0 0;
 }
 b {
+  color: #444;
   font-weight: 400;
 }
 strong {
+  color: #444;
   font-weight: 700;
 }
 .cryptedmail:after {
@@ -127,6 +129,10 @@ i.bx {
   display: block;
   padding: 0.8em 0 0 4%;
   font-weight: 400;
+  color: #444;
+}
+.p-sub a {
+  color: #5f5fca;
 }
 
 /* MENU RECONFIGURATION - BEGIN */

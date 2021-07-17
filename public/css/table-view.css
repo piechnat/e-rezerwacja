@@ -12,7 +12,7 @@
   .table-view .table-view-header {
     position: sticky;
     left: 0;
-    background-color: #fff;
+    background-color: #f6f6fc;
     box-shadow: inset 0 -0.2rem 0.3rem -0.2rem rgba(45,45,45,0.3);
   }
   .table-view .table-view-header > div {
@@ -27,7 +27,7 @@
   .table-view .table-view-body {
     position: relative;
     z-index: 1;
-    background-color: #f0f0f0;
+    background-color: #f0f0f2;
   }
   .table-view table {
     border-collapse: separate;

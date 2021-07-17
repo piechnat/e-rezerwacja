@@ -11,6 +11,9 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+/TODO.txt
+/e-rezerwacja.pdf
+
 ###> symfony/phpunit-bridge ###
 .phpunit
 .phpunit.result.cache
