@@ -38,5 +38,5 @@ Nie można dodać rezerwacji w przeszłości, ani edytować przeszłej rezerwacj
 - limit długości wszystkich rezerwacji<sup>[4]</sup> w tygodniu (sugerowane 14 godz.)
 - minimalna przerwa między rezerwacjami użytkownika<sup>[4]</sup> w tej samej sali (sugerowane 2 godz.)
 
-[3] Nie dotyczy konta _Zarządcy_.
+[3] Nie dotyczy konta _Zarządcy_.  
 [4] Nie dotyczy rezerwacji przypisanych użytkownikowi przez _Zarządcę_.
